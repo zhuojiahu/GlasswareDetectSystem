@@ -1,0 +1,17 @@
+[ErrorRecord]
+Error_1=2.2.117.56 2021-08-17 11:39:31 Normal image locates Row is: 31Col is: 34
+Error_2=2.2.117.56 2021-08-17 11:39:33 Normal image locates Row is: 30Col is: 45
+Error_3=2.2.117.56 2021-08-17 11:39:35 Normal image locates Row is: 32Col is: 37
+Error_4=2.2.117.56 2021-08-17 11:39:37 Normal image locates Row is: 31Col is: 33
+Error_5=2.2.117.56 2021-08-17 11:39:39 Normal image locates Row is: 31Col is: 41
+Error_6=2.2.117.56 2021-08-17 11:39:41 Normal image locates Row is: 31Col is: 34
+Error_7=2.2.117.56 2021-08-17 11:39:43 Normal image locates Row is: 31Col is: 34
+Error_8=2.2.117.56 2021-08-17 11:39:45 Normal image locates Row is: 30Col is: 45
+Error_9=2.2.117.56 2021-08-17 11:39:47 Normal image locates Row is: 32Col is: 37
+Error_10=2.2.117.56 2021-08-17 11:39:49 Normal image locates Row is: 31Col is: 33
+Error_11=2.2.117.56 2021-08-17 11:39:51 Normal image locates Row is: 31Col is: 41
+Error_12=2.2.117.56 2021-08-17 11:39:53 Normal image locates Row is: 31Col is: 34
+Error_13=2.2.117.56 2021-08-17 11:39:55 Normal image locates Row is: 31Col is: 34
+
+[setup]
+total=13

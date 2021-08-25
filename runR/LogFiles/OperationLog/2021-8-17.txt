@@ -1,0 +1,8 @@
+[OperationInfo]
+INFO_1=2021-8-17 11:39:31 \x5f00\x59cb\x68c0\x6d4b
+INFO_2=2021-8-17 11:39:56 \x505c\x6b62\x68c0\x6d4b
+INFO_3=2021-8-17 11:39:57 \x5173\x95ed\x7b97\x6cd5\x8bbe\x7f6e\xff01
+INFO_4=2021-8-17 11:39:57 \x5173\x95ed\x76f8\x673a
+
+[setup]
+total=4

@@ -1,0 +1,6 @@
+[OperationInfo]
+INFO_1=2021-8-16 9:53:3 \x5173\x95ed\x7b97\x6cd5\x8bbe\x7f6e\xff01
+INFO_2=2021-8-16 9:53:3 \x5173\x95ed\x76f8\x673a
+
+[setup]
+total=2

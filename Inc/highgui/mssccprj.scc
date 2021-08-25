@@ -1,0 +1,9 @@
+SCC = This is a Source Code Control file
+
+[highgui.dsp]
+SCC_Aux_Path = "\\192.168.0.60\vss\"
+SCC_Project_Name = "$/SA0602 管制玻璃瓶检测项目/视觉算法部/瓶体检测算法库/源代码/管制瓶质量在线检测系统(不断更新)/BottleInspection/Inc/highgui", NTPBAAAA
+
+[highgui.vcproj]
+SCC_Aux_Path = "\\192.168.0.60\vss\"
+SCC_Project_Name = "$/SA0602 管制玻璃瓶检测项目/视觉算法部/瓶体检测算法库/源代码/管制瓶质量在线检测系统(不断更新)/BottleInspection/Inc/highgui", NTPBAAAA

@@ -1,0 +1,20 @@
+[OperationInfo]
+INFO_1=2021-8-6 14:43:5 \x5f00\x59cb\x68c0\x6d4b
+INFO_2=2021-8-6 14:43:8 \x505c\x6b62\x68c0\x6d4b
+INFO_3=2021-8-6 15:35:49 \x5f00\x59cb\x68c0\x6d4b
+INFO_4=2021-8-6 15:35:52 \x505c\x6b62\x68c0\x6d4b
+INFO_5=2021-8-6 15:59:9 \x5f00\x59cb\x68c0\x6d4b
+INFO_6=2021-8-6 15:59:11 \x8fdb\x5165\x7b97\x6cd5\x8bbe\x7f6e\x754c\x9762\x76f8\x673a\xff1a\x30
+INFO_7=2021-8-6 15:59:34 \x505c\x6b62\x68c0\x6d4b
+INFO_8=2021-8-6 16:3:41 \x5f00\x59cb\x68c0\x6d4b
+INFO_9=2021-8-6 16:3:42 \x8fdb\x5165\x7b97\x6cd5\x8bbe\x7f6e\x754c\x9762\x76f8\x673a\xff1a\x30
+INFO_10=2021-8-6 16:4:8 \x505c\x6b62\x68c0\x6d4b
+INFO_11=2021-8-6 16:4:9 \x8fdb\x5165\x7b97\x6cd5\x8bbe\x7f6e\x754c\x9762\x76f8\x673a\xff1a\x30
+INFO_12=2021-8-6 16:4:19 \x8fdb\x5165\x7b97\x6cd5\x8bbe\x7f6e\x754c\x9762\x76f8\x673a\xff1a\x30
+INFO_13=2021-8-6 16:4:20 \x5f00\x59cb\x68c0\x6d4b
+INFO_14=2021-8-6 16:4:27 \x505c\x6b62\x68c0\x6d4b
+INFO_15=2021-8-6 16:4:28 \x5173\x95ed\x7b97\x6cd5\x8bbe\x7f6e\xff01
+INFO_16=2021-8-6 16:4:28 \x5173\x95ed\x76f8\x673a
+
+[setup]
+total=16

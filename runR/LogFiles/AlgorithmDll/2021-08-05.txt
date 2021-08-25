@@ -1,0 +1,6 @@
+[ErrorRecord]
+Error_1=2.2.117.56 2021-08-05 09:06:48 Normal image locates Row is: 63Col is: 202
+Error_2=2.2.117.56 2021-08-05 09:06:50 Normal image locates Row is: 63Col is: 197
+
+[setup]
+total=2
