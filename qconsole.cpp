@@ -18,8 +18,8 @@ QConsole::QConsole(QWidget *parent)
 	m_sSystemInfo.iCardID = 1;
 	m_sSystemInfo.strCardInitFile = QString("./PIO24B_reg_init1.txt");
 	m_sSystemInfo.strCardName = QString("PIO24B1");
-	
-	if(pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
 		int temp = 0 ;
 		m_vIOCard = new CIOCard(m_sSystemInfo,1);
@@ -30,14 +30,13 @@ QConsole::QConsole(QWidget *parent)
 		ui.lineEdit_1->setText(QString::number(temp));
 		temp = m_vIOCard->readParam(32);
 		ui.lineEdit_2->setText(QString::number(temp));
+		m_plc = new Widget_PLC(parent);
+		connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
+		nReadIOcard = new QTimer(this);
+		nReadIOcard->setInterval(1000);
+		connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
+		nReadIOcard->start();
 	}
-	
-	m_plc = new Widget_PLC(parent);
-	connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
-	nReadIOcard = new QTimer(this);
-	nReadIOcard->setInterval(1000);
-	connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
-	nReadIOcard->start();
 }
 
 QConsole::~QConsole()

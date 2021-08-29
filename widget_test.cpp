@@ -57,6 +57,7 @@ WidgetTest::WidgetTest(QWidget *parent)
 	}else{
 		ui.pushButton_set->setVisible(false);
 	}
+	pMainFrm->m_sRunningInfo.m_iKickMode = 2;
 }
 WidgetTest::~WidgetTest()
 {

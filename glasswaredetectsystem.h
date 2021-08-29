@@ -178,8 +178,6 @@ public:
 	int sLanguage;
 public:
 	ImageSave m_SavePicture[CAMERA_MAX_COUNT];
-	double MaxRate;
-	double MinRate;
 	int surplusDays;
 	HANDLE pHandles[CAMERA_MAX_COUNT];
 	QList<MyErrorType> nCameraErrorType;

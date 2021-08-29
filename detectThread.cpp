@@ -63,7 +63,6 @@ void DetectThread::ProcessHanlde(int Camera)
 		pMainFrm->nQueue[iCamera].mGrabLocker.unlock();
 		if(0 == DetectElement.iType)
 		{
-			//CountRuningData(iCamera);
 			DetectNormal(DetectElement.ImageNormal);
 			if (pMainFrm->nQueue[iCamera].InitID == DetectElement.ImageNormal->initID)
 			{ 
@@ -73,15 +72,12 @@ void DetectThread::ProcessHanlde(int Camera)
 			}
 			else
 			{
-				//pMainFrm->Logfile.write(tr("delete a element!"),AbnormityLog);
 				delete DetectElement.ImageNormal->SourceImage;
 				delete DetectElement.ImageNormal->myImage;
 				DetectElement.ImageNormal = NULL;
 				delete DetectElement.ImageNormal;
 			}
 		}else{
-			//iStressCamera = DetectElement.iCameraNormal;
-			//Sleep(1);
 			DetectStress(DetectElement.ImageNormal);
 			if (pMainFrm->nQueue[iCamera].InitID == DetectElement.ImageNormal->initID)
 			{
@@ -91,10 +87,9 @@ void DetectThread::ProcessHanlde(int Camera)
 			}
 			else
 			{
-				//pMainFrm->Logfile.write(tr("delete a element!"),AbnormityLog);
 				delete DetectElement.ImageNormal->SourceImage;
 				delete DetectElement.ImageNormal->myImage;
-				DetectElement.ImageNormal->myImage = NULL;
+				DetectElement.ImageNormal = NULL;
 				delete DetectElement.ImageNormal;
 			}
 		}
@@ -112,7 +107,7 @@ void DetectThread::DetectNormal(CGrabElement *pElement)
 	try
 	{
 		rotateImage(pElement);
-		if (pMainFrm->m_sRunningInfo.m_bCheck)
+		if (pMainFrm->m_sRunningInfo.m_bCheck && pMainFrm->m_sRunningInfo.m_bIsCheck[iCamera])
 		{
 			try
 			{
@@ -166,7 +161,7 @@ void DetectThread::DetectStress(CGrabElement *pElement)
 	try
 	{
 		rotateImage(pElement);
-		if (pMainFrm->m_sRunningInfo.m_bCheck)
+		if (pMainFrm->m_sRunningInfo.m_bCheck && pMainFrm->m_sRunningInfo.m_bIsCheck[iCamera])
 		{
 			try
 			{

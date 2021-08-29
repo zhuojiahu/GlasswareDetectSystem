@@ -93,8 +93,6 @@ GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
 	: QDialog(parent)
 {
 	pMainFrm = this;
-	MinRate=0;
-	MaxRate=0;
 	for (int i=0;i<CAMERA_MAX_COUNT;i++)
 	{
 		nQueue[i].listDetect.clear();
@@ -170,7 +168,7 @@ void WINAPI GlobalGrabOverCallback (const s_GBSIGNALINFO* SigInfo)
 void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 {
 	int iRealCameraSN = SigInfo->nGrabberSN;
-	if (iRealCameraSN==-1 || !m_sRunningInfo.m_bCheck || !pMainFrm->m_sRunningInfo.m_bIsCheck[iRealCameraSN])
+	if (iRealCameraSN==-1 || !m_sRunningInfo.m_bCheck)
 	{
 		return;
 	}
@@ -525,7 +523,7 @@ void GlasswareDetectSystem::ReadIniInformation()
 	//切割后相机个数
 	m_sSystemInfo.iCamCount = iniset.value("/system/CarveDeviceCount",1).toInt();
 
-	for(int i=0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
+	/*for(int i=0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
 	{
 		if(i >= pMainFrm->m_sSystemInfo.iRealCamCount)
 		{
@@ -534,7 +532,7 @@ void GlasswareDetectSystem::ReadIniInformation()
 		{
 			m_sCarvedCamInfo[i].m_iToRealCamera = i;
 		}
-	}
+	}*/
 	for (int i=0;i<m_sSystemInfo.iRealCamCount;i++)
 	{
 		struGrabCardPara[i].iGrabberTypeSN = 1;
@@ -609,6 +607,8 @@ void GlasswareDetectSystem::ReadCorveConfig()
 		m_sCarvedCamInfo[i].m_iImageWidth = iniCarveSet.value(strSession,i).toInt();
 		strSession = QString("/height/Grab_%1").arg(i);
 		m_sCarvedCamInfo[i].m_iImageHeight = iniCarveSet.value(strSession,i).toInt();
+		strSession = QString("/convert/Grab_%1").arg(i);
+		m_sCarvedCamInfo[i].m_iToRealCamera = iniCarveSet.value(strSession,i).toInt();
 
 		if ((m_sCarvedCamInfo[i].i_ImageX + m_sCarvedCamInfo[i].m_iImageWidth) > m_sRealCamInfo[i].m_iImageWidth)
 		{
@@ -711,7 +711,7 @@ void GlasswareDetectSystem::InitGrabCard(s_GBINITSTRUCT struGrabCardPara,int ind
 			m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_bCameraInitSuccess = m_sRealCamInfo[index].m_bCameraInitSuccess;
 			m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_iImageWidth = m_sRealCamInfo[index].m_iImageWidth;
 			m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_iImageHeight = m_sRealCamInfo[index].m_iImageHeight;
-
+			m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_iImageRoAngle = m_sRealCamInfo[index].m_iImageRoAngle;
 			if (90 == m_sRealCamInfo[index].m_iImageRoAngle || 270 == m_sRealCamInfo[index].m_iImageRoAngle )
 			{
 				int iTemp = m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_iImageHeight;
@@ -719,12 +719,6 @@ void GlasswareDetectSystem::InitGrabCard(s_GBINITSTRUCT struGrabCardPara,int ind
 				m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_iImageWidth = iTemp;
 			}
 		}
-        if (90 == m_sRealCamInfo[index].m_iImageRoAngle || 270 == m_sRealCamInfo[index].m_iImageRoAngle )
-        {
-            int iTemp = m_sRealCamInfo[index].m_iImageHeight;
-            m_sRealCamInfo[index].m_iImageHeight = m_sRealCamInfo[index].m_iImageWidth;
-            m_sRealCamInfo[index].m_iImageWidth = iTemp;
-        }
 	}
 	else
 	{
@@ -742,6 +736,12 @@ void GlasswareDetectSystem::InitGrabCard(s_GBINITSTRUCT struGrabCardPara,int ind
 		strError = QString("camera%1initial error,ErrorPosition%2").arg(index).arg(iErrorPosition);
 		pMainFrm->Logfile.write(strError,OperationLog);
 		m_sRealCamInfo[index].m_strErrorInfo = str;
+	}
+	if (90 == m_sRealCamInfo[index].m_iImageRoAngle || 270 == m_sRealCamInfo[index].m_iImageRoAngle )
+	{
+		int iTemp = m_sRealCamInfo[index].m_iImageHeight;
+		m_sRealCamInfo[index].m_iImageHeight = m_sRealCamInfo[index].m_iImageWidth;
+		m_sRealCamInfo[index].m_iImageWidth = iTemp;
 	}
 }
 //初始化相机（设置曝光时间和触发方式）
@@ -995,7 +995,7 @@ void GlasswareDetectSystem::StartDetectThread()
 void GlasswareDetectSystem::initDetectThread()
 {
 	m_bIsThreadDead = FALSE;
-	CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)SendDetect, this, 0, NULL );
+	//CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)SendDetect, this, 0, NULL );
 	for (int i=0;i<m_sSystemInfo.iCamCount;i++)
 	{
 		pdetthread[i] = new DetectThread(this,i);
