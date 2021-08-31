@@ -242,7 +242,7 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 	{
 		if(m_sSystemInfo.m_bIsTest)
 		{
-			if(widget_carveSetting->iCameraNo > m_sSystemInfo.iRealCamCount)
+			if(widget_carveSetting->iCameraNo >= m_sSystemInfo.iRealCamCount)
 			{
 				tempCamera += m_sSystemInfo.iRealCamCount;
 			}
