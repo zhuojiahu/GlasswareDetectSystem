@@ -24,7 +24,7 @@
 #pragma warning(disable:4005) //不显示宏重定义警告
 
 //最大相机个数
-#define CAMERA_MAX_COUNT 30
+#define CAMERA_MAX_COUNT 40
 //#define ERROR_MAX_COUNT 43
 //最多错误类型个数
 #define ERRORTYPE_MAX_COUNT 50

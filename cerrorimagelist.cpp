@@ -207,6 +207,8 @@ void CErrorImageList::slots_ShowSelectImage(QModelIndex modelIndex)
 	pMainFrm->m_SavePicture[nCamNo].pThat=imageError;
 	pMainFrm->m_SavePicture[nCamNo].m_Picture =imageError->copy();
 	
+	memcpy(pMainFrm->widget_carveSetting->image_widget->sAlgImageLocInfo[nCamNo].sXldPoint.nColsAry,pElement->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);
+	memcpy(pMainFrm->widget_carveSetting->image_widget->sAlgImageLocInfo[nCamNo].sXldPoint.nRowsAry,pElement->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
 	emit signals_showErrorImage(imageError, nCamNo, pElement->nSignalNo, pElement->dCostTime, pElement->nMouldID, pElement->nCheckRet, pElement->cErrorRectList, iListNo);
 	pMainFrm->m_ErrorList.m_mutexmErrorList.unlock();
 }

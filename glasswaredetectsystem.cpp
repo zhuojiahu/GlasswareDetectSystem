@@ -187,7 +187,7 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 		//每次回调尝试读取两个工位的图像号，通过是否重复来判断是第几工位拍图，再放到对应的检测队列，就没法判断误触发的情况
 		if(m_sSystemInfo.m_bIsTest)
 		{
-			tempI = m_sCarvedCamInfo[widget_carveSetting->iCameraNo].m_iStress;
+			//tempI = m_sCarvedCamInfo[widget_carveSetting->iCameraNo].m_iStress;
 		}else{
 			for(;tempI<2;tempI++)
 			{
@@ -240,9 +240,17 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 
 	if (m_sSystemInfo.m_bIsIOCardOK)
 	{
-		if(tempI == 1 && m_sSystemInfo.m_iSystemType != 2)
+		if(m_sSystemInfo.m_bIsTest)
 		{
-			tempCamera += m_sSystemInfo.iRealCamCount;
+			if(widget_carveSetting->iCameraNo > m_sSystemInfo.iRealCamCount)
+			{
+				tempCamera += m_sSystemInfo.iRealCamCount;
+			}
+		}else{
+			if(tempI == 1 && m_sSystemInfo.m_iSystemType != 2)
+			{
+				tempCamera += m_sSystemInfo.iRealCamCount;
+			}
 		}
 	}else{
 		if(m_sRealCamInfo[iRealCameraSN].m_iGrabImageCount%2 == 0)
@@ -338,8 +346,8 @@ void GlasswareDetectSystem::InitParameter()
 		m_sRealCamInfo[i].m_bGrabIsStart = FALSE;
 	}
 	m_tcpSocket = new QTcpSocket();
-	//m_tcpSocket->connectToHost("192.168.250.204",8088);
-	m_tcpSocket->connectToHost("192.168.20.124",8088);
+	m_tcpSocket->connectToHost("192.168.250.204",8088);
+	//m_tcpSocket->connectToHost("192.168.20.124",8088);
 	if(m_tcpSocket->waitForConnected(3000))
 	{
 		connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(onServerDataReady()));
@@ -736,6 +744,10 @@ void GlasswareDetectSystem::InitGrabCard(s_GBINITSTRUCT struGrabCardPara,int ind
 		strError = QString("camera%1initial error,ErrorPosition%2").arg(index).arg(iErrorPosition);
 		pMainFrm->Logfile.write(strError,OperationLog);
 		m_sRealCamInfo[index].m_strErrorInfo = str;
+		if(m_sSystemInfo.m_iSystemType != 2)
+		{
+			m_sRealCamInfo[index+m_sSystemInfo.iRealCamCount].m_bCameraInitSuccess = m_sRealCamInfo[index].m_bCameraInitSuccess;
+		}
 	}
 	if (90 == m_sRealCamInfo[index].m_iImageRoAngle || 270 == m_sRealCamInfo[index].m_iImageRoAngle )
 	{
@@ -852,6 +864,19 @@ void GlasswareDetectSystem::InitImage()
 		m_sCarvedCamInfo[i].m_pGrabTemp = new BYTE[m_sRealCamInfo[i].m_iImageWidth*m_sRealCamInfo[i].m_iImageHeight];
 		//分配元素链表中图像的内存，每剪切出来的相机10个。
 		nQueue[i].InitCarveQueue(m_sCarvedCamInfo[i].m_iImageWidth, m_sCarvedCamInfo[i].m_iImageHeight,m_sRealCamInfo[i].m_iImageWidth,m_sRealCamInfo[i].m_iImageHeight,m_sCarvedCamInfo[i].m_iImageBitCount, 10, true);
+		for (int k = 0; k < 256;k++)
+		{
+			delete []m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry;
+			delete []m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry;
+
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_iHaveInfo = 0;
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nCount = 0;
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
+			memset(m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry,0, 4*BOTTLEXLD_POINTNUM);
+			memset(m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry,0, 4*BOTTLEXLD_POINTNUM);
+			// 				memset
+		}
 	}
 	SetCarvedCamInfo();
 	//初始化缺陷图像列表
@@ -890,12 +915,8 @@ void GlasswareDetectSystem::InitIOCard()
 	if (m_sSystemInfo.m_bIsIOCardOK)
 	{
 		m_sSystemInfo.m_sConfigIOCardInfo[0].iCardID = 0;
-		
 		m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile = QString("./PIO24B_reg_init.txt");
-		
-		
 		m_sSystemInfo.m_sConfigIOCardInfo[0].strCardName = QString("PIO24B");
-
 		m_vIOCard[0] = new CIOCard(m_sSystemInfo.m_sConfigIOCardInfo[0],0);
 		connect(m_vIOCard[0],SIGNAL(emitMessageBoxMainThread(s_MSGBoxInfo)),this,SLOT(slots_MessageBoxMainThread(s_MSGBoxInfo)));
 		s_IOCardErrorInfo sIOCardErrorInfo = m_vIOCard[0]->InitIOCard();
@@ -1305,8 +1326,8 @@ void GlasswareDetectSystem::slots_OnBtnStar()
 			}
 			for (int i = 0; i < m_sSystemInfo.iCamCount;i++)
 			{
-				m_sRealCamInfo[i].m_iImageIdxLast[0] = -1;
-				m_sRealCamInfo[i].m_iImageIdxLast[1] = -1;
+				m_sRealCamInfo[i].m_iImageIdxLast[0] = 0;
+				m_sRealCamInfo[i].m_iImageIdxLast[1] = 0;
 			}
 			pMainFrm->Logfile.write(tr("Start Check"),OperationLog);
 			m_sRunningInfo.m_bCheck = true;
@@ -1424,6 +1445,11 @@ void GlasswareDetectSystem::ReleaseAll()
 	for(int i = 0; i < m_sSystemInfo.iCamCount; i++)
 	{
 		s_Status sReturnStatus = m_cBottleCheck[i].Free();
+		for (int j = 0; j < 256;j++)
+		{
+			delete []m_sCarvedCamInfo[i].sImageLocInfo[j].m_AlgImageLocInfos.sXldPoint.nRowsAry;
+			delete []m_sCarvedCamInfo[i].sImageLocInfo[j].m_AlgImageLocInfos.sXldPoint.nColsAry;
+		}
 	}
 	if (CherkerAry.pCheckerlist != NULL)
 	{
@@ -1792,56 +1818,59 @@ void GlasswareDetectSystem::slot_SockScreen()
 
 void GlasswareDetectSystem::InitLastData()
 {
-	QSettings LoadLastData(SaveDataPath,QSettings::IniFormat);
-	LoadLastData.setIniCodec(QTextCodec::codecForName("GBK"));
+	//QSettings LoadLastData(SaveDataPath,QSettings::IniFormat);
+	//LoadLastData.setIniCodec(QTextCodec::codecForName("GBK"));
+	//QString strSession;
+	//for (int j = 1;j<=pMainFrm->m_sErrorInfo.m_iErrorTypeCount;j++)
+	//{
+	//	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
+	//	{
+	//		strSession = QString("DefaultTypeCount/EveryRow%1").arg(i);
+	//		int xRowTemp=LoadLastData.value(strSession,-1).toInt();
+
+	//		strSession = QString("DefaultTypeCount/EveryLine%1").arg(j);
+	//		int yLineTemp=LoadLastData.value(strSession,-1).toInt();
+
+	//		if ( xRowTemp == -1 || yLineTemp == -1 )
+	//		{
+	//			continue;
+	//		}
+
+	//		strSession = QString("DefaultTypeCount/EveryNumber%1_%2").arg(xRowTemp).arg(yLineTemp);
+	//		m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp]=LoadLastData.value(strSession,0).toInt();
+	//		m_sRunningInfo.m_iErrorTypeCount[j]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
+	//		m_sRunningInfo.m_iErrorCamCount[i]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
+	//	}
+	//}
+	////上一次整点数据
+	//strSession = QString("LastTimeDate/LastTime");
+	//LastTime=QDateTime::fromString(LoadLastData.value(strSession,"0000-00-00 00:00").toString(),"yyyy-MM-dd hh:mm");
+	//strSession = QString("LastTimeDate/Checknumber");
+	////LastTimeData.m_AllCount = LoadLastData.value(strSession,0).toInt();
+	//strSession = QString("LastTimeDate/Failurenumber");
+	////LastTimeData.m_FailCount = LoadLastData.value(strSession,0).toInt();
+	//for (int i=1;i<ERRORTYPE_MAX_COUNT;i++)
+	//{
+	//	strSession = QString("LastTimeDate/ErrorType_%1_count").arg(i);
+	//	//LastTimeData.m_CameraTypeCount[i] = LoadLastData.value(strSession,0).toInt();
+	//}
+	//for (int i=1;i<CAMERA_MAX_COUNT;i++)
+	//{
+	//	for(int j=1;j<ERRORTYPE_MAX_COUNT;j++)
+	//	{
+	//		strSession = QString("LastTimeDate/Camera%1_ErrorType%2").arg(i).arg(j);
+	//		//LastTimeData.m_TypeCount[i][j] = LoadLastData.value(strSession,0).toInt();
+	//	}
+	//}
+
+	QSettings iniset(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
+	iniset.setIniCodec(QTextCodec::codecForName("GBK"));
 	QString strSession;
-	for (int j = 1;j<=pMainFrm->m_sErrorInfo.m_iErrorTypeCount;j++)
-	{
-		for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
-		{
-			strSession = QString("DefaultTypeCount/EveryRow%1").arg(i);
-			int xRowTemp=LoadLastData.value(strSession,-1).toInt();
+	strSession=QString("/system/checkedNum");
+	m_sRunningInfo.m_checkedNum=iniset.value(strSession,0).toInt();
 
-			strSession = QString("DefaultTypeCount/EveryLine%1").arg(j);
-			int yLineTemp=LoadLastData.value(strSession,-1).toInt();
-
-			if ( xRowTemp == -1 || yLineTemp == -1 )
-			{
-				continue;
-			}
-
-			strSession = QString("DefaultTypeCount/EveryNumber%1_%2").arg(xRowTemp).arg(yLineTemp);
-			m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp]=LoadLastData.value(strSession,0).toInt();
-			m_sRunningInfo.m_iErrorTypeCount[j]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
-			m_sRunningInfo.m_iErrorCamCount[i]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
-		}
-	}
-	strSession=QString("HeadCount/Checknumber");
-	m_sRunningInfo.m_checkedNum=LoadLastData.value(strSession,0).toInt();
-
-	strSession=QString("HeadCount/Failurenumber");
-	m_sRunningInfo.m_failureNumFromIOcard=LoadLastData.value(strSession,0).toInt();
-
-	//上一次整点数据
-	strSession = QString("LastTimeDate/LastTime");
-	LastTime=QDateTime::fromString(LoadLastData.value(strSession,"0000-00-00 00:00").toString(),"yyyy-MM-dd hh:mm");
-	strSession = QString("LastTimeDate/Checknumber");
-	//LastTimeData.m_AllCount = LoadLastData.value(strSession,0).toInt();
-	strSession = QString("LastTimeDate/Failurenumber");
-	//LastTimeData.m_FailCount = LoadLastData.value(strSession,0).toInt();
-	for (int i=1;i<ERRORTYPE_MAX_COUNT;i++)
-	{
-		strSession = QString("LastTimeDate/ErrorType_%1_count").arg(i);
-		//LastTimeData.m_CameraTypeCount[i] = LoadLastData.value(strSession,0).toInt();
-	}
-	for (int i=1;i<CAMERA_MAX_COUNT;i++)
-	{
-		for(int j=1;j<ERRORTYPE_MAX_COUNT;j++)
-		{
-			strSession = QString("LastTimeDate/Camera%1_ErrorType%2").arg(i).arg(j);
-			//LastTimeData.m_TypeCount[i][j] = LoadLastData.value(strSession,0).toInt();
-		}
-	}
+	strSession=QString("/system/failureNum");
+	m_sRunningInfo.m_failureNumFromIOcard=iniset.value(strSession,0).toInt();
 }
 #ifdef JIAMI_INITIA
 void GlasswareDetectSystem::MonitorLicense()

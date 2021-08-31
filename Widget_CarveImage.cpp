@@ -1591,14 +1591,14 @@ void Widget_CarveImage::slots_timerTest()
 	if (pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
 		int CameraNo = pMainFrm->m_sCarvedCamInfo[iCameraNo].m_iToRealCamera;
-		int iPosition = pMainFrm->m_sRealCamInfo[CameraNo].m_iGrabPosition;
-		if(pMainFrm->m_sCarvedCamInfo[iCameraNo].m_iStress)
+		//int iPosition = pMainFrm->m_sRealCamInfo[CameraNo].m_iGrabPosition;
+
+		//if(pMainFrm->m_sCarvedCamInfo[iCameraNo].m_iStress)
+		if(iCameraNo <= pMainFrm->m_sSystemInfo.iRealCamCount)
 		{
-			pMainFrm->m_vIOCard[0]->TestOutPut(pMainFrm->struGrabCardPara[CameraNo].iReserve2);
-			//pMainFrm->Logfile.write(QString("%1--%2").arg(iCameraNo).arg(pMainFrm->struGrabCardPara[CameraNo].iReserve2),CheckLog);//条纹光
-		}else{
 			pMainFrm->m_vIOCard[0]->TestOutPut(pMainFrm->struGrabCardPara[CameraNo].iReserve1);
-			//pMainFrm->Logfile.write(QString("%1--%2").arg(iCameraNo).arg(pMainFrm->struGrabCardPara[CameraNo].iReserve1),CheckLog);//条纹光
+		}else{
+			pMainFrm->m_vIOCard[0]->TestOutPut(pMainFrm->struGrabCardPara[CameraNo].iReserve2);
 		}
 	}
 }

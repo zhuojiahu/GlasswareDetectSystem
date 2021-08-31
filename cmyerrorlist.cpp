@@ -27,8 +27,10 @@ void CMyErrorList::initErrorList(int nWidth,int nHeight,int nBitCount,int nBlock
 	listError.clear();
 // 	int nBlockSize = nWidth*nHeight*nBitCount/8;
  	for (int i=0;i<nBlockCount;i++)
- 	{		
- 		CGrabElement *pElement = new CGrabElement;
+ 	{	
+		CGrabElement *pElement = new CGrabElement;
+		pElement->sImgLocInfo.sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
+		pElement->sImgLocInfo.sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
 		pElement->myImage = NULL;
   		//pElement->myImage = new QImage(nWidth,nHeight,nBitCount/8);
   		//pElement->myImage->setColorTable(vColorTable);

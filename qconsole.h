@@ -58,7 +58,7 @@ class QConsole : public QMainWindow
 	Q_OBJECT
 
 public:
-	QConsole(QWidget *parent = 0);
+	QConsole(int ,QWidget *parent = 0);
 	~QConsole();
 	void closeEvent(QCloseEvent *event);
 	bool WritePrivateProfileQString(QString strSectionName, QString strKeyName, QString strValue, QString strFileName);
@@ -78,6 +78,7 @@ public:
 	Widget_PLC * m_plc;
 	//WidgetWarning* m_warning;
 	QTimer* nReadIOcard;
+	int nType;
 public:
 	NingInfo nInfo;
 };

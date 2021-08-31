@@ -4,7 +4,7 @@
 #include <QSignalMapper>
 #include "glasswaredetectsystem.h"
 extern GlasswareDetectSystem *pMainFrm;
-QConsole::QConsole(QWidget *parent)
+QConsole::QConsole(int SystemType,QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
@@ -18,8 +18,8 @@ QConsole::QConsole(QWidget *parent)
 	m_sSystemInfo.iCardID = 1;
 	m_sSystemInfo.strCardInitFile = QString("./PIO24B_reg_init1.txt");
 	m_sSystemInfo.strCardName = QString("PIO24B1");
-
-	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+	nType = SystemType;
+	if(nType== 2 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
 		int temp = 0 ;
 		m_vIOCard = new CIOCard(m_sSystemInfo,1);
@@ -30,19 +30,19 @@ QConsole::QConsole(QWidget *parent)
 		ui.lineEdit_1->setText(QString::number(temp));
 		temp = m_vIOCard->readParam(32);
 		ui.lineEdit_2->setText(QString::number(temp));
-		m_plc = new Widget_PLC(parent);
-		connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
 		nReadIOcard = new QTimer(this);
 		nReadIOcard->setInterval(1000);
 		connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
 		nReadIOcard->start();
 	}
+	m_plc = new Widget_PLC(parent);
+	connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
 }
 
 QConsole::~QConsole()
 {
 	delete m_plc;
-	if(pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+	if(nType== 2)
 	{
 		m_vIOCard->CloseIOCard();
 	}
@@ -71,22 +71,28 @@ void QConsole::closeEvent(QCloseEvent *event)
 }
 void QConsole::slot_ResetIoCard()
 {
-	m_vIOCard->m_Pio24b.softReset();
+	if(nType == 2)
+	{
+		m_vIOCard->m_Pio24b.softReset();
+	}
 }
 void QConsole::slot_SaveCard()
 {
-	QString strValue,strPara;
-	int temp = ui.lineEdit_1->text().toInt();
-	strValue = strValue.setNum(temp,10);
-	strPara = strPara.setNum(45,10);
-	WritePrivateProfileQString("PIO24B",strPara,strValue,"./PIO24B_reg_init1.txt");
-	m_vIOCard->writeParam(45,temp);
+	if(nType== 2)
+	{
+		QString strValue,strPara;
+		int temp = ui.lineEdit_1->text().toInt();
+		strValue = strValue.setNum(temp,10);
+		strPara = strPara.setNum(45,10);
+		WritePrivateProfileQString("PIO24B",strPara,strValue,"./PIO24B_reg_init1.txt");
+		m_vIOCard->writeParam(45,temp);
 
-	temp = ui.lineEdit_2->text().toInt();
-	strValue = strValue.setNum(temp,10);
-	strPara = strPara.setNum(32,10);
-	WritePrivateProfileQString("PIO24B",strPara,strValue,"./PIO24B_reg_init1.txt");
-	m_vIOCard->writeParam(32,temp);
+		temp = ui.lineEdit_2->text().toInt();
+		strValue = strValue.setNum(temp,10);
+		strPara = strPara.setNum(32,10);
+		WritePrivateProfileQString("PIO24B",strPara,strValue,"./PIO24B_reg_init1.txt");
+		m_vIOCard->writeParam(32,temp);
+	}
 }
 void QConsole::slot_OpenPLC()
 {
@@ -96,8 +102,11 @@ void QConsole::slot_OpenPLC()
 }
 void QConsole::slot_OpenCard()
 {
-	m_vIOCard->writeParam(114,256);
-	m_vIOCard->Show_PIO24B_DebugDialog(this);
+	if(nType== 2)
+	{
+		m_vIOCard->writeParam(114,256);
+		m_vIOCard->Show_PIO24B_DebugDialog(this);
+	}
 }
 bool QConsole::WritePrivateProfileQString(QString strSectionName, QString strKeyName, QString strValue, QString strFileName)
 {

@@ -137,8 +137,8 @@ typedef struct _realCamInfo
 		m_iGrabImageCount = 0;
 		m_iGrabTriggerSignalCount = 0;
 		m_iLastTriggerSignalCount = 0;
-		m_iImageIdxLast[0] = -1;
-		m_iImageIdxLast[1] = -1;
+		m_iImageIdxLast[0] = 0;
+		m_iImageIdxLast[1] = 0;
 		m_bGrabIsTrigger = TRUE;
 		m_bGrabIsStart = FALSE;
 		m_pGrabYUVtoRGB = NULL;
@@ -167,7 +167,7 @@ typedef struct _carvedCamInfo
 	int m_iErrorCount;
 	int m_iGrabPosition;
 	
-	int m_iStress;				//0：正常图像 1：条纹图像
+	int m_iStress;				//0：正常图像 1：应力图像
 	int m_iToStressCamera;
 	int m_iToNormalCamera;
 	QList<CGrabElement *> listWaiteLoc;

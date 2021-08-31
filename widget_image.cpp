@@ -17,6 +17,8 @@ ImageWidget::ImageWidget(QWidget *parent)
 		bIsShowErrorImage[i] = false;
 		iImagePosition[i] = -1;
 		ImageError[i] = NULL;
+		sAlgImageLocInfo[i].sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
+		sAlgImageLocInfo[i].sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
 	}
 	initDialog();
 	checkCamera();
@@ -25,6 +27,8 @@ ImageWidget::~ImageWidget()
 {
 	for (int i = 0; i < CAMERA_MAX_COUNT; i++)
 	{
+		delete[] sAlgImageLocInfo[i].sXldPoint.nColsAry;
+		delete[] sAlgImageLocInfo[i].sXldPoint.nRowsAry;
 		if (ImageError[i] != NULL)
 		{
 			delete ImageError[i];
@@ -100,47 +104,30 @@ void ImageWidget::initDialog()
 	Contentlayout->setContentsMargins(0,0,0,0);
 	gridLayoutImage = new QGridLayout(widgetContent);
 	gridLayoutStressImage = new QGridLayout(widgetContentStess);
+	int nRow = 0;
+	if(pMainFrm->m_sSystemInfo.iCamCount == 24 || pMainFrm->m_sSystemInfo.iCamCount==4)
+	{
+		nRow = 2;
+	}else if(pMainFrm->m_sSystemInfo.iCamCount == 36)
+	{
+		nRow = 3;
+	}
+	int nNormalRow = 0;
+	int nStressRow = 0;
 	for (int i = 0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
 	{
 		MyImageShowItem *imageShowItem = new MyImageShowItem(this);
 		imageShowItem->inital(i);
 		listImageShowItem.append(imageShowItem);
+		if(pMainFrm->m_sCarvedCamInfo[i].m_iStress)
+		{
+			gridLayoutStressImage->addWidget(listImageShowItem[i],nStressRow%nRow,nStressRow/nRow,1,1);
+			nStressRow++;
+		}else{
+			gridLayoutImage->addWidget(listImageShowItem[i],nNormalRow%nRow,nNormalRow/nRow,1,1);//0.0  
+			nNormalRow++;
+		}
 	}
-	if(pMainFrm->m_sSystemInfo.iCamCount == 24)
-	{
-		gridLayoutImage->addWidget(listImageShowItem[0],0,0,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[1],1,0,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[12],0,1,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[13],1,1,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[4],0,2,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[5],1,2,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[16],0,3,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[17],1,3,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[8],0,4,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[9],1,4,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[20],0,5,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[21],1,5,1,1);
-		
-		gridLayoutStressImage->addWidget(listImageShowItem[2],0,0,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[3],1,0,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[14],0,1,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[15],1,1,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[6],0,2,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[7],1,2,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[18],0,3,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[19],1,3,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[10],0,4,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[11],1,4,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[22],0,5,1,1);
-		gridLayoutStressImage->addWidget(listImageShowItem[23],1,5,1,1);
-	}else if(pMainFrm->m_sSystemInfo.iCamCount == 4)
-	{
-		gridLayoutImage->addWidget(listImageShowItem[0],0,0,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[1],0,1,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[2],1,0,1,1);
-		gridLayoutImage->addWidget(listImageShowItem[3],1,1,1,1);
-	}
-	
 	widgetContentStess->setVisible(false);
 	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
 	{
@@ -253,18 +240,7 @@ void ImageWidget::slots_imageItemDoubleClick(int iCameraNo)
 }
 void ImageWidget::showMaxImage(int iCameraNo)
 {
-	/*if (iCameraNo >= pMainFrm->m_sSystemInfo.iRealCamCount)
-	{
-		widgetContent->setVisible(false);
-		widgetContentStess->setVisible(true);
-	}
-	else
-	{
-		widgetContentStess->setVisible(false);
-		widgetContent->setVisible(true);
-	}*/
-	QString ContentId("-0-1-12-13-4-5-16-17-8-9-20-21-");
-	if(ContentId.find(QString("-%1-").arg(iCameraNo)) == -1)
+	if(pMainFrm->m_sCarvedCamInfo[iCameraNo].m_iStress)
 	{
 		widgetContent->setVisible(false);
 		widgetContentStess->setVisible(true);
@@ -535,7 +511,7 @@ void ImageWidget::slots_stopAllStressCheck()
 		bIsStopAllStessCheck = true;
 		for (int i=0; i<pMainFrm->m_sSystemInfo.iCamCount; i++)
 		{
-			if (2 == pMainFrm->m_sCarvedCamInfo[i].m_iStress)
+			if (1 == pMainFrm->m_sCarvedCamInfo[i].m_iStress)
 			{
 				slots_stopCheck(i);
 				listImageShowItem.at(i)->bIsCheck = false;
@@ -548,7 +524,7 @@ void ImageWidget::slots_stopAllStressCheck()
 		bIsStopAllStessCheck = false;
 		for (int i=0; i<pMainFrm->m_sSystemInfo.iCamCount; i++)
 		{
-			if (2 == pMainFrm->m_sCarvedCamInfo[i].m_iStress)
+			if (1 == pMainFrm->m_sCarvedCamInfo[i].m_iStress)
 			{
 				slots_startCheck(i);
 				listImageShowItem.at(i)->bIsCheck = true;
@@ -626,8 +602,7 @@ void ImageWidget::slots_showOnlyCamera(int cameraId)
 		widgetContent->setVisible(true);
 		iImagePage = 0;
 	}else{
-		QString ContentId("-0-1-12-13-4-5-16-17-8-9-20-21-");
-		if(ContentId.find(QString("-%1-").arg(cameraId)) == -1)
+		if(pMainFrm->m_sCarvedCamInfo[cameraId].m_iStress)
 		{
 			widgetContent->setVisible(false);
 			widgetContentStess->setVisible(true);

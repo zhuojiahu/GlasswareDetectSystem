@@ -222,7 +222,56 @@ void DetectThread::checkImage(CGrabElement *pElement,int iCheckMode)
 	sAlgCInp.sInputParam.nWidth = pElement->myImage->width();
 	sAlgCInp.sInputParam.nChannel = 1;
 	sAlgCInp.sInputParam.pcData = (char*)pElement->myImage->bits();
-	sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
+	//sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
+
+	if (1 == iCheckMode)
+	{
+		sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
+		pMainFrm->m_sCarvedCamInfo[iCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sLocOri = pAlgCheckResult->sImgLocInfo.sLocOri;
+		pMainFrm->m_sCarvedCamInfo[iCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nCount  = pAlgCheckResult->sImgLocInfo.sXldPoint.nCount;
+		memcpy(pMainFrm->m_sCarvedCamInfo[iCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nColsAry, \
+			pAlgCheckResult->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);														
+		memcpy(pMainFrm->m_sCarvedCamInfo[iCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nRowsAry, \
+			pAlgCheckResult->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
+		
+		SetEvent(pMainFrm->pHandles[iCamera]);
+		pMainFrm->m_sCarvedCamInfo[iCamera].sImageLocInfo[pElement->nSignalNo].m_iHaveInfo = 1;
+	}
+	else if (2 == iCheckMode)
+	{
+		int normalCamera = pMainFrm->m_sCarvedCamInfo[iCamera].m_iToNormalCamera;
+		if(!pMainFrm->m_sSystemInfo.m_bIsTest)
+		{
+			int dwRet = WaitForSingleObject(pMainFrm->pHandles[normalCamera],1500);
+			switch(dwRet)
+			{
+			case WAIT_TIMEOUT:
+				pMainFrm->Logfile.write(QString("Camera:%1 overtime").arg(iCamera) ,CheckLog);
+			}
+		}
+		
+		pElement->sImgLocInfo.sLocOri = pMainFrm->m_sCarvedCamInfo[normalCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sLocOri;
+		pElement->sImgLocInfo.sXldPoint.nCount = pMainFrm->m_sCarvedCamInfo[normalCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nCount;
+
+		memcpy(pElement->sImgLocInfo.sXldPoint.nColsAry,\
+			pMainFrm->m_sCarvedCamInfo[normalCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);							
+		memcpy(pElement->sImgLocInfo.sXldPoint.nRowsAry,\
+			pMainFrm->m_sCarvedCamInfo[normalCamera].sImageLocInfo[pElement->nSignalNo].m_AlgImageLocInfos.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
+		
+		if(pElement->sImgLocInfo.sLocOri.modelCol == 0 || pElement->sImgLocInfo.sLocOri.modelRow == 0)
+		{
+			pElement->sImgLocInfo.sLocOri = tempOri;
+		}else{
+			tempOri = pElement->sImgLocInfo.sLocOri;
+		}
+		sAlgCInp.sImgLocInfo = pElement->sImgLocInfo;
+		sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
+		pMainFrm->m_sCarvedCamInfo[ pMainFrm->m_sCarvedCamInfo[iCamera].m_iToNormalCamera].sImageLocInfo[pElement->nSignalNo].m_iHaveInfo = 0;
+	}
+	else
+	{
+		sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
+	}
 }
 //获取检测结果
 bool DetectThread::getCheckResult(CGrabElement *pElement)
@@ -377,7 +426,7 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 		pMainFrm->m_cCombine.RemoveOneResult(nSignalNo);
 		if (pMainFrm->m_sRunningInfo.m_bCheck)	
 		{
-			pMainFrm->nAllConut++;
+			//pMainFrm->nAllConut++;
 			int iErrorCamera = pMainFrm->m_cCombine.ErrorCamera(nSignalNo);
 			s_ErrorPara sComErrorpara = pMainFrm->m_cCombine.ConbineError(nSignalNo);
 			if (pMainFrm->m_sRunningInfo.m_cErrorTypeInfo[iErrorCamera].ErrorTypeJudge(sComErrorpara.nErrorType))

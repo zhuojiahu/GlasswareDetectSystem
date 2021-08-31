@@ -48,7 +48,7 @@ WidgetTest::WidgetTest(QWidget *parent)
 	ui.Distance1to4->setText(QString::number(iIOCardOffSet));
 
 	//瓶口瓶底增加控件控制PLC通讯
-	nConsole = new QConsole();
+	nConsole = new QConsole(pMainFrm->m_sSystemInfo.m_iSystemType);
 	nConsole->setStyleSheet("background:white");
 	connect(ui.pushButton_set,SIGNAL(clicked()),this,SLOT(slot_openPlcSet()));
 	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)//隐藏瓶身的按钮，防止前后壁误操作到第二块接口卡
