@@ -38,8 +38,8 @@ public:
 	QUdpSocket* m_pSocket;
 	QTimer* m_zTimer;
 	int nErrorType;
-	HANDLE nHandle[30];
-	int nImageNum[30];
+	HANDLE nHandle[40];
+	int nImageNum[40];
 };
 
 #endif // WIDGET_PLC_H

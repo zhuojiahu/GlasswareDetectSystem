@@ -268,8 +268,7 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 	{
 		pGrabElement = (CGrabElement *) nQueue[tempCamera].listGrab.first();
 		nQueue[tempCamera].listGrab.removeFirst();
-		memcpy(pGrabElement->SourceImage->bits(), pImageBuffer, \
-			nWidth*nHeight);
+		memcpy(pGrabElement->SourceImage->bits(),pImageBuffer,nWidth*nHeight);
 		pGrabElement->bHaveImage=TRUE;
 		pGrabElement->nCheckRet = FALSE;
 		pGrabElement->cErrorParaList.clear();
@@ -282,8 +281,6 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 		{
 			m_detectElement[tempCamera].ImageNormal = pGrabElement;
 			m_detectElement[tempCamera].iCameraNormal = tempCamera;
-			//m_detectElement[iRealCameraSN].iSignalNoNormal = pGrabElement->nSignalNo;
-
 			if(1 == m_sCarvedCamInfo[tempCamera].m_iStress)
 			{
 				m_detectElement[tempCamera].iType = 1;
@@ -293,7 +290,6 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 			nQueue[tempCamera].mDetectLocker.lock();
 			nQueue[tempCamera].listDetect.append(m_detectElement[tempCamera]);
 			nQueue[tempCamera].mDetectLocker.unlock();
-			//SetEvent(pHandles[tempCamera]);
 		}
 		else
 		{
@@ -1654,8 +1650,14 @@ int GlasswareDetectSystem::ReadImageSignal(int nImageNum,int cameraID)
 		case 1:
 			return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
 		case 2:
-			return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
+			return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
 		case 3:
+			return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
+		case 4:
+			return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
+		case 5:
+			return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
+		case 6:
 			return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
 		}
 	}else if(m_sSystemInfo.m_iSystemType == 2)
@@ -1678,8 +1680,14 @@ int GlasswareDetectSystem::ReadImageSignal(int nImageNum,int cameraID)
 		case 1:
 			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
 		case 2:
-			return test_widget->nConsole->m_plc->GetImageNo(228,cameraID,nImageNo);
+			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
 		case 3:
+			return test_widget->nConsole->m_plc->GetImageNo(228,cameraID,nImageNo);
+		case 4:
+			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
+		case 5:
+			return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
+		case 6:
 			return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
 		}
 	}

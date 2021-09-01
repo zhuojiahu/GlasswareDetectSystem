@@ -20,6 +20,15 @@ ImageWidget::ImageWidget(QWidget *parent)
 		sAlgImageLocInfo[i].sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
 		sAlgImageLocInfo[i].sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
 	}
+	if(pMainFrm->m_sSystemInfo.iCamCount == 24 || pMainFrm->m_sSystemInfo.iCamCount==4)
+	{
+		nRow = 2;
+	}else if(pMainFrm->m_sSystemInfo.iCamCount == 36)
+	{
+		nRow = 3;
+	}else{
+		nRow = 2;
+	}
 	initDialog();
 	checkCamera();
 }
@@ -41,7 +50,7 @@ void ImageWidget::resizeEvent(QResizeEvent *event)
 	widgetWidth = ui.scrollArea->geometry().width();
 	widgetHeight = ui.scrollArea->geometry().height();
 
-	int minItemHeight = (widgetHeight - 3*iSpacing)/2;
+	int minItemHeight = (widgetHeight - 3*iSpacing)/3;
 	minwidgetContentWidth = 0;
 	for (int i = 0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
 	{
@@ -63,10 +72,6 @@ void ImageWidget::resizeEvent(QResizeEvent *event)
 		if (0 == i%2 && i < pMainFrm->m_sSystemInfo.iRealCamCount)
 		{
 			minwidgetContentWidth += (iSpacing + minItemWidth);
-		}
-		else
-		{
-			//minwidgetContentStessWidth += (iSpacing + minItemWidth);
 		}
 	}
 	widgetContent->setMinimumSize(minwidgetContentWidth + iSpacing, widgetHeight);
@@ -104,14 +109,6 @@ void ImageWidget::initDialog()
 	Contentlayout->setContentsMargins(0,0,0,0);
 	gridLayoutImage = new QGridLayout(widgetContent);
 	gridLayoutStressImage = new QGridLayout(widgetContentStess);
-	int nRow = 0;
-	if(pMainFrm->m_sSystemInfo.iCamCount == 24 || pMainFrm->m_sSystemInfo.iCamCount==4)
-	{
-		nRow = 2;
-	}else if(pMainFrm->m_sSystemInfo.iCamCount == 36)
-	{
-		nRow = 3;
-	}
 	int nNormalRow = 0;
 	int nStressRow = 0;
 	for (int i = 0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
@@ -128,6 +125,12 @@ void ImageWidget::initDialog()
 			nNormalRow++;
 		}
 	}
+	/*gridLayoutImage->setSpacing(iSpacing);
+	gridLayoutImage->setContentsMargins(iSpacing,iSpacing,iSpacing,iSpacing);
+
+	gridLayoutStressImage->setSpacing(iSpacing);
+	gridLayoutStressImage->setContentsMargins(iSpacing,iSpacing,iSpacing,iSpacing);*/
+
 	widgetContentStess->setVisible(false);
 	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
 	{

@@ -40,11 +40,12 @@ Widget_PLC::Widget_PLC(QWidget *parent)
 	m_zTimer->start(1000);
 	//获取PLC报警信息
 	nErrorType = 0;
-	for(int i=0;i<30;i++)
+	for(int i=0;i<40;i++)
 	{
 		nHandle[i] = CreateEvent(NULL,FALSE,NULL,NULL);
 		nImageNum[i] = 0;
 	}
+	//80000200010000020005 0101B200 D4000002
 }
 
 Widget_PLC::~Widget_PLC()
@@ -104,6 +105,9 @@ int Widget_PLC::SendMessage(int address,QByteArray& send,int state,int id,int Da
 	}
 	return 0;
 }
+int rrrrr;
+#include "glasswaredetectsystem.h"
+extern GlasswareDetectSystem *pMainFrm;
 int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
 {
 	QByteArray send;
@@ -116,13 +120,22 @@ int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
 		}
 	}
 	WaitForSingleObject(nHandle[CameraId],2000);
+	//pMainFrm->Logfile.write(QString("CameraId==%1").arg(nImageNum[CameraId]),CheckLog);
 	return nImageNum[CameraId];
 }
 void Widget_PLC::slots_readFromPLC()
 {
-	//定义0x20为获取报警状态信息
 	QByteArray v_receive = m_pSocket->readAll();
-	if (v_receive.size() == 120)//14+6+36+64
+	if(v_receive.size() == 18)
+	{
+		int v_Itmp=0;
+		ByteToData(v_receive,14,17,v_Itmp);
+		WORD imgNO = 0;
+		ByteToData(v_receive,8,9,imgNO);
+		nImageNum[imgNO] = v_Itmp;
+		SetEvent(nHandle[imgNO]);
+
+	}else if (v_receive.size() == 120)//14+6+36+64
 	{
 		double v_douTemp = 0;
 		int v_Itmp = 0;
@@ -261,12 +274,6 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_20->setText(QString::number(v_douTemp,'f',2));
-	}else if(v_receive.size() == 18)
-	{
-		int v_Itmp=0;
-		ByteToData(v_receive,14,17,v_Itmp);
-		nImageNum[v_receive[10]] = v_Itmp;
-		SetEvent(nHandle[v_receive[10]]);//第10为相机ID
 	}
 }
 

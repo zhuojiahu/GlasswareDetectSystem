@@ -85,7 +85,7 @@ private:
 	int widgetHeight;
 	int iCamCount;
 	int iImagePosition[CAMERA_MAX_COUNT];
-
+	int nRow;
 	QGridLayout *gridLayoutLeft;
 	QGridLayout *gridLayoutMiddle;
 	QGridLayout *gridLayoutRight;
