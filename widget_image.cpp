@@ -50,7 +50,7 @@ void ImageWidget::resizeEvent(QResizeEvent *event)
 	widgetWidth = ui.scrollArea->geometry().width();
 	widgetHeight = ui.scrollArea->geometry().height();
 
-	int minItemHeight = (widgetHeight - 3*iSpacing)/3;
+	int minItemHeight = (widgetHeight - nRow*iSpacing)/nRow;
 	minwidgetContentWidth = 0;
 	for (int i = 0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
 	{
