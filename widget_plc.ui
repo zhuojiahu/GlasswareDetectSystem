@@ -315,7 +315,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>240</y>
+         <y>220</y>
          <width>311</width>
          <height>22</height>
         </rect>
@@ -410,7 +410,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>200</y>
+         <y>190</y>
          <width>311</width>
          <height>22</height>
         </rect>
@@ -446,7 +446,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>310</y>
+         <y>280</y>
          <width>311</width>
          <height>18</height>
         </rect>
@@ -479,7 +479,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>340</y>
+         <y>310</y>
          <width>311</width>
          <height>21</height>
         </rect>
@@ -512,7 +512,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>280</y>
+         <y>250</y>
          <width>311</width>
          <height>18</height>
         </rect>
@@ -541,11 +541,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>370</y>
+         <y>340</y>
          <width>161</width>
          <height>22</height>
         </rect>
@@ -560,6 +560,39 @@
         </item>
         <item>
          <widget class="QLineEdit" name="lineEdit_21"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>370</y>
+         <width>311</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="3,1,1">
+        <item>
+         <widget class="QLabel" name="label_24">
+          <property name="text">
+           <string>机型</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_9">
+          <property name="text">
+           <string>左手机</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_10">
+          <property name="text">
+           <string>右手机</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

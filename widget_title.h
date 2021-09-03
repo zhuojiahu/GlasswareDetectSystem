@@ -18,23 +18,16 @@ class WidgetTitle : public QWidget
 public:
     explicit WidgetTitle(QWidget *parent = 0);
 	void addToolName();
-
 signals:
-
 	void showSkin();
     void showMin();
 	void showMainMenu();
 	void closeWidget();
 	void turnPage(int current_page);
-
 public slots:
 	void turnPage(QString current_page);
-
 private:
-
     QPoint press_point;//鼠标按下去的点
-    BOOL is_move;
-
 	QLabel *version_title; //标题
 	QLabel *labelVersion; //版本信息
     PushButton *min_button; //最小化

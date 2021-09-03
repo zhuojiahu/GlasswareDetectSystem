@@ -55,7 +55,7 @@ Widget_PLC::~Widget_PLC()
 void Widget_PLC::slots_Pushbuttonread()
 {
 	QByteArray st;
-	SendMessage(20,st,1,1,40);
+	SendMessage(20,st,1,1,44);
 }
 void Widget_PLC::slots_TimeOut()
 {
@@ -105,9 +105,6 @@ int Widget_PLC::SendMessage(int address,QByteArray& send,int state,int id,int Da
 	}
 	return 0;
 }
-int rrrrr;
-#include "glasswaredetectsystem.h"
-extern GlasswareDetectSystem *pMainFrm;
 int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
 {
 	QByteArray send;
@@ -120,7 +117,6 @@ int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
 		}
 	}
 	WaitForSingleObject(nHandle[CameraId],2000);
-	//pMainFrm->Logfile.write(QString("CameraId==%1").arg(nImageNum[CameraId]),CheckLog);
 	return nImageNum[CameraId];
 }
 void Widget_PLC::slots_readFromPLC()
@@ -256,7 +252,7 @@ void Widget_PLC::slots_readFromPLC()
 		{
 			emit signals_ResetCard();
 		}
-	}else if(v_receive.size() == 54)//14+40
+	}else if(v_receive.size() == 58)//14+44
 	{
 		double v_douTemp;
 		int v_bit=14;
@@ -274,6 +270,17 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_20->setText(QString::number(v_douTemp,'f',2));
+		v_bit+=8;
+		int v_Temp = 0;
+		ByteToData(v_receive,v_bit,v_bit+3,v_Temp);
+		if(v_Temp)
+		{
+			ui.radioButton_9->setChecked(true);
+			ui.radioButton_10->setChecked(false);
+		}else{
+			ui.radioButton_9->setChecked(false);
+			ui.radioButton_10->setChecked(true);
+		}
 	}
 }
 
@@ -349,7 +356,14 @@ void Widget_PLC::slots_Pushbuttonsave()
 	DataToByte(TempSpeed,st);
 	TempSpeed = ui.lineEdit_19->text().toDouble();
 	DataToByte(TempSpeed,st);
-	SendMessage(97,st,2,1,106);
+	if(ui.radioButton_9->isChecked())
+	{
+		TempData = 1;
+	}else{
+		TempData = 0;
+	}
+	DataToByte(TempData,st);
+	SendMessage(97,st,2,1,110);
 }
 template<typename T>
 void Widget_PLC::DataToByte(T& xx, QByteArray& st)

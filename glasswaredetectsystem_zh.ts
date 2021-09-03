@@ -1174,6 +1174,14 @@
     </message>
 </context>
 <context>
+    <name>QConsole</name>
+    <message>
+        <location filename="qconsole.cpp" line="30"/>
+        <source>Error in init IOCard</source>
+        <translation type="unfinished">初始化IO卡错误</translation>
+    </message>
+</context>
+<context>
     <name>QConsoleClass</name>
     <message>
         <location filename="qconsole.ui" line="14"/>
@@ -2629,17 +2637,17 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">一体机*</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="96"/>
+        <location filename="widget_title.cpp" line="98"/>
         <source>minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="97"/>
+        <location filename="widget_title.cpp" line="99"/>
         <source>close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="98"/>
+        <location filename="widget_title.cpp" line="100"/>
         <source>Image</source>
         <translation>图像显示</translation>
     </message>
@@ -2656,17 +2664,17 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">图像监视</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="99"/>
+        <location filename="widget_title.cpp" line="101"/>
         <source>Management</source>
         <translation>品种管理</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="100"/>
+        <location filename="widget_title.cpp" line="102"/>
         <source>Test</source>
         <translation>系统设置</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="101"/>
+        <location filename="widget_title.cpp" line="103"/>
         <source>Algorithm</source>
         <oldsource>Algorithm set</oldsource>
         <translation>算法设置</translation>
@@ -2684,13 +2692,13 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">帮助</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="102"/>
+        <location filename="widget_title.cpp" line="104"/>
         <source>Start</source>
         <oldsource>Clear</oldsource>
         <translation type="unfinished">开始检测</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="103"/>
+        <location filename="widget_title.cpp" line="105"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
@@ -2699,22 +2707,22 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">内部信息</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="104"/>
+        <location filename="widget_title.cpp" line="106"/>
         <source>UpDown</source>
         <translation type="unfinished">前壁</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="106"/>
+        <location filename="widget_title.cpp" line="108"/>
         <source>GoDown</source>
         <translation type="unfinished">后壁</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="105"/>
+        <location filename="widget_title.cpp" line="107"/>
         <source>ClampDown</source>
         <translation type="unfinished">夹持</translation>
     </message>
     <message>
-        <location filename="widget_title.cpp" line="107"/>
+        <location filename="widget_title.cpp" line="109"/>
         <source>InterFace</source>
         <translation type="unfinished">主界面</translation>
     </message>
@@ -4070,6 +4078,21 @@ Please check the camera and restart the software!</source>
     <message utf8="true">
         <location filename="widget_plc.ui" line="557"/>
         <source>连续不踢废数量</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message utf8="true">
+        <location filename="widget_plc.ui" line="579"/>
+        <source>机型</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message utf8="true">
+        <location filename="widget_plc.ui" line="586"/>
+        <source>左手机</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message utf8="true">
+        <location filename="widget_plc.ui" line="593"/>
+        <source>右手机</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

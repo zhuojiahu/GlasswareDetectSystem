@@ -17,13 +17,20 @@ QConsole::QConsole(int SystemType,QWidget *parent)
 	s_ConfigIOCardInfo m_sSystemInfo;
 	m_sSystemInfo.iCardID = 1;
 	m_sSystemInfo.strCardInitFile = QString("./PIO24B_reg_init1.txt");
-	m_sSystemInfo.strCardName = QString("PIO24B1");
+	m_sSystemInfo.strCardName = QString("PIO24B");
 	nType = SystemType;
-	if(nType== 2 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+	if(nType == 2 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
 		int temp = 0 ;
 		m_vIOCard = new CIOCard(m_sSystemInfo,1);
-		m_vIOCard->InitIOCard();
+		s_IOCardErrorInfo sIOCardErrorInfo = m_vIOCard->InitIOCard();
+		if (!sIOCardErrorInfo.bResult)
+		{
+			pMainFrm->m_sSystemInfo.m_bIsIOCardOK = false;
+			pMainFrm->Logfile.write(tr("Error in init IOCard"),CheckLog);
+		}else{
+			pMainFrm->Logfile.write("succeed!!!!",CheckLog);
+		}
 		Sleep(200);
 		m_vIOCard->enable(true);
 		temp = m_vIOCard->readParam(45);
