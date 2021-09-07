@@ -37,6 +37,8 @@ QConsole::QConsole(int SystemType,QWidget *parent)
 		ui.lineEdit_1->setText(QString::number(temp));
 		temp = m_vIOCard->readParam(32);
 		ui.lineEdit_2->setText(QString::number(temp));
+		m_vIOCard->writeParam(114,256);
+
 		nReadIOcard = new QTimer(this);
 		nReadIOcard->setInterval(1000);
 		connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
@@ -111,7 +113,6 @@ void QConsole::slot_OpenCard()
 {
 	if(nType== 2)
 	{
-		m_vIOCard->writeParam(114,256);
 		m_vIOCard->Show_PIO24B_DebugDialog(this);
 	}
 }

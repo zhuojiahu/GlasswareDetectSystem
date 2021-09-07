@@ -1643,6 +1643,7 @@ int GlasswareDetectSystem::ReadImageSignal(int nImageNum,int cameraID)
 	}*/
 	//PLC获取图像号
 	int nImageNo = -1;
+	//Sleep(1000);
 	if(m_sSystemInfo.m_iSystemType == 1)
 	{
 		switch(nImageNum) 
