@@ -61,7 +61,7 @@ void Widget_PLC::slots_TimeOut()
 {
 	//获取PLC的报警信息
 	QByteArray st;
-	SendMessage(0,st,1,1,8);//读取两个word数据
+	SendMessage(0,st,1,1,10);//读取报警数据
 }
 void Widget_PLC::slots_return()
 {
@@ -222,7 +222,7 @@ void Widget_PLC::slots_readFromPLC()
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_19->setText(QString::number(v_douTemp,'f',2));
 
-	}else if(v_receive.size() == 22)//14+4
+	}else if(v_receive.size() == 24)
 	{
 		WORD v_Itmp=0;
 		int j=0;
@@ -245,7 +245,7 @@ void Widget_PLC::slots_readFromPLC()
 		{
 			nErrorType = -1;
 		}
-		m_byte+=2;
+		m_byte+=4;
 		ByteToData(v_receive,m_byte,m_byte+1,v_Itmp);
 		
 		if(v_Itmp >> 0 & 0x01)
