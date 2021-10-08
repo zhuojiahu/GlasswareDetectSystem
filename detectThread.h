@@ -17,7 +17,6 @@ public:
 signals:
 	void signals_updateActiveImg(int nCamNo,int nImgNo,double dCostTime,int tmpResult);
 	void signals_AddErrorTableView(int nCamSN,int nSignalNo,int nErrorType);
-	void signals_AddDataToBase(int,int,int*);
 	void signals_upDateCamera(int nCam,int nMode = 0);
 	void signals_updateCameraFailureRate();
 	void signals_updateImage(QImage*, QString, QString, QString, QString, QString, QList<QRect> ,int );

@@ -165,6 +165,7 @@
       <AdditionalLibraryDirectories>$(QTDIR)\lib;.\Lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>qtmain.lib;qwt.lib;QtCore4.lib;QtGui4.lib;Qt3Support4.lib;comdlg32.lib;QtXmlPatternsd4.lib;QtSql4.lib;qsqlite4.lib;Qtnetwork4.lib;QAxContainer.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>0x1000000</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

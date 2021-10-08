@@ -86,9 +86,9 @@ WidgetTitle::WidgetTitle(QWidget *parent)
 
     setLayout(main_layout); 
     setFixedHeight(TITEL_HEIGHT);
-	button_list.at(6)->setVisible(false);
+	/*button_list.at(6)->setVisible(false);
 	button_list.at(7)->setVisible(false);
-	button_list.at(8)->setVisible(false);
+	button_list.at(8)->setVisible(false);*/
 }
 
 void WidgetTitle::addToolName()

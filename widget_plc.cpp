@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-Widget_PLC::Widget_PLC(QWidget *parent)
+Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -38,13 +38,20 @@ Widget_PLC::Widget_PLC(QWidget *parent)
 	m_zTimer = new QTimer(this);
 	connect(m_zTimer,SIGNAL(timeout()),this,SLOT(slots_TimeOut()));
 	m_zTimer->start(1000);
+
+	m_CrashTimer = new QTimer(this);
+	connect(m_CrashTimer,SIGNAL(timeout()),this,SLOT(slots_CrashTimeOut()));
+	m_CrashTimer->start(10000);
+
 	//获取PLC报警信息
 	nErrorType = 0;
-	for(int i=0;i<40;i++)
+	nErrorCameraID = 0;
+	nSystemType = SystemType;
+	/*for(int i=0;i<40;i++)
 	{
-		nHandle[i] = CreateEvent(NULL,FALSE,NULL,NULL);
-		nImageNum[i] = 0;
-	}
+	nHandle[i] = CreateEvent(NULL,FALSE,NULL,NULL);
+	nImageNum[i] = 0;
+	}*/
 	//80000200010000020005 0101B200 D4000002
 }
 
@@ -55,7 +62,29 @@ Widget_PLC::~Widget_PLC()
 void Widget_PLC::slots_Pushbuttonread()
 {
 	QByteArray st;
-	SendMessage(20,st,1,1,44);
+	SendMessage(20,st,1,1,40);
+}
+void Widget_PLC::slots_CrashTimeOut()
+{
+	QByteArray st;
+	int zTest = 1;
+	if(nErrorCameraID)
+	{
+		int test = 1;
+		DataToByte(test,st);
+	}else{
+		int test = 0;
+		DataToByte(test,st);
+	}
+	DataToByte(zTest,st);
+	if(nSystemType == 1)
+	{
+		SendMessage(200,st,1,1,8);
+	}else if(nSystemType == 2){
+		SendMessage(204,st,1,1,8);
+	}else if(nSystemType == 3){
+		SendMessage(208,st,1,1,8);
+	}
 }
 void Widget_PLC::slots_TimeOut()
 {
@@ -107,31 +136,32 @@ int Widget_PLC::SendMessage(int address,QByteArray& send,int state,int id,int Da
 }
 int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
 {
-	QByteArray send;
-	SendDataToPLCHead(nAddr,send,1,CameraId,4);
-	if (m_pSocket->state() == QAbstractSocket::ConnectedState) //
-	{
-		if (NULL != m_pSocket)
-		{
-			m_pSocket->write(send);
-		}
-	}
-	WaitForSingleObject(nHandle[CameraId],2000);
-	return nImageNum[CameraId];
+	//QByteArray send;
+	//SendDataToPLCHead(nAddr,send,1,CameraId,4);
+	//if (m_pSocket->state() == QAbstractSocket::ConnectedState) //
+	//{
+	//	if (NULL != m_pSocket)
+	//	{
+	//		m_pSocket->write(send);
+	//	}
+	//}
+	//WaitForSingleObject(nHandle[CameraId],2000);
+	//return nImageNum[CameraId];
+	return 0;
 }
 void Widget_PLC::slots_readFromPLC()
 {
 	QByteArray v_receive = m_pSocket->readAll();
 	if(v_receive.size() == 18)
 	{
-		int v_Itmp=0;
+		/*int v_Itmp=0;
 		ByteToData(v_receive,14,17,v_Itmp);
 		WORD imgNO = 0;
 		ByteToData(v_receive,8,9,imgNO);
 		nImageNum[imgNO] = v_Itmp;
-		SetEvent(nHandle[imgNO]);
+		SetEvent(nHandle[imgNO]);*/
 
-	}else if (v_receive.size() == 120)//14+6+36+64
+	}else if (v_receive.size() == 124)
 	{
 		double v_douTemp = 0;
 		int v_Itmp = 0;
@@ -221,7 +251,17 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_19->setText(QString::number(v_douTemp,'f',2));
-
+		v_bit+=8;
+		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp);
+		
+		if(v_Itmp == 0)
+		{
+			ui.radioButton_9->setChecked(false);
+			ui.radioButton_10->setChecked(true);
+		}else{
+			ui.radioButton_9->setChecked(true);
+			ui.radioButton_10->setChecked(false);
+		}
 	}else if(v_receive.size() == 24)
 	{
 		WORD v_Itmp=0;
@@ -252,7 +292,7 @@ void Widget_PLC::slots_readFromPLC()
 		{
 			emit signals_ResetCard();
 		}
-	}else if(v_receive.size() == 58)//14+44
+	}else if(v_receive.size() == 54)//14+40
 	{
 		double v_douTemp;
 		int v_bit=14;
@@ -270,7 +310,7 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_20->setText(QString::number(v_douTemp,'f',2));
-		v_bit+=8;
+		/*v_bit+=8;
 		int v_Temp = 0;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Temp);
 		if(v_Temp)
@@ -280,7 +320,7 @@ void Widget_PLC::slots_readFromPLC()
 		}else{
 			ui.radioButton_9->setChecked(false);
 			ui.radioButton_10->setChecked(true);
-		}
+		}*/
 	}
 }
 

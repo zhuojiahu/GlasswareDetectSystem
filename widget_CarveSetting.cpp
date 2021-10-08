@@ -38,7 +38,13 @@ WidgetCarveSetting::WidgetCarveSetting(QWidget *parent)
 		pushButton_carvePage->setText(QString::number(i+1));
 		pushButton_carvePage->setStyleSheet("background-color:gray");
 		buttonGroupCamera->addButton(pushButton_carvePage,i);
-		GridLayout->addWidget(pushButton_carvePage,i%2,i/2);
+		if(pMainFrm->m_sSystemInfo.iCamCount ==36)
+		{
+			GridLayout->addWidget(pushButton_carvePage,i%3,i/3);
+		}else
+		{
+			GridLayout->addWidget(pushButton_carvePage,i%2,i/2);
+		}
 	}
 	setWidget = new QWidget(this);
 	setWidget->setMaximumWidth(400);

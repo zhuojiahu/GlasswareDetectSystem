@@ -31,8 +31,8 @@ bool CMyQueue::InitQueue(int nWidth,int nHeight,int nBitCount,int nBlockCount,bo
 		for (int i=0;i<nBlockCount;i++)
 		{		
 			CGrabElement *pElement = new CGrabElement;
-			pElement->sImgLocInfo.sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
-			pElement->sImgLocInfo.sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
+			pElement->sImgLocInfo.sXldPoint.nColsAry = new int[BOTTLEXLD_POINTNUM];
+			pElement->sImgLocInfo.sXldPoint.nRowsAry = new int[BOTTLEXLD_POINTNUM];
 			pElement->myImage = new QImage(nWidth,nHeight,nBitCount);// 用于实时显示
 			pElement->myImage->setColorTable(vColorTable);
 			pElement->initID = InitID;
@@ -51,8 +51,8 @@ bool CMyQueue::InitCarveQueue(int CarveWidth,int CarveHeight,int nWidth,int nHei
 		for (int i=0;i<nBlockCount;i++)
 		{		
 			CGrabElement *pElement = new CGrabElement;
-			pElement->sImgLocInfo.sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
-			pElement->sImgLocInfo.sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
+			pElement->sImgLocInfo.sXldPoint.nColsAry = new int[BOTTLEXLD_POINTNUM];
+			pElement->sImgLocInfo.sXldPoint.nRowsAry = new int[BOTTLEXLD_POINTNUM];
 			pElement->SourceImage = new QImage(nWidth,nHeight,nBitCount);// 用于实时显示
 			pElement->SourceImage->setColorTable(vColorTable);
 			pElement->myImage = new QImage(CarveWidth,CarveHeight,nBitCount);// 用于实时显示

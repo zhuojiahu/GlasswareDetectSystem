@@ -227,19 +227,24 @@
         <translation type="obsolete">队列2综合，图像号：%1，结果：%2</translation>
     </message>
     <message>
-        <location filename="detectThread.cpp" line="475"/>
-        <location filename="detectThread.cpp" line="491"/>
-        <source>SaveImageByTime\</source>
-        <translation>按时间保存图像\\</translation>
-    </message>
-    <message>
-        <location filename="detectThread.cpp" line="476"/>
-        <source>normal image\</source>
-        <translation>正常图像\\</translation>
+        <location filename="detectThread.cpp" line="59"/>
+        <source>ImageSize unsuitable, Thread:Grab, camera:%1.lImageSize = %2,myImage byteCount = %3</source>
+        <translation type="unfinished">图像尺寸不合适（检测线程），相机%1,图像大小%2，图像内存大小%3</translation>
     </message>
     <message>
         <location filename="detectThread.cpp" line="476"/>
         <location filename="detectThread.cpp" line="492"/>
+        <source>SaveImageByTime\</source>
+        <translation>按时间保存图像\\</translation>
+    </message>
+    <message>
+        <location filename="detectThread.cpp" line="477"/>
+        <source>normal image\</source>
+        <translation>正常图像\\</translation>
+    </message>
+    <message>
+        <location filename="detectThread.cpp" line="477"/>
+        <location filename="detectThread.cpp" line="493"/>
         <source>\camera%1</source>
         <translation>\\相机%1</translation>
     </message>
@@ -248,7 +253,7 @@
         <translation type="obsolete">创建路径失败!</translation>
     </message>
     <message>
-        <location filename="detectThread.cpp" line="492"/>
+        <location filename="detectThread.cpp" line="493"/>
         <source>stress image\</source>
         <translation>应力图像\\</translation>
     </message>
@@ -461,17 +466,16 @@
         <translation type="obsolete">采集异常</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="311"/>
         <source>Get Version</source>
-        <translation>获取版本</translation>
+        <translation type="obsolete">获取版本</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="416"/>
+        <location filename="glasswaredetectsystem.cpp" line="474"/>
         <source>Good</source>
         <translation>合格</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="426"/>
+        <location filename="glasswaredetectsystem.cpp" line="484"/>
         <source>Unknown Defect</source>
         <translation>未知缺陷</translation>
     </message>
@@ -510,22 +514,22 @@
         <translation type="obsolete">正常相机设置出错！____相机%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="733"/>
+        <location filename="glasswaredetectsystem.cpp" line="782"/>
         <source>DeviceName:%1</source>
         <translation type="unfinished">设备名称：%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="734"/>
+        <location filename="glasswaredetectsystem.cpp" line="783"/>
         <source>ErrorCode:%2</source>
         <translation type="unfinished">错误代码：%2</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="735"/>
+        <location filename="glasswaredetectsystem.cpp" line="784"/>
         <source>ErrorDescription:%3</source>
         <translation type="unfinished">错误描述：%3</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="737"/>
+        <location filename="glasswaredetectsystem.cpp" line="786"/>
         <source>ErrorPosition:%5
 </source>
         <translation type="unfinished">报错位置：%5</translation>
@@ -539,33 +543,48 @@
         <translation type="obsolete">报警</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1199"/>
+        <location filename="glasswaredetectsystem.cpp" line="134"/>
+        <source>UpDown</source>
+        <translation type="unfinished">前壁</translation>
+    </message>
+    <message>
+        <location filename="glasswaredetectsystem.cpp" line="137"/>
+        <source>ClampDown</source>
+        <translation type="unfinished">夹持</translation>
+    </message>
+    <message>
+        <location filename="glasswaredetectsystem.cpp" line="140"/>
+        <source>GoDown</source>
+        <translation type="unfinished">后壁</translation>
+    </message>
+    <message>
+        <location filename="glasswaredetectsystem.cpp" line="1219"/>
         <source>Remaining days of use?%1 </source>
         <translation>剩余使用天数：%1 </translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1917"/>
+        <location filename="glasswaredetectsystem.cpp" line="1949"/>
         <source>Encryption verification failed, will exit the program!</source>
         <translation>加密验证失败,即将退出程序!</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1927"/>
+        <location filename="glasswaredetectsystem.cpp" line="1959"/>
         <source>The authorization to use the equipment is about to expire 
 , please contact business personnel!</source>
         <translation>设备使用授权即将到期\n请联系商务人员！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1951"/>
+        <location filename="glasswaredetectsystem.cpp" line="1983"/>
         <source>License expired or dongle abnormal! Error code: 22</source>
         <translation>License过期或加密狗异常！错误代码：22</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1967"/>
+        <location filename="glasswaredetectsystem.cpp" line="1999"/>
         <source>License expired or dongle abnormal! Error code: %1</source>
         <translation>License过期或加密狗异常！错误代码：%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1973"/>
+        <location filename="glasswaredetectsystem.cpp" line="2005"/>
         <source>Encryption authentication failed!</source>
         <translation>加密验证失败！</translation>
     </message>
@@ -574,17 +593,17 @@
         <translation type="obsolete">模点失败率: %1 / %2</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="923"/>
+        <location filename="glasswaredetectsystem.cpp" line="972"/>
         <source>Error in init IOCard</source>
         <translation>初始化IO卡错误</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="944"/>
+        <location filename="glasswaredetectsystem.cpp" line="993"/>
         <source>----load model error----</source>
         <translation>加载模板错误</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="962"/>
+        <location filename="glasswaredetectsystem.cpp" line="1011"/>
         <source>----camera%1 load model error----</source>
         <translation>相机%1加载模板错误</translation>
     </message>
@@ -593,8 +612,7 @@
         <translation type="obsolete">光电计数</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="126"/>
-        <location filename="glasswaredetectsystem.cpp" line="128"/>
+        <location filename="glasswaredetectsystem.cpp" line="142"/>
         <source>Version:</source>
         <translation>版本：</translation>
     </message>
@@ -611,13 +629,13 @@
         <translation type="obsolete">持续好</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1194"/>
+        <location filename="glasswaredetectsystem.cpp" line="1214"/>
         <source>Speed:</source>
         <oldsource>Speed+</oldsource>
         <translation>速度：</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1228"/>
+        <location filename="glasswaredetectsystem.cpp" line="1302"/>
         <source>Error in image carve </source>
         <translation>图像剪切错误</translation>
     </message>
@@ -731,7 +749,7 @@
         <translation type="obsolete">初始化检测！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1195"/>
+        <location filename="glasswaredetectsystem.cpp" line="1215"/>
         <source>Time:</source>
         <oldsource>Time</oldsource>
         <translation type="unfinished">时间:</translation>
@@ -779,18 +797,18 @@
         <translation type="obsolete">错误描述:%3</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="736"/>
+        <location filename="glasswaredetectsystem.cpp" line="785"/>
         <source>ErrorRemark:%4
 </source>
         <translation type="unfinished">错误描述：%4</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="738"/>
-        <location filename="glasswaredetectsystem.cpp" line="1333"/>
-        <location filename="glasswaredetectsystem.cpp" line="1917"/>
-        <location filename="glasswaredetectsystem.cpp" line="1951"/>
-        <location filename="glasswaredetectsystem.cpp" line="1967"/>
-        <location filename="glasswaredetectsystem.cpp" line="1973"/>
+        <location filename="glasswaredetectsystem.cpp" line="787"/>
+        <location filename="glasswaredetectsystem.cpp" line="1412"/>
+        <location filename="glasswaredetectsystem.cpp" line="1949"/>
+        <location filename="glasswaredetectsystem.cpp" line="1983"/>
+        <location filename="glasswaredetectsystem.cpp" line="1999"/>
+        <location filename="glasswaredetectsystem.cpp" line="2005"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -815,22 +833,22 @@
         <translation type="obsolete">测试</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1319"/>
+        <location filename="glasswaredetectsystem.cpp" line="1393"/>
         <source>OpenIOCard%1</source>
         <translation>打开接口卡%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1328"/>
+        <location filename="glasswaredetectsystem.cpp" line="1407"/>
         <source>Start Check</source>
         <translation>开始检测</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1348"/>
+        <location filename="glasswaredetectsystem.cpp" line="1427"/>
         <source>CloseIOCard%1</source>
         <translation>关闭接口卡%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1355"/>
+        <location filename="glasswaredetectsystem.cpp" line="1434"/>
         <source>Stop Check</source>
         <translation>停止检测</translation>
     </message>
@@ -839,22 +857,22 @@
         <translation type="obsolete">关闭IO卡</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1557"/>
+        <location filename="glasswaredetectsystem.cpp" line="1636"/>
         <source>CamraNo:%1</source>
         <translation>相机：%1</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1573"/>
+        <location filename="glasswaredetectsystem.cpp" line="1661"/>
         <source>Please Stop Detection First!</source>
         <translation>请停止检测！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1579"/>
+        <location filename="glasswaredetectsystem.cpp" line="1667"/>
         <source>Close ModelDlg!</source>
         <translation type="unfinished">关闭算法设置！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1583"/>
+        <location filename="glasswaredetectsystem.cpp" line="1671"/>
         <source>Error in Close ModelDlg--OnExit</source>
         <oldsource>Error in Close ModelDlg</oldsource>
         <translation type="unfinished">关闭算法设置时出错--退出系统</translation>
@@ -865,7 +883,7 @@
         <translation type="obsolete">退出系统！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1194"/>
+        <location filename="glasswaredetectsystem.cpp" line="1214"/>
         <source>Coder Number</source>
         <translation>编码器计数</translation>
     </message>
@@ -886,15 +904,15 @@
         <translation type="obsolete">提示</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1300"/>
-        <location filename="glasswaredetectsystem.cpp" line="1568"/>
-        <location filename="glasswaredetectsystem.cpp" line="1573"/>
+        <location filename="glasswaredetectsystem.cpp" line="1374"/>
+        <location filename="glasswaredetectsystem.cpp" line="1656"/>
+        <location filename="glasswaredetectsystem.cpp" line="1661"/>
         <source>Infomation</source>
         <translation>系统信息</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1300"/>
-        <location filename="glasswaredetectsystem.cpp" line="1568"/>
+        <location filename="glasswaredetectsystem.cpp" line="1374"/>
+        <location filename="glasswaredetectsystem.cpp" line="1656"/>
         <source>Please Stop Test First!</source>
         <translation>请先停止检测！</translation>
     </message>
@@ -903,24 +921,24 @@
         <translation type="obsolete">应力图像%1错误，相机%2不是正常图像！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1333"/>
+        <location filename="glasswaredetectsystem.cpp" line="1412"/>
         <source>No Model,Please Load Model!</source>
         <translation>当前没有模板，请先选择模版！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1337"/>
+        <location filename="glasswaredetectsystem.cpp" line="1416"/>
         <source>Stop</source>
         <oldsource>Stop detect</oldsource>
         <translation>停止检测</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1358"/>
+        <location filename="glasswaredetectsystem.cpp" line="1437"/>
         <source>Start</source>
         <oldsource>Start detect</oldsource>
         <translation>开始检测</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1396"/>
+        <location filename="glasswaredetectsystem.cpp" line="1475"/>
         <source>CloseCam</source>
         <translation>关闭相机</translation>
     </message>
@@ -933,7 +951,7 @@
         <translation type="obsolete">停止&amp;结束检测线程！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1459"/>
+        <location filename="glasswaredetectsystem.cpp" line="1538"/>
         <source>Directory change</source>
         <translation>qss路径变化</translation>
     </message>
@@ -942,12 +960,12 @@
         <translation type="obsolete">qss文件变化，重新加载</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1485"/>
+        <location filename="glasswaredetectsystem.cpp" line="1564"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1485"/>
+        <location filename="glasswaredetectsystem.cpp" line="1564"/>
         <source>Load Language pack [glasswaredetectsystem_zh.qm] fail!</source>
         <translation>加载语言包[glasswaredetectsystem_zh.qm]失败！</translation>
     </message>
@@ -964,17 +982,17 @@
         <translation type="obsolete">setModle时异常2</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1557"/>
+        <location filename="glasswaredetectsystem.cpp" line="1636"/>
         <source>In to Alg Page</source>
         <translation>进入算法设置界面</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1562"/>
+        <location filename="glasswaredetectsystem.cpp" line="1650"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="1563"/>
+        <location filename="glasswaredetectsystem.cpp" line="1651"/>
         <source>Are you sure to exit?</source>
         <translation>确定退出？</translation>
     </message>
@@ -1371,7 +1389,7 @@
         <translation type="obsolete">初始化检测！</translation>
     </message>
     <message>
-        <location filename="glasswaredetectsystem.cpp" line="440"/>
+        <location filename="glasswaredetectsystem.cpp" line="498"/>
         <source>Glass Bottle Detect System</source>
         <translation>玻璃瓶在线检测系统</translation>
     </message>
@@ -1560,12 +1578,12 @@
         <translation type="obsolete">请先停止测试</translation>
     </message>
     <message>
-        <location filename="Widget_CarveSetting.cpp" line="123"/>
+        <location filename="Widget_CarveSetting.cpp" line="129"/>
         <source>tip</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="Widget_CarveSetting.cpp" line="124"/>
+        <location filename="Widget_CarveSetting.cpp" line="130"/>
         <source>Testing,do you want to stop test?</source>
         <translation>正在测试相机，是否停止当前停止测试？</translation>
     </message>
@@ -1605,35 +1623,35 @@
     </message>
     <message>
         <location filename="widget_Management.cpp" line="154"/>
-        <location filename="widget_Management.cpp" line="253"/>
+        <location filename="widget_Management.cpp" line="295"/>
         <source>Input a new name</source>
         <translation>输入新品种名称</translation>
     </message>
     <message>
         <location filename="widget_Management.cpp" line="154"/>
-        <location filename="widget_Management.cpp" line="254"/>
+        <location filename="widget_Management.cpp" line="296"/>
         <source>New name:</source>
         <translation>名称：</translation>
     </message>
     <message>
         <location filename="widget_Management.cpp" line="163"/>
         <location filename="widget_Management.cpp" line="167"/>
-        <location filename="widget_Management.cpp" line="185"/>
-        <location filename="widget_Management.cpp" line="190"/>
-        <location filename="widget_Management.cpp" line="195"/>
-        <location filename="widget_Management.cpp" line="248"/>
-        <location filename="widget_Management.cpp" line="267"/>
-        <location filename="widget_Management.cpp" line="272"/>
-        <location filename="widget_Management.cpp" line="288"/>
-        <location filename="widget_Management.cpp" line="293"/>
-        <location filename="widget_Management.cpp" line="318"/>
-        <location filename="widget_Management.cpp" line="359"/>
-        <location filename="widget_Management.cpp" line="373"/>
-        <location filename="widget_Management.cpp" line="391"/>
-        <location filename="widget_Management.cpp" line="409"/>
-        <location filename="widget_Management.cpp" line="418"/>
-        <location filename="widget_Management.cpp" line="439"/>
-        <location filename="widget_Management.cpp" line="494"/>
+        <location filename="widget_Management.cpp" line="227"/>
+        <location filename="widget_Management.cpp" line="232"/>
+        <location filename="widget_Management.cpp" line="237"/>
+        <location filename="widget_Management.cpp" line="290"/>
+        <location filename="widget_Management.cpp" line="309"/>
+        <location filename="widget_Management.cpp" line="314"/>
+        <location filename="widget_Management.cpp" line="330"/>
+        <location filename="widget_Management.cpp" line="335"/>
+        <location filename="widget_Management.cpp" line="360"/>
+        <location filename="widget_Management.cpp" line="401"/>
+        <location filename="widget_Management.cpp" line="415"/>
+        <location filename="widget_Management.cpp" line="433"/>
+        <location filename="widget_Management.cpp" line="451"/>
+        <location filename="widget_Management.cpp" line="460"/>
+        <location filename="widget_Management.cpp" line="481"/>
+        <location filename="widget_Management.cpp" line="536"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
@@ -1644,7 +1662,7 @@
     </message>
     <message>
         <location filename="widget_Management.cpp" line="167"/>
-        <location filename="widget_Management.cpp" line="267"/>
+        <location filename="widget_Management.cpp" line="309"/>
         <source>Model name already exist.</source>
         <translation>品种名已经存在。</translation>
     </message>
@@ -1654,143 +1672,143 @@
         <translation>新建品种:[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="185"/>
+        <location filename="widget_Management.cpp" line="227"/>
         <source>Please stop detection!</source>
         <translation>请停止检测！</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="190"/>
+        <location filename="widget_Management.cpp" line="232"/>
         <source>Current product model is already loaded!</source>
         <translation>当前品种已经被选中!</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="195"/>
-        <location filename="widget_Management.cpp" line="248"/>
-        <location filename="widget_Management.cpp" line="293"/>
-        <location filename="widget_Management.cpp" line="409"/>
-        <location filename="widget_Management.cpp" line="494"/>
+        <location filename="widget_Management.cpp" line="237"/>
+        <location filename="widget_Management.cpp" line="290"/>
+        <location filename="widget_Management.cpp" line="335"/>
+        <location filename="widget_Management.cpp" line="451"/>
+        <location filename="widget_Management.cpp" line="536"/>
         <source>Product model not selected!</source>
         <translation>尚未选择品种!</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="200"/>
+        <location filename="widget_Management.cpp" line="242"/>
         <source>Load</source>
         <translation>加载</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="201"/>
+        <location filename="widget_Management.cpp" line="243"/>
         <source>Are you sure to load:&lt;font color=red&gt;[%1]&lt;/font&gt;?</source>
         <translation>确定载入：&lt;font color=red&gt;[%1]&lt;/font&gt;?</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="221"/>
+        <location filename="widget_Management.cpp" line="263"/>
         <source>Loading the template:</source>
         <oldsource>Loading the template</oldsource>
         <translation>加载模板:</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="272"/>
+        <location filename="widget_Management.cpp" line="314"/>
         <source>Cannot input same name!</source>
         <translation>已有相同的名字的品种！</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="281"/>
+        <location filename="widget_Management.cpp" line="323"/>
         <source>Backup model:[%1]</source>
         <translation>备份品种：[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="288"/>
+        <location filename="widget_Management.cpp" line="330"/>
         <source>Current product model is loaded, can not delete!</source>
         <translation>单签品种正在使用，不能删除！</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="297"/>
+        <location filename="widget_Management.cpp" line="339"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="298"/>
+        <location filename="widget_Management.cpp" line="340"/>
         <source>Are you sure to delete:&lt;font color=red&gt;[%1]&lt;/font&gt;?</source>
         <translation>确定删除：&lt;font color=red&gt;[%1]&lt;/font&gt;?</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="307"/>
+        <location filename="widget_Management.cpp" line="349"/>
         <source>Delete model:[%1]</source>
         <translation>删除品种：[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="319"/>
+        <location filename="widget_Management.cpp" line="361"/>
         <source>Image already exist.Are you sure to change it?</source>
         <translation>图像已经存在，确定替换？</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="327"/>
+        <location filename="widget_Management.cpp" line="369"/>
         <source>Select a image:</source>
         <translation>选择图像：</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="328"/>
+        <location filename="widget_Management.cpp" line="370"/>
         <source>Images (*.png *.bmp *.jpg *.tif *.GIF)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="346"/>
+        <location filename="widget_Management.cpp" line="388"/>
         <source>change image:[%1]</source>
         <translation>更换图像：[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="359"/>
-        <location filename="widget_Management.cpp" line="373"/>
+        <location filename="widget_Management.cpp" line="401"/>
+        <location filename="widget_Management.cpp" line="415"/>
         <source>Deleting [%1] fail!</source>
         <translation>删除[%1]失败！</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="391"/>
+        <location filename="widget_Management.cpp" line="433"/>
         <source>Copying [%1] fail!</source>
         <translation>复制[%1]失败！</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="405"/>
+        <location filename="widget_Management.cpp" line="447"/>
         <source>Export Cart</source>
         <translation>导出</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="418"/>
+        <location filename="widget_Management.cpp" line="460"/>
         <source>Model already Backup.</source>
         <translation>品种已备份.</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="427"/>
+        <location filename="widget_Management.cpp" line="469"/>
         <source>Export model:[%1]</source>
         <translation>导出：[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="432"/>
+        <location filename="widget_Management.cpp" line="474"/>
         <source>Import Cart</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="439"/>
+        <location filename="widget_Management.cpp" line="481"/>
         <source>Model already exist.</source>
         <translation>品种已存在。</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="453"/>
+        <location filename="widget_Management.cpp" line="495"/>
         <source>Import model:[%1]</source>
         <translation>导入：[%1]</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="469"/>
+        <location filename="widget_Management.cpp" line="511"/>
         <source>CameraNo:%1</source>
         <translation>相机：%1</translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="471"/>
+        <location filename="widget_Management.cpp" line="513"/>
         <source>Height:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_Management.cpp" line="473"/>
+        <location filename="widget_Management.cpp" line="515"/>
         <source>Angle:</source>
         <translation></translation>
     </message>
@@ -2034,13 +2052,13 @@
         <translation>缺陷图像</translation>
     </message>
     <message utf8="true">
-        <location filename="widget_test.ui" line="956"/>
+        <location filename="widget_test.ui" line="1015"/>
         <source>后光延迟:</source>
         <oldsource>理论后光延迟:</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1252"/>
+        <location filename="widget_test.ui" line="1222"/>
         <source>set</source>
         <translation type="unfinished">设置</translation>
     </message>
@@ -2196,17 +2214,17 @@
         <translation type="obsolete">光电4-5距离：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1218"/>
+        <location filename="widget_test.ui" line="1195"/>
         <source>Read</source>
         <translation>读取</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="996"/>
+        <location filename="widget_test.ui" line="1061"/>
         <source>Advance</source>
         <translation>高级</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="915"/>
+        <location filename="widget_test.ui" line="1215"/>
         <source>Continue Kick</source>
         <translation>持续剔废</translation>
     </message>
@@ -2215,27 +2233,27 @@
         <translation type="obsolete">隔瓶剔废</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1016"/>
+        <location filename="widget_test.ui" line="1235"/>
         <source>Continue Good</source>
         <translation>持续好</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1162"/>
+        <location filename="widget_test.ui" line="1252"/>
         <source>Normal</source>
         <translation>正常剔废</translation>
     </message>
     <message utf8="true">
-        <location filename="widget_test.ui" line="1053"/>
+        <location filename="widget_test.ui" line="1074"/>
         <source>产品间距(0.3):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1148"/>
+        <location filename="widget_test.ui" line="1048"/>
         <source>Set to Card</source>
         <translation>设置到卡</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1245"/>
+        <location filename="widget_test.ui" line="1182"/>
         <source>Save to File</source>
         <translation>保存到文件</translation>
     </message>
@@ -2250,12 +2268,12 @@
         <translation type="obsolete">光电2-3距离：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1191"/>
+        <location filename="widget_test.ui" line="973"/>
         <source>Channel1:</source>
         <translation>第1路:</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1003"/>
+        <location filename="widget_test.ui" line="994"/>
         <source>Channel4:</source>
         <translation>第4路:</translation>
     </message>
@@ -2264,35 +2282,35 @@
         <translation type="obsolete">卡一：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1198"/>
+        <location filename="widget_test.ui" line="1001"/>
         <source>Channel2:</source>
         <translation>第2路:</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="935"/>
+        <location filename="widget_test.ui" line="1142"/>
         <source>Channel3:</source>
         <translation>第3路:</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="851"/>
+        <location filename="widget_test.ui" line="892"/>
         <source>Channel6:</source>
         <oldsource>Channel6：</oldsource>
         <translation>第6路:</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1077"/>
+        <location filename="widget_test.ui" line="1119"/>
         <source>Channel5:</source>
         <oldsource>Channel7:</oldsource>
         <translation>第5路:</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1090"/>
+        <location filename="widget_test.ui" line="1028"/>
         <source>Kick Width:</source>
         <oldsource>Kick Width：</oldsource>
         <translation>剔废宽度：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="858"/>
+        <location filename="widget_test.ui" line="851"/>
         <source>Kick Delay:</source>
         <oldsource>Kick Delay：</oldsource>
         <translation>剔废延时：</translation>
@@ -2311,32 +2329,32 @@
         <translation type="obsolete">接口卡1</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="902"/>
-        <location filename="widget_test.cpp" line="851"/>
+        <location filename="widget_test.ui" line="885"/>
+        <location filename="widget_test.cpp" line="874"/>
         <source>Frequency:</source>
         <translation>一相行频：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="895"/>
-        <location filename="widget_test.cpp" line="854"/>
+        <location filename="widget_test.ui" line="878"/>
+        <location filename="widget_test.cpp" line="877"/>
         <source>IN0:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="922"/>
-        <location filename="widget_test.cpp" line="857"/>
+        <location filename="widget_test.ui" line="980"/>
+        <location filename="widget_test.cpp" line="880"/>
         <source>IN1:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1155"/>
-        <location filename="widget_test.cpp" line="860"/>
+        <location filename="widget_test.ui" line="923"/>
+        <location filename="widget_test.cpp" line="883"/>
         <source>IN2:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1030"/>
-        <location filename="widget_test.cpp" line="863"/>
+        <location filename="widget_test.ui" line="1112"/>
+        <location filename="widget_test.cpp" line="886"/>
         <source>IN3:</source>
         <translation></translation>
     </message>
@@ -2354,45 +2372,45 @@
         <translation type="obsolete">接口卡1输出</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1121"/>
-        <location filename="widget_test.cpp" line="867"/>
+        <location filename="widget_test.ui" line="944"/>
+        <location filename="widget_test.cpp" line="890"/>
         <source>OUT0:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1205"/>
-        <location filename="widget_test.cpp" line="870"/>
+        <location filename="widget_test.ui" line="1008"/>
+        <location filename="widget_test.cpp" line="893"/>
         <source>OUT1:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1023"/>
-        <location filename="widget_test.cpp" line="873"/>
+        <location filename="widget_test.ui" line="1081"/>
+        <location filename="widget_test.cpp" line="896"/>
         <source>OUT2:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1232"/>
-        <location filename="widget_test.cpp" line="876"/>
+        <location filename="widget_test.ui" line="1169"/>
+        <location filename="widget_test.cpp" line="899"/>
         <source>OUT3:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1128"/>
-        <location filename="widget_test.cpp" line="879"/>
+        <location filename="widget_test.ui" line="906"/>
+        <location filename="widget_test.cpp" line="902"/>
         <source>OUT4:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1114"/>
-        <location filename="widget_test.cpp" line="882"/>
+        <location filename="widget_test.ui" line="899"/>
+        <location filename="widget_test.cpp" line="905"/>
         <source>OUT5:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="widget_test.ui" line="388"/>
-        <location filename="widget_test.cpp" line="485"/>
-        <location filename="widget_test.cpp" line="498"/>
+        <location filename="widget_test.cpp" line="491"/>
+        <location filename="widget_test.cpp" line="504"/>
         <source>Show</source>
         <translation>显示</translation>
     </message>
@@ -2406,14 +2424,14 @@
         <translation type="obsolete">卡二：</translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="973"/>
-        <location filename="widget_test.cpp" line="885"/>
+        <location filename="widget_test.ui" line="930"/>
+        <location filename="widget_test.cpp" line="908"/>
         <source>OUT6:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="widget_test.ui" line="1225"/>
-        <location filename="widget_test.cpp" line="888"/>
+        <location filename="widget_test.ui" line="1202"/>
+        <location filename="widget_test.cpp" line="911"/>
         <source>OUT7:</source>
         <translation></translation>
     </message>
@@ -2434,7 +2452,7 @@
         <translation type="obsolete">所有缺陷</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="287"/>
+        <location filename="widget_test.cpp" line="288"/>
         <source>Login Hold Time</source>
         <translation>自动退出登录时间</translation>
     </message>
@@ -2452,7 +2470,7 @@
         <translation type="obsolete">光电1-2距离：</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="291"/>
+        <location filename="widget_test.cpp" line="292"/>
         <source>Save Mode</source>
         <translation>保存图像设置</translation>
     </message>
@@ -2461,7 +2479,7 @@
         <translation type="obsolete">统计报警设置</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="295"/>
+        <location filename="widget_test.cpp" line="296"/>
         <source>Camera Surveillance</source>
         <translation>相机监视</translation>
     </message>
@@ -2480,7 +2498,7 @@
         <translation type="obsolete">接口卡测试</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="299"/>
+        <location filename="widget_test.cpp" line="300"/>
         <source>IOCard Delay</source>
         <translation>接口卡延时设置</translation>
     </message>
@@ -2493,39 +2511,38 @@
         <translation type="obsolete">警告</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="463"/>
         <source>Camera %1 Offline ! 
 Please check the camera and restart the software!</source>
-        <translation>相机 %1 掉线！
+        <translation type="obsolete">相机 %1 掉线！
 请检查相机并重启软件！</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="422"/>
+        <location filename="widget_test.cpp" line="423"/>
         <source>Camera Offline monitoring start</source>
         <translation>相机掉线监视开始</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="304"/>
+        <location filename="widget_test.cpp" line="305"/>
         <source>Equipment Maintenance Alarm Set</source>
         <translation>设备维护报警设置</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="417"/>
+        <location filename="widget_test.cpp" line="418"/>
         <source>Camera Offline monitoring already start</source>
         <translation>相机掉线监视已经开始</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="429"/>
+        <location filename="widget_test.cpp" line="430"/>
         <source>Camera Offline monitoring already stop</source>
         <translation>相机掉线监视已经停止</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="434"/>
+        <location filename="widget_test.cpp" line="435"/>
         <source>Camera Offline monitoring stop</source>
         <translation>相机掉线监视停止</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="496"/>
+        <location filename="widget_test.cpp" line="502"/>
         <source>Hide</source>
         <translation>隐藏</translation>
     </message>
@@ -2600,8 +2617,8 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">禁止读取！</translation>
     </message>
     <message>
-        <location filename="widget_test.cpp" line="670"/>
-        <location filename="widget_test.cpp" line="700"/>
+        <location filename="widget_test.cpp" line="688"/>
+        <location filename="widget_test.cpp" line="720"/>
         <source>The set value is out of range!</source>
         <translation>设定数值越界！</translation>
     </message>
@@ -2787,7 +2804,7 @@ Please check the camera and restart the software!</source>
     </message>
     <message>
         <location filename="Widget_CarveImage.cpp" line="501"/>
-        <location filename="Widget_CarveImage.cpp" line="1565"/>
+        <location filename="Widget_CarveImage.cpp" line="1569"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -2811,12 +2828,12 @@ Please check the camera and restart the software!</source>
         <translation>返回</translation>
     </message>
     <message>
-        <location filename="Widget_CarveImage.cpp" line="1547"/>
+        <location filename="Widget_CarveImage.cpp" line="1551"/>
         <source>set camera%1 param,TriggerType:%2,ShuterTime:%3,TriggerDelay:%4!</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="Widget_CarveImage.cpp" line="1565"/>
+        <location filename="Widget_CarveImage.cpp" line="1569"/>
         <source>Please stop detect!</source>
         <translation>请先停止测试!</translation>
     </message>
@@ -2870,12 +2887,12 @@ Please check the camera and restart the software!</source>
         <translation type="obsolete">请先停止检测！</translation>
     </message>
     <message>
-        <location filename="Widget_CarveImage.cpp" line="1556"/>
+        <location filename="Widget_CarveImage.cpp" line="1560"/>
         <source>Start Test</source>
         <translation>开始测试</translation>
     </message>
     <message>
-        <location filename="Widget_CarveImage.cpp" line="1577"/>
+        <location filename="Widget_CarveImage.cpp" line="1581"/>
         <source>Stop Test</source>
         <translation>停止测试</translation>
     </message>

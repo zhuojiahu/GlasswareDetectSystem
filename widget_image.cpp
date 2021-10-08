@@ -17,8 +17,8 @@ ImageWidget::ImageWidget(QWidget *parent)
 		bIsShowErrorImage[i] = false;
 		iImagePosition[i] = -1;
 		ImageError[i] = NULL;
-		sAlgImageLocInfo[i].sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
-		sAlgImageLocInfo[i].sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
+		sAlgImageLocInfo[i].sXldPoint.nColsAry = new int[BOTTLEXLD_POINTNUM];
+		sAlgImageLocInfo[i].sXldPoint.nRowsAry = new int[BOTTLEXLD_POINTNUM];
 	}
 	if(pMainFrm->m_sSystemInfo.iCamCount == 24 || pMainFrm->m_sSystemInfo.iCamCount==4)
 	{

@@ -41,6 +41,7 @@ struct MyErrorType
 {
 	int id;
 	int nType;
+	int nErrorArea;
 };
 
 class GlasswareDetectSystem : public QDialog
@@ -75,6 +76,7 @@ public:
 	void MonitorLicense();
 	void showAllert();
 	static DWORD WINAPI SendDetect(void*);
+	static DWORD WINAPI SendIOCard(void*);
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 signals:
@@ -93,7 +95,6 @@ public slots:
 	void slots_updateCameraState(int nCam,int nMode = 0);
 	void slots_SetCameraStatus(int nCam,int mode);
 	void directoryChanged(QString path);
-	void slots_addDataToBase(int,int,int*);
 	void onServerDataReady();
 	void slot_SockScreen();
 public:
@@ -144,9 +145,6 @@ public:
 	s_RunningInfo m_sRunningInfo;
 	//设备维护报警结构体
 	s_RuntimeInfo m_sRuntimeInfo;
-	//上一个整点保存的数据
-	QDateTime LastTime;
-	//TemporaryData LastTimeData;
 	//连接服务器
 	QTcpSocket * m_tcpSocket;
 	//相机结构体
@@ -180,18 +178,18 @@ public:
 	ImageSave m_SavePicture[CAMERA_MAX_COUNT];
 	int surplusDays;
 	HANDLE pHandles[CAMERA_MAX_COUNT];
-	QList<MyErrorType> nCameraErrorType;
 	time_t nConnectStartTime;//用于判断掉线重连的时间
-	int* nSendData;
+	MyErrorType nSendData[256];
+	QList<MyErrorType> nCameraErrorType;
 public:
 	//涉及网络通信的变量
+	QMutex nSocketMutex;
+	QList<QByteArray> ncSocketWriteData;
+	int nCountNumber;
 	time_t n_StartTime;
 	time_t n_EndTime;
 	char* m_ptr;
-	int* nCheckSendData;
 	int* nIOCard;
-	int nFailCount;
-	int nAllConut;
 };
 #endif // GLASSWAREDETECTSYSTEM_H
 

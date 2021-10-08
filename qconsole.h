@@ -24,7 +24,10 @@ enum StateEnum
 	NLEADING,
 	NCLAMPING,
 	NBACKING,
-	MAININTERFACE
+	MAININTERFACE,
+	SYSTEMMODEADD,
+	SYSTEMMODESELECT,
+	SYSTEMMODEDELTE
 };
 enum UnitEnum
 {
@@ -38,6 +41,7 @@ struct MyStruct
 	UnitEnum nUnit;//发送的设备标志位
 	int nCount;//前端通过in0得到的过检总数
 	int nFail;//前端通过out3得到的踢废总数
+	QString nTemp;//前端的多余变量
 };
 struct NingInfo
 {

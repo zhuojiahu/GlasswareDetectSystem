@@ -124,8 +124,8 @@ void CErrorImageList::initail()
 	m_ListErrorWidget->setModel(m_modelError);
 	//ÉèÖÃÁÐ¿í
 	m_ListErrorWidget->setColumnWidth(0, 60); 
-	m_ListErrorWidget->setColumnWidth(1, 100); 
-	m_ListErrorWidget->setColumnWidth(2, 150); 
+	m_ListErrorWidget->setColumnWidth(1, 60); 
+	m_ListErrorWidget->setColumnWidth(2, 80); 
 	m_ListErrorWidget->setColumnWidth(3, 80); 
 
 	CherkerAry.iValidNum = pMainFrm->m_sSystemInfo.iCamCount;

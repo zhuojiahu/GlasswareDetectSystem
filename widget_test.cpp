@@ -270,10 +270,11 @@ void WidgetTest::initInformation()
 			m_nDelay5 = pMainFrm->m_vIOCard[0]->readParam(157);
 			m_nDelay6 = pMainFrm->m_vIOCard[0]->readParam(158);
 		}else{
-			m_nDelay1 = pMainFrm->m_vIOCard[0]->readParam(32);
-			m_nDelay2 = pMainFrm->m_vIOCard[0]->readParam(61);
+			m_nDelay1 = pMainFrm->m_vIOCard[0]->readParam(157);
+			m_nDelay2 = pMainFrm->m_vIOCard[0]->readParam(158);
 			m_nDelay3 = pMainFrm->m_vIOCard[0]->readParam(159);
 			m_nDelay4 = pMainFrm->m_vIOCard[0]->readParam(160);
+			m_nDelay5 = pMainFrm->m_vIOCard[0]->readParam(96);
 		}
 		m_nKickDelay = pMainFrm->m_vIOCard[0]->readParam(49);
 		m_nKickWidth = pMainFrm->m_vIOCard[0]->readParam(46);
@@ -460,17 +461,22 @@ void WidgetTest::slots_CameraOffAreet()
 		{
 			//相机掉线报警
 			pMainFrm->cameraStatus_list.at(i)->SetCameraStatus(2);
-			emit signals_ShowWarning(i,QString(tr("Camera %1 Offline ! \nPlease check the camera and restart the software!")).arg(i+1));
+			//emit signals_ShowWarning(i,QString(tr("Camera %1 Offline ! \nPlease check the camera and restart the software!")).arg(i+1));
 			test = true;
+			nConsole->m_plc->nErrorCameraID = i+1;
 			break;
 		}
 	}
-	if(test)
+	if(!test)
+	{
+		nConsole->m_plc->nErrorCameraID = 0;
+	}
+	/*if(test)
 	{
 		emit signal_UsualSend(1);
 	}else{
 		emit signal_UsualSend(0);
-	}
+	}*/
 }
 
 void WidgetTest::SetCameraMonitorStatus()
@@ -650,13 +656,25 @@ void WidgetTest::slots_readDelay()
 		if(pMainFrm->m_sSystemInfo.m_iSystemType != 2)//前壁的参数设置
 		{
 			m_nKickDelay = j-i-iIOCardOffSet;
+			if(m_nKickDelay<0)
+			{
+				m_nKickDelay+=65535;
+			}
 			ui.KickDelay->setText(QString::number(m_nKickDelay));
 			ui.lineDelay->setText("0");
 			ui.KickWidth->setText(QString::number(m_nKickWidth));
 		}else{  //瓶口瓶底的参数设置
 			m_nKickDelay = k-i-iIOCardOffSet;
+			if(m_nKickDelay<0)
+			{
+				m_nKickDelay+=65535;
+			}
 			ui.KickDelay->setText(QString::number(m_nKickDelay));
 			m_nSampleDelay = j-k-iIOCardOffSet;
+			if(m_nSampleDelay<0)
+			{
+				m_nSampleDelay+=65535;
+			}
 			ui.lineDelay->setText(QString::number(m_nSampleDelay));
 			ui.KickWidth->setText(QString::number(m_nKickWidth));
 		}
@@ -671,6 +689,7 @@ void WidgetTest::slots_setToCard()
 		QMessageBox::information(this,"Error",str);	
 		return; 
 	}
+
 	if (pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
 		if(pMainFrm->m_sSystemInfo.m_iSystemType != 2)
@@ -682,10 +701,11 @@ void WidgetTest::slots_setToCard()
 			pMainFrm->m_vIOCard[0]->writeParam(157,m_nDelay5);
 			pMainFrm->m_vIOCard[0]->writeParam(158,m_nDelay6);
 		}else{
-			pMainFrm->m_vIOCard[0]->writeParam(32,m_nDelay1);
-			pMainFrm->m_vIOCard[0]->writeParam(61,m_nDelay2);
+			pMainFrm->m_vIOCard[0]->writeParam(157,m_nDelay1);
+			pMainFrm->m_vIOCard[0]->writeParam(158,m_nDelay2);
 			pMainFrm->m_vIOCard[0]->writeParam(159,m_nDelay3);
 			pMainFrm->m_vIOCard[0]->writeParam(160,m_nDelay4);
+			pMainFrm->m_vIOCard[0]->writeParam(96,m_nDelay5);
 		}
 		pMainFrm->m_vIOCard[0]->writeParam(49,m_nKickDelay);
 		pMainFrm->m_vIOCard[0]->writeParam(46,m_nKickWidth);
@@ -729,11 +749,11 @@ void WidgetTest::slots_setToFile()
 		StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 	}else{
 		strValue = strValue.setNum(m_nDelay1,10);
-		strPara = strPara.setNum(32,10);
+		strPara = strPara.setNum(157,10);
 		StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 		
 		strValue = strValue.setNum(m_nDelay2,10);
-		strPara = strPara.setNum(61,10);
+		strPara = strPara.setNum(158,10);
 		StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 
 		strValue = strValue.setNum(m_nDelay3,10);
@@ -744,6 +764,9 @@ void WidgetTest::slots_setToFile()
 		strPara = strPara.setNum(160,10);
 		StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 
+		strValue = strValue.setNum(m_nDelay5,10);
+		strPara = strPara.setNum(96,10);
+		StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 	}
 	strValue = strValue.setNum(m_nKickDelay,10);
 	strPara = strPara.setNum(49,10);

@@ -12,7 +12,7 @@ class Widget_PLC : public QWidget
 	Q_OBJECT
 
 public:
-	Widget_PLC(QWidget *parent);
+	Widget_PLC(QWidget *parent,int);
 	~Widget_PLC();
 public slots:
 	void slots_return();
@@ -21,6 +21,7 @@ public slots:
 	void slots_Pushbuttonread();
 	void slots_readFromPLC();
 	void slots_TimeOut();
+	void slots_CrashTimeOut();
 public:
 	int GetImageNo(int nAddr,int CameraId,int& ImageNo);
 signals:
@@ -37,9 +38,12 @@ public:
 public:
 	QUdpSocket* m_pSocket;
 	QTimer* m_zTimer;
+	QTimer* m_CrashTimer;
 	int nErrorType;
-	HANDLE nHandle[40];
-	int nImageNum[40];
+	int nErrorCameraID;
+	int nSystemType;
+	//HANDLE nHandle[40];
+	//int nImageNum[40];
 };
 
 #endif // WIDGET_PLC_H

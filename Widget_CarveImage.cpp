@@ -1525,12 +1525,12 @@ void Widget_CarveImage::slots_setToCamera()
 			switch (station)
 			{
 			case 1:
-				pMainFrm->m_vIOCard[0]->writeParam(32,iTriggerDelay);
-				strPara = strPara.setNum(32,10);
+				pMainFrm->m_vIOCard[0]->writeParam(157,iTriggerDelay);
+				strPara = strPara.setNum(157,10);
 				break;
 			case 2:
-				pMainFrm->m_vIOCard[0]->writeParam(61,iTriggerDelay);
-				strPara = strPara.setNum(61,10);
+				pMainFrm->m_vIOCard[0]->writeParam(158,iTriggerDelay);
+				strPara = strPara.setNum(158,10);
 				break;	
 			case 3:
 				pMainFrm->m_vIOCard[0]->writeParam(159,iTriggerDelay);
@@ -1539,6 +1539,10 @@ void Widget_CarveImage::slots_setToCamera()
 			case 4:
 				pMainFrm->m_vIOCard[0]->writeParam(160,iTriggerDelay);
 				strPara = strPara.setNum(160,10);
+				break;
+			case 5:
+				pMainFrm->m_vIOCard[0]->writeParam(96,iTriggerDelay);
+				strPara = strPara.setNum(96,10);
 				break;
 			}
 			StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
@@ -1646,16 +1650,19 @@ void Widget_CarveImage::slots_readDelayPara()
 			switch (station)
 			{
 			case 1:
-				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(32);
+				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(157);
 				break;
 			case 2:
-				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(61);
+				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(158);
 				break;	
 			case 3:
 				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(159);
 				break;
 			case 4:
 				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(160);
+				break;
+			case 5:
+				iTriggerDelay = pMainFrm->m_vIOCard[0]->readParam(96);
 				break;
 			}
 		}

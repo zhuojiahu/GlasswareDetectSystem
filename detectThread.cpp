@@ -53,6 +53,17 @@ void DetectThread::ProcessHanlde(int Camera)
 		}
 		//裁剪原始图片
 		pMainFrm->nQueue[iCamera].mGrabLocker.lock();
+		long lImageSize = pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageWidth * pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageHeight;
+		if (lImageSize != DetectElement.ImageNormal->myImage->byteCount())
+		{
+			pMainFrm->Logfile.write(tr("ImageSize unsuitable, Thread:Grab, camera:%1.lImageSize = %2,myImage byteCount = %3").arg(iCamera).arg(lImageSize).arg(DetectElement.ImageNormal->myImage->byteCount()),AbnormityLog);
+			delete DetectElement.ImageNormal->myImage;
+			delete DetectElement.ImageNormal->SourceImage;
+			delete DetectElement.ImageNormal;
+			DetectElement.ImageNormal = NULL;
+			pMainFrm->nQueue[iCamera].mGrabLocker.unlock();
+			return;
+		}
 		pMainFrm->CarveImage(pMainFrm->m_sRealCamInfo[iCamera].m_pRealImage->bits(),pMainFrm->m_sCarvedCamInfo[iCamera].m_pGrabTemp,\
 			pMainFrm->m_sRealCamInfo[iCamera].m_iImageWidth,pMainFrm->m_sRealCamInfo[iCamera].m_iImageHeight, pMainFrm->m_sCarvedCamInfo[iCamera].i_ImageX,pMainFrm->m_sCarvedCamInfo[iCamera].i_ImageY,\
 			pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageWidth,pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageHeight);			
@@ -415,6 +426,10 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 		sResultInfo.nIOCardNum = 0;
 		if (pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 		{
+			//发送图像号记录
+			pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->writeParam(110,nSignalNo);
+			//发送踢废结果
+			Sleep(1);
 			pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->SendResult(sResultInfo);
 		}
 		/*if(comResult)
@@ -426,7 +441,6 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 		pMainFrm->m_cCombine.RemoveOneResult(nSignalNo);
 		if (pMainFrm->m_sRunningInfo.m_bCheck)	
 		{
-			//pMainFrm->nAllConut++;
 			int iErrorCamera = pMainFrm->m_cCombine.ErrorCamera(nSignalNo);
 			s_ErrorPara sComErrorpara = pMainFrm->m_cCombine.ConbineError(nSignalNo);
 			if (pMainFrm->m_sRunningInfo.m_cErrorTypeInfo[iErrorCamera].ErrorTypeJudge(sComErrorpara.nErrorType))
@@ -437,30 +451,17 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 				pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[0] += 1;//阴同添加
 				pMainFrm->m_sRunningInfo.m_iErrorTypeCount[sComErrorpara.nErrorType] +=1;
 				
-				/*if(comResult)
-				{
-					pMainFrm->m_sRunningInfo.m_failureNum2++;
-				}*/
-				//MyErrorType test;
-				//test.id = iErrorCamera;
-				//test.nType = sComErrorpara.nErrorType;
-				//pMainFrm->nCameraErrorType.push_back(test);
-				//emit signals_updateAlert(sComErrorpara.nErrorType);//报警
-				//memcpy(pMainFrm->nSendData+(pMainFrm->nAllConut-1)*24+iCamera-1,&sComErrorpara.nErrorType,sizeof(int));
+				pMainFrm->nSendData[nSignalNo].id = iErrorCamera;
+				pMainFrm->nSendData[nSignalNo].nType = sComErrorpara.nErrorType;
+				pMainFrm->nSendData[nSignalNo].nErrorArea = sComErrorpara.nArea;
+
+				pMainFrm->nCameraErrorType.push_back(pMainFrm->nSendData[nSignalNo]);
 			}
 			else
 			{
 				pMainFrm->m_sRunningInfo.m_cErrorTypeInfo[iErrorCamera].iErrorCountByType[0]+=1;
 				pMainFrm->m_sRunningInfo.m_iErrorTypeCount[0] +=1;
 			}
-			//if(pMainFrm->nAllConut == 4)
-			//{
-			//	memcpy(pMainFrm->nCheckSendData,pMainFrm->nSendData,256*24);
-			//	emit signals_AddDataToBase(pMainFrm->m_sRunningInfo.m_failureNum2,pMainFrm->nAllConut,pMainFrm->nCheckSendData);//数据传输到服务器
-			//	memset(pMainFrm->nSendData,0,256*24);
-			//	pMainFrm->m_sRunningInfo.m_failureNum2 = 0;
-			//	pMainFrm->nAllConut = 0;
-			//}
 		}
 	}
 }

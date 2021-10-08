@@ -28,8 +28,6 @@ QConsole::QConsole(int SystemType,QWidget *parent)
 		{
 			pMainFrm->m_sSystemInfo.m_bIsIOCardOK = false;
 			pMainFrm->Logfile.write(tr("Error in init IOCard"),CheckLog);
-		}else{
-			pMainFrm->Logfile.write("succeed!!!!",CheckLog);
 		}
 		Sleep(200);
 		m_vIOCard->enable(true);
@@ -42,9 +40,9 @@ QConsole::QConsole(int SystemType,QWidget *parent)
 		nReadIOcard = new QTimer(this);
 		nReadIOcard->setInterval(1000);
 		connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
-		nReadIOcard->start();
+		//nReadIOcard->start();
 	}
-	m_plc = new Widget_PLC(parent);
+	m_plc = new Widget_PLC(parent,nType);
 	connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
 }
 
@@ -82,7 +80,7 @@ void QConsole::slot_ResetIoCard()
 {
 	if(nType == 2)
 	{
-		m_vIOCard->m_Pio24b.softReset();
+		//m_vIOCard->m_Pio24b.softReset();
 	}
 }
 void QConsole::slot_SaveCard()
@@ -106,7 +104,7 @@ void QConsole::slot_SaveCard()
 void QConsole::slot_OpenPLC()
 {
 	QByteArray st;
-	m_plc->SendMessage(97,st,1,2,106);//暂时获取界面显示的所有数据7*4+8+8*8
+	m_plc->SendMessage(97,st,1,2,110);//暂时获取界面显示的所有数据2+8*5+8*8+4
 	m_plc->show();
 }
 void QConsole::slot_OpenCard()

@@ -24,18 +24,30 @@ CProgramLicense m_ProgramLicense;
 
 GlasswareDetectSystem * pMainFrm;
 QString appPath;  //更新路径
-
+DWORD GlasswareDetectSystem::SendIOCard(void* param)
+{
+	while(!pMainFrm->m_bIsThreadDead)
+	{
+		if(pMainFrm->ncSocketWriteData.count()>0)
+		{
+			QByteArray nTest = pMainFrm->ncSocketWriteData.first();
+			pMainFrm->ncSocketWriteData.removeFirst();
+			pMainFrm->m_tcpSocket->write(nTest.data(),nTest.size());
+		}
+		Sleep(200);
+	}
+	return TRUE;
+}
 DWORD GlasswareDetectSystem::SendDetect(void* param)
 {
-	//GlasswareDetectSystem* Glass = (GlasswareDetectSystem*)param;
-	
 	int lastNumber = 0;
 	int nSignalNo = 0 ;
-
 	int nlastNumber = 0;
 	int nCurrentNum = 0;
-	char *m_ptr = new char[24*sizeof(int)+sizeof(MyStruct)];
+	int nCount=0;
+	char *m_reportPtr = new char[256*sizeof(MyErrorType)+sizeof(MyStruct)];
 	MyStruct nTempStruct;
+	char* nTPtr;
 	if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
 	{
 		nTempStruct.nUnit = LEADING;
@@ -46,47 +58,42 @@ DWORD GlasswareDetectSystem::SendDetect(void* param)
 	{
 		nTempStruct.nUnit = BACKING;
 	}
-	nTempStruct.nCount = 1;
-	nTempStruct.nState = ALERT;
-	memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
+	MyErrorType nCheckSendData[256]={0};
 	while(!pMainFrm->m_bIsThreadDead)
 	{
-		//判断是否停机倒瓶
 		if(pMainFrm->m_sRunningInfo.m_bCheck && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 		{
-			nCurrentNum = pMainFrm->m_vIOCard[0]->ReadCounter(1);//如果停机倒瓶会有信号发送到in1
-			if(nlastNumber != nCurrentNum)
+			nCurrentNum = pMainFrm->m_vIOCard[0]->ReadCounter(3);
+			if(nCurrentNum != lastNumber)
 			{
-				pMainFrm->m_vIOCard[0]->m_Pio24b.softReset();
-				nlastNumber = nCurrentNum;
+				nSignalNo= pMainFrm->m_vIOCard[0]->readParam(127); //根据预先保存的图像号来找对应的缺陷
+				lastNumber = nCurrentNum;
+				if(nSignalNo != nlastNumber)//排除加减速造成的图像号一致问题
+				{
+					nlastNumber = nSignalNo;
+					nCheckSendData[pMainFrm->nCountNumber] = pMainFrm->nSendData[nSignalNo];
+					pMainFrm->nCountNumber++;
+					if(pMainFrm->nCountNumber == 256)//发送256个数据到服务器进行汇总
+					{
+						pMainFrm->nCountNumber = 0;
+						nTempStruct.nState = SENDDATA;
+						nTempStruct.nCount = 256;
+						memcpy(m_reportPtr,&nTempStruct,sizeof(MyStruct));
+						nTPtr = m_reportPtr;
+						nTPtr+=sizeof(MyStruct);
+						memcpy(nTPtr,&nCheckSendData,256*sizeof(MyErrorType));
+						memset(nCheckSendData,0,256*sizeof(MyErrorType));
+
+						QByteArray ba(m_reportPtr, 256*sizeof(MyErrorType)+sizeof(MyStruct));
+						pMainFrm->nSocketMutex.lock();
+						pMainFrm->ncSocketWriteData.push_back(ba);
+						pMainFrm->nSocketMutex.unlock();
+					}
+				}
 			}
-			int temp =0;
-			char* nTPtr = m_ptr;
-			nTPtr+=sizeof(MyStruct);
-			if(pMainFrm->nCameraErrorType.count()>0)
-			{
-				MyErrorType ntest = pMainFrm->nCameraErrorType.first();
-				pMainFrm->nCameraErrorType.removeFirst();
-				pMainFrm->nIOCard[16] = ntest.id+1;
-				pMainFrm->nIOCard[17] = ntest.nType;
-			}else{
-				pMainFrm->nIOCard[16] = 1;
-				pMainFrm->nIOCard[17] = 0;
-			}
-			//瓶口瓶底暂时将最后一个值作为PLC报警错误类型来传递
-			if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
-			{
-				pMainFrm->nIOCard[23] = pMainFrm->test_widget->nConsole->m_plc->nErrorType;
-			}
-			memcpy(nTPtr,pMainFrm->nIOCard,24*sizeof(int));
-			memset(pMainFrm->nIOCard,0,24*sizeof(int));
-			pMainFrm->m_tcpSocket->write(m_ptr,sizeof(MyStruct)+ 24*sizeof(int));
 		}
-		//暂时不考虑断线重连
-		
-		Sleep(1000);
+		Sleep(1);
 	}
-	delete m_ptr;
 	return TRUE;
 }
 GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
@@ -104,37 +111,40 @@ GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
 	m_vcolorTable.clear();
 	for (int i = 0; i < 256; i++)  
 	{  
+		nSendData[i].id = 0;
+		nSendData[i].nErrorArea = 0;
+		nSendData[i].nType = 0;
 		m_vcolorTable.append(qRgb(i, i, i)); 
 	}
 	CherkerAry.pCheckerlist=NULL;
 	surplusDays=0;
 
 	//网络通信初始化
-	nFailCount = 0;
-	nAllConut = 0;
-	nSendData = new int[256*24];
-	memset(nSendData,0,256*24);
-	nCheckSendData = new int[256*24];
-	memset(nCheckSendData,0,256*24);
+	nCountNumber = -1;
 	nIOCard = new int[24];
-
-	m_ptr = new char[256*24*sizeof(int)+sizeof(MyStruct)];
+	memset(nIOCard,0,24*sizeof(int));
+	m_ptr = new char[24*sizeof(int)+sizeof(MyStruct)];
+	memset(m_ptr ,0,24*sizeof(int)+sizeof(MyStruct));
 }
 QString GlasswareDetectSystem::getVersion(QString strFullName)
 {
-#ifdef WIN_32_1_10
-	QString temp(tr("Version:")+"3.32.");
-#else
-	QString temp(tr("Version:")+"3.64.");
-#endif
-	return temp+"1.12";
+	QString SysType;
+	if(m_sSystemInfo.m_iSystemType == 1)
+	{
+		SysType = QString(tr("UpDown"));
+	}else if(m_sSystemInfo.m_iSystemType == 2)
+	{
+		SysType = QString(tr("ClampDown"));
+	}else if(m_sSystemInfo.m_iSystemType == 3)
+	{
+		SysType = QString(tr("GoDown"));
+	}
+	return SysType + QString(tr("Version:")+"5.64.1.0");
 }
 GlasswareDetectSystem::~GlasswareDetectSystem()
 {
-	delete nSendData;
-	delete nCheckSendData;
-	delete nIOCard;
 	delete m_ptr;
+	delete nIOCard;
 }
 void GlasswareDetectSystem::Init()
 {
@@ -308,11 +318,8 @@ void GlasswareDetectSystem::InitParameter()
 	QString path = QApplication::applicationFilePath();  
 	appPath = path.left(path.findRev("/")+1);
 	m_sConfigInfo.m_strAppPath = appPath;
-	pMainFrm->Logfile.write(tr("Get Version"),AbnormityLog);
-
 	//获取文件版本号
 	sVersion = getVersion(path);
-
 	//配置文件在run目录中位置
 	m_sConfigInfo.m_strConfigPath = "Config/Config.ini";
 	m_sConfigInfo.m_strDataPath = "Config/Data.ini";
@@ -343,7 +350,9 @@ void GlasswareDetectSystem::InitParameter()
 	}
 	m_tcpSocket = new QTcpSocket();
 	m_tcpSocket->connectToHost("192.168.250.204",8088);
-	//m_tcpSocket->connectToHost("192.168.20.124",8088);
+	//m_tcpSocket->connectToHost("10.41.48.52",8088);
+	//m_tcpSocket->connectToHost("10.41.61.15",8088);
+	//m_tcpSocket->connectToHost("192.168.20.116",8088);10.41.61.15
 	if(m_tcpSocket->waitForConnected(3000))
 	{
 		connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(onServerDataReady()));
@@ -361,10 +370,20 @@ void GlasswareDetectSystem::onServerDataReady()
 	if(((MyStruct*)t_ptr)->nState == CLEAR)
 	{
 		widget_carveSetting->errorList_widget->slots_clearTable();
+		m_sRunningInfo.nGSoap_ErrorTypeCount[0]=0;
+		m_sRunningInfo.nGSoap_ErrorCamCount[0]=0;
+		m_sRunningInfo.nGSoap_ErrorTypeCount[2]=0;
+		m_sRunningInfo.nGSoap_ErrorCamCount[2]=0;
 		m_sRunningInfo.m_checkedNum = 0;
 		m_sRunningInfo.m_failureNumFromIOcard = 0;
 		test_widget->nConsole->nInfo.m_checkedNum = 0;
 		test_widget->nConsole->nInfo.m_checkedNum2 = 0;
+		m_vIOCard[0]->m_Pio24b.softReset();
+		pMainFrm->nCountNumber = 0;
+		if(m_sSystemInfo.m_iSystemType == 2)
+		{
+			test_widget->nConsole->m_vIOCard->m_Pio24b.softReset();
+		}
 	}else if(((MyStruct*)t_ptr)->nState == IMAGE)
 	{
 		pMainFrm->slots_turnPage(0);
@@ -373,12 +392,51 @@ void GlasswareDetectSystem::onServerDataReady()
 		time(&nConnectStartTime);
 	}else if(((MyStruct*)t_ptr)->nState == SEVERS)
 	{
-		MyStruct nTempStruct;
+		/*MyStruct nTempStruct;
 		nTempStruct.nCount = test_widget->nConsole->nInfo.m_checkedNum;
 		nTempStruct.nFail =	test_widget->nConsole->nInfo.m_checkedNum2;
 		nTempStruct.nState = SEVERS;
 		nTempStruct.nUnit = CLAMPING;
-		m_tcpSocket->write((char*)&nTempStruct,sizeof(MyStruct));
+		m_tcpSocket->write((char*)&nTempStruct,sizeof(MyStruct));*/
+	}else if(((MyStruct*)t_ptr)->nState == SYSTEMMODEADD)
+	{
+		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+		{
+			slots_OnBtnStar();
+		}
+		if(m_sSystemInfo.m_bIsTest)
+		{
+			widget_carveSetting->widgetCarveImage->slots_startTest();
+		}
+		//创建新的模板函数
+		QString nAddModeName = ((MyStruct*)t_ptr)->nTemp;
+		widget_Management->SeverAdd(nAddModeName);
+	}else if(((MyStruct*)t_ptr)->nState == SYSTEMMODESELECT)
+	{
+		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+		{
+			slots_OnBtnStar();
+		}
+		if(m_sSystemInfo.m_bIsTest)
+		{
+			widget_carveSetting->widgetCarveImage->slots_startTest();
+		}
+		//创建新的模板函数
+		QString nAddModeName = ((MyStruct*)t_ptr)->nTemp;
+		widget_Management->SeverSelect(nAddModeName);
+	}else if(((MyStruct*)t_ptr)->nState == SYSTEMMODEDELTE)
+	{
+		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+		{
+			slots_OnBtnStar();
+		}
+		if(m_sSystemInfo.m_bIsTest)
+		{
+			widget_carveSetting->widgetCarveImage->slots_startTest();
+		}
+		//创建新的模板函数
+		QString nAddModeName = ((MyStruct*)t_ptr)->nTemp;
+		widget_Management->SeverDelete(nAddModeName);
 	}
 }
 void GlasswareDetectSystem::mouseMoveEvent(QMouseEvent *event)
@@ -527,16 +585,7 @@ void GlasswareDetectSystem::ReadIniInformation()
 	//切割后相机个数
 	m_sSystemInfo.iCamCount = iniset.value("/system/CarveDeviceCount",1).toInt();
 
-	/*for(int i=0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
-	{
-		if(i >= pMainFrm->m_sSystemInfo.iRealCamCount)
-		{
-			m_sCarvedCamInfo[i].m_iToRealCamera = i - pMainFrm->m_sSystemInfo.iRealCamCount;
-		}else
-		{
-			m_sCarvedCamInfo[i].m_iToRealCamera = i;
-		}
-	}*/
+	
 	for (int i=0;i<m_sSystemInfo.iRealCamCount;i++)
 	{
 		struGrabCardPara[i].iGrabberTypeSN = 1;
@@ -578,7 +627,7 @@ void GlasswareDetectSystem::ReadIniInformation()
 		m_sRealCamInfo[i].m_iShuter=iniCameraSet.value(strShuter,20).toInt();
 		m_sRealCamInfo[i].m_iTrigger=iniCameraSet.value(strTrigger,1).toInt();//默认外触发
 	}
-	
+	sVersion = getVersion(NULL);
 	//read Equipment maintenance Config
 	m_sRuntimeInfo.isEnable = runtimeCfg.value("EquipAlarm/Enable",false).toBool();
 	m_sRuntimeInfo.total = runtimeCfg.value("EquipAlarm/total",20).toInt();
@@ -867,8 +916,8 @@ void GlasswareDetectSystem::InitImage()
 
 			m_sCarvedCamInfo[i].sImageLocInfo[k].m_iHaveInfo = 0;
 			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nCount = 0;
-			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry = new int[4*BOTTLEXLD_POINTNUM];
-			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry = new int[4*BOTTLEXLD_POINTNUM];
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry = new int[BOTTLEXLD_POINTNUM];
+			m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry = new int[BOTTLEXLD_POINTNUM];
 			memset(m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nRowsAry,0, 4*BOTTLEXLD_POINTNUM);
 			memset(m_sCarvedCamInfo[i].sImageLocInfo[k].m_AlgImageLocInfos.sXldPoint.nColsAry,0, 4*BOTTLEXLD_POINTNUM);
 			// 				memset
@@ -1012,7 +1061,8 @@ void GlasswareDetectSystem::StartDetectThread()
 void GlasswareDetectSystem::initDetectThread()
 {
 	m_bIsThreadDead = FALSE;
-	//CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)SendDetect, this, 0, NULL );
+	CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)SendDetect, this, 0, NULL );
+	CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)SendIOCard, this, 0, NULL );
 	for (int i=0;i<m_sSystemInfo.iCamCount;i++)
 	{
 		pdetthread[i] = new DetectThread(this,i);
@@ -1059,7 +1109,6 @@ void GlasswareDetectSystem::initInterface()
 		cameraStatus->setObjectName("toolButtonCamera");
 		cameraStatus->setAlignment(Qt::AlignCenter);
 		cameraStatus->setText(QString::number(i+1));
-
 		cameraStatus_list.append(cameraStatus);
 		gridLayoutStatusLight->addWidget(cameraStatus,i%2,i/2);
 	}
@@ -1118,7 +1167,6 @@ void GlasswareDetectSystem::initInterface()
 	connect(nSockScreen, SIGNAL(timeout()), this, SLOT(slot_SockScreen()));    
  	for (int i = 0;i < pMainFrm->m_sSystemInfo.iCamCount;i++)
 	{
-		connect(pMainFrm->pdetthread[i], SIGNAL(signals_AddDataToBase(int,int,int*)), this, SLOT(slots_addDataToBase(int,int,int*)));
 		connect(pMainFrm->pdetthread[i], SIGNAL(signals_upDateCamera(int,int)), this, SLOT(slots_updateCameraState(int,int)));
 	}
 	connect(pMainFrm->widget_carveSetting->image_widget, SIGNAL(signals_SetCameraStatus(int,int)), this, SLOT(slots_SetCameraStatus(int,int)));
@@ -1127,43 +1175,15 @@ void GlasswareDetectSystem::initInterface()
 	title_widget->turnPage("0");
 	skin.fill(QColor(90,90,90,120));
 }
-void GlasswareDetectSystem::slots_addDataToBase(int nFailCount,int nSendCount,int* nDataAddress)
-{
-	MyStruct nTempStruct;
-	int temp =0;
-	char* nTPtr = m_ptr;
-	nTempStruct.nCount = nSendCount;
-	nTempStruct.nFail = nFailCount;
-	nTempStruct.nState = SENDDATA;
-	if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
-	{
-		temp = 24;
-		nTempStruct.nUnit = LEADING;
-	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
-	{
-		temp = 4;
-		nTempStruct.nUnit = CLAMPING;
-	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
-	{
-		temp = 24;
-		nTempStruct.nUnit = BACKING;
-	}
-	memcpy(nTPtr,&nTempStruct,sizeof(MyStruct));
-	nTPtr+=sizeof(MyStruct);
-	for(int i=0;i<nSendCount;i++)
-	{
-		memcpy(nTPtr,nDataAddress,temp*sizeof(int));
-		nTPtr += sizeof(int)*temp;
-		nDataAddress+=24;
-	}
-	//Logfile.write("send data",CheckLog);
-	m_tcpSocket->write(m_ptr,sizeof(MyStruct)+ nSendCount*temp*sizeof(int));
-}
 void GlasswareDetectSystem::SendDataToSever(int nSendCount,StateEnum nState)
 {
 	MyStruct nTempStruct;
 	nTempStruct.nState = nState;
-	m_tcpSocket->write((char*)&nTempStruct,sizeof(MyStruct));
+	QByteArray ba((char*)&nTempStruct, sizeof(MyStruct));
+	nSocketMutex.lock();
+	ncSocketWriteData.push_back(ba);
+	nSocketMutex.unlock();
+	//m_tcpSocket->write((char*)&nTempStruct,sizeof(MyStruct));
 }
 void GlasswareDetectSystem::slots_UpdateCoderNumber()
 {
@@ -1199,6 +1219,60 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 		labelCoder->setText(strEncoder+strTime+tr("Remaining days of use：%1 ").arg(surplusDays)); //剩余使用天数：%1
 	}else{
 		labelCoder->setText(strEncoder+strTime);
+	}
+	//保存IO卡的数据准备发送
+	if(m_sRunningInfo.m_bCheck && m_sSystemInfo.m_bIsIOCardOK)
+	{
+		MyStruct nTempStruct;
+		if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
+		{
+			nTempStruct.nUnit = LEADING;
+		}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+		{
+			nTempStruct.nUnit = CLAMPING;
+		}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
+		{
+			nTempStruct.nUnit = BACKING;
+		}
+		char* nTPIOtr;
+		if(pMainFrm->nCameraErrorType.count()>0)
+		{
+			nTempStruct.nState = ALERT;
+			memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
+			nTPIOtr = m_ptr;
+			nTPIOtr+=sizeof(MyStruct);
+			MyErrorType nTest = pMainFrm->nCameraErrorType.first();
+			nCameraErrorType.removeFirst();
+			nIOCard[16] = nTest.id+1;
+			nIOCard[17] = nTest.nType;
+			if(m_sSystemInfo.m_iSystemType == 2)
+			{
+				nIOCard[21] = test_widget->nConsole->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
+				nIOCard[22] = test_widget->nConsole->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
+				nIOCard[23] = test_widget->nConsole->m_plc->nErrorType;
+			}
+			memcpy(nTPIOtr,nIOCard,24*sizeof(int));
+			memset(nIOCard,0,24*sizeof(int));
+			QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
+			nSocketMutex.lock();
+			pMainFrm->ncSocketWriteData.push_back(ba);
+			nSocketMutex.unlock();
+		}else{
+			nTempStruct.nState = ALERT;
+			memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
+			nTPIOtr = m_ptr;
+			nTPIOtr+=sizeof(MyStruct);
+			if(m_sSystemInfo.m_iSystemType == 2)
+			{
+				nIOCard[23] = test_widget->nConsole->m_plc->nErrorType;
+			}
+			memcpy(nTPIOtr,nIOCard,24*sizeof(int));
+			memset(nIOCard,0,24*sizeof(int));
+			QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
+			nSocketMutex.lock();
+			pMainFrm->ncSocketWriteData.push_back(ba);
+			nSocketMutex.unlock();
+		}
 	}
 }
 void GlasswareDetectSystem::slots_updateCameraState(int nCam,int mode)
@@ -1325,6 +1399,11 @@ void GlasswareDetectSystem::slots_OnBtnStar()
 				m_sRealCamInfo[i].m_iImageIdxLast[0] = 0;
 				m_sRealCamInfo[i].m_iImageIdxLast[1] = 0;
 			}
+			m_sRunningInfo.nGSoap_ErrorTypeCount[0]=0;
+			m_sRunningInfo.nGSoap_ErrorCamCount[0]=0;
+			m_sRunningInfo.nGSoap_ErrorTypeCount[2]=0;
+			m_sRunningInfo.nGSoap_ErrorCamCount[2]=0;
+
 			pMainFrm->Logfile.write(tr("Start Check"),OperationLog);
 			m_sRunningInfo.m_bCheck = true;
 		}
@@ -1559,6 +1638,15 @@ void GlasswareDetectSystem::ShowCheckSet(int nCamIdx,int signalNumber)
 }
 void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 {
+	QSettings iniDataSet(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
+	iniDataSet.setIniCodec(QTextCodec::codecForName("GBK"));
+	QString strSession;
+	strSession=QString("/system/checkedNum");
+	iniDataSet.setValue(strSession,m_sRunningInfo.m_checkedNum);
+
+	strSession = QString("/system/failureNum");
+	iniDataSet.setValue(strSession,m_sRunningInfo.m_failureNumFromIOcard);
+
 	if (ifyanz || QMessageBox::Yes == QMessageBox::question(this,tr("Exit"),
 		tr("Are you sure to exit?"),
 		QMessageBox::Yes | QMessageBox::No))	
@@ -1573,7 +1661,7 @@ void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 			QMessageBox::information(this,tr("Infomation"),tr("Please Stop Detection First!"));
 			return;		
 		}
-		//emit widget_count->widgetCountSet->ui.pushButton_save;
+		
 		EquipRuntime::Instance()->EquipExitLogFile();
 		ToolButton *TBtn = title_widget->button_list.at(4);
 		pMainFrm->Logfile.write(tr("Close ModelDlg!"),OperationLog);
@@ -1585,10 +1673,6 @@ void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 		}
 		CloseCam();
 		ReleaseAll();
-		QSettings iniset(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
-		iniset.setIniCodec(QTextCodec::codecForName("GBK"));
-		iniset.setValue("/system/failureNum",m_sRunningInfo.m_failureNumFromIOcard);
-		iniset.setValue("/system/checkedNum",m_sRunningInfo.m_checkedNum);
 		ReleaseIOCard();
 		exit(0);
 		//close();
@@ -1597,102 +1681,94 @@ void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 int GlasswareDetectSystem::ReadImageSignal(int nImageNum,int cameraID)
 {
 	//接口卡获取图像号
-	/*if(m_sSystemInfo.m_iSystemType != 2)
+	if(m_sSystemInfo.m_iSystemType != 2)
 	{
-	switch(nImageNum) 
-	{
-	case 1:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(28);
-	break;
-	case 2:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(31);
-	break;
-	case 3:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(29);
-	break;
-	case 4:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(30);
-	break;
-	case 5:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(49);
-	break;
-	case 6:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(50);
-	break;
-	default:
-	return 0;
-	}
+		switch(nImageNum) 
+		{
+		case 1:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(28);
+		case 2:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(31);
+		case 3:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(29);
+		case 4:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(30);
+		case 5:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(49);
+		case 6:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(50);
+		default:
+			return 0;
+		}
 	}else{
-	switch(nImageNum) 
-	{
-	case 1:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(28);
-	break;
-	case 2:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(31);
-	break;
-	case 3:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(51);
-	break;
-	case 4:
-	return pMainFrm->m_vIOCard[0]->ReadImageSignal(52);
-	break;
-	default:
-	return 0;
+		switch(nImageNum) 
+		{
+		case 1:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(49);
+		case 2:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(50);
+		case 3:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(51);
+		case 4:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(52);
+		case 5:
+			return pMainFrm->m_vIOCard[0]->ReadImageSignal(35);
+		default:
+			return 0;
+		}
 	}
-	}*/
 	//PLC获取图像号
-	int nImageNo = -1;
-	//Sleep(1000);
-	if(m_sSystemInfo.m_iSystemType == 1)
-	{
-		switch(nImageNum) 
-		{
-		case 1:
-			return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
-		case 2:
-			return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
-		case 3:
-			return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
-		case 4:
-			return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
-		case 5:
-			return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
-		case 6:
-			return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
-		}
-	}else if(m_sSystemInfo.m_iSystemType == 2)
-	{
-		switch(nImageNum) 
-		{
-		case 1:
-			return test_widget->nConsole->m_plc->GetImageNo(218,cameraID,nImageNo);
-		case 2:
-			return test_widget->nConsole->m_plc->GetImageNo(220,cameraID,nImageNo);
-		case 3:
-			return test_widget->nConsole->m_plc->GetImageNo(222,cameraID,nImageNo);
-		case 4:
-			return test_widget->nConsole->m_plc->GetImageNo(224,cameraID,nImageNo);
-		}
-	}else if(m_sSystemInfo.m_iSystemType == 3)
-	{
-		switch(nImageNum) 
-		{
-		case 1:
-			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-		case 2:
-			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-		case 3:
-			return test_widget->nConsole->m_plc->GetImageNo(228,cameraID,nImageNo);
-		case 4:
-			return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-		case 5:
-			return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
-		case 6:
-			return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
-		}
-	}
-	return nImageNo;
+	//int nImageNo = -1;
+	////Sleep(1000);
+	//if(m_sSystemInfo.m_iSystemType == 1)
+	//{
+	//	switch(nImageNum) 
+	//	{
+	//	case 1:
+	//		return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
+	//	case 2:
+	//		return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
+	//	case 3:
+	//		return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
+	//	case 4:
+	//		return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
+	//	case 5:
+	//		return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
+	//	case 6:
+	//		return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
+	//	}
+	//}else if(m_sSystemInfo.m_iSystemType == 2)
+	//{
+	//	switch(nImageNum) 
+	//	{
+	//	case 1:
+	//		return test_widget->nConsole->m_plc->GetImageNo(218,cameraID,nImageNo);
+	//	case 2:
+	//		return test_widget->nConsole->m_plc->GetImageNo(220,cameraID,nImageNo);
+	//	case 3:
+	//		return test_widget->nConsole->m_plc->GetImageNo(222,cameraID,nImageNo);
+	//	case 4:
+	//		return test_widget->nConsole->m_plc->GetImageNo(224,cameraID,nImageNo);
+	//	}
+	//}else if(m_sSystemInfo.m_iSystemType == 3)
+	//{
+	//	switch(nImageNum) 
+	//	{
+	//	case 1:
+	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
+	//	case 2:
+	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
+	//	case 3:
+	//		return test_widget->nConsole->m_plc->GetImageNo(228,cameraID,nImageNo);
+	//	case 4:
+	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
+	//	case 5:
+	//		return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
+	//	case 6:
+	//		return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
+	//	}
+	//}
+	//return nImageNo;
 }
 
 void GlasswareDetectSystem::InitCamImage(int iCameraNo)
@@ -1748,7 +1824,7 @@ void GlasswareDetectSystem::InitCamImage(int iCameraNo)
 	nQueue[i].InitCarveQueue(m_sCarvedCamInfo[i].m_iImageWidth, m_sCarvedCamInfo[i].m_iImageHeight,m_sRealCamInfo[i].m_iImageWidth,m_sRealCamInfo[i].m_iImageHeight,m_sCarvedCamInfo[i].m_iImageBitCount, 10, true);
 	nQueue[i].mGrabLocker.unlock();
 	nQueue[i].mDetectLocker.unlock();
-	SetCarvedCamInfo();
+	//SetCarvedCamInfo();
 }
 bool GlasswareDetectSystem::RoAngle(uchar* pRes,uchar* pTar,int iResWidth,int iResHeight,int iAngle)
 {
@@ -1827,59 +1903,14 @@ void GlasswareDetectSystem::slot_SockScreen()
 
 void GlasswareDetectSystem::InitLastData()
 {
-	//QSettings LoadLastData(SaveDataPath,QSettings::IniFormat);
-	//LoadLastData.setIniCodec(QTextCodec::codecForName("GBK"));
-	//QString strSession;
-	//for (int j = 1;j<=pMainFrm->m_sErrorInfo.m_iErrorTypeCount;j++)
-	//{
-	//	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
-	//	{
-	//		strSession = QString("DefaultTypeCount/EveryRow%1").arg(i);
-	//		int xRowTemp=LoadLastData.value(strSession,-1).toInt();
-
-	//		strSession = QString("DefaultTypeCount/EveryLine%1").arg(j);
-	//		int yLineTemp=LoadLastData.value(strSession,-1).toInt();
-
-	//		if ( xRowTemp == -1 || yLineTemp == -1 )
-	//		{
-	//			continue;
-	//		}
-
-	//		strSession = QString("DefaultTypeCount/EveryNumber%1_%2").arg(xRowTemp).arg(yLineTemp);
-	//		m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp]=LoadLastData.value(strSession,0).toInt();
-	//		m_sRunningInfo.m_iErrorTypeCount[j]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
-	//		m_sRunningInfo.m_iErrorCamCount[i]+=m_sRunningInfo.m_cErrorTypeInfo[xRowTemp].iErrorCountByType[yLineTemp];
-	//	}
-	//}
-	////上一次整点数据
-	//strSession = QString("LastTimeDate/LastTime");
-	//LastTime=QDateTime::fromString(LoadLastData.value(strSession,"0000-00-00 00:00").toString(),"yyyy-MM-dd hh:mm");
-	//strSession = QString("LastTimeDate/Checknumber");
-	////LastTimeData.m_AllCount = LoadLastData.value(strSession,0).toInt();
-	//strSession = QString("LastTimeDate/Failurenumber");
-	////LastTimeData.m_FailCount = LoadLastData.value(strSession,0).toInt();
-	//for (int i=1;i<ERRORTYPE_MAX_COUNT;i++)
-	//{
-	//	strSession = QString("LastTimeDate/ErrorType_%1_count").arg(i);
-	//	//LastTimeData.m_CameraTypeCount[i] = LoadLastData.value(strSession,0).toInt();
-	//}
-	//for (int i=1;i<CAMERA_MAX_COUNT;i++)
-	//{
-	//	for(int j=1;j<ERRORTYPE_MAX_COUNT;j++)
-	//	{
-	//		strSession = QString("LastTimeDate/Camera%1_ErrorType%2").arg(i).arg(j);
-	//		//LastTimeData.m_TypeCount[i][j] = LoadLastData.value(strSession,0).toInt();
-	//	}
-	//}
-
-	QSettings iniset(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
-	iniset.setIniCodec(QTextCodec::codecForName("GBK"));
+	QSettings iniDataSet(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
+	iniDataSet.setIniCodec(QTextCodec::codecForName("GBK"));
 	QString strSession;
 	strSession=QString("/system/checkedNum");
-	m_sRunningInfo.m_checkedNum=iniset.value(strSession,0).toInt();
+	m_sRunningInfo.m_checkedNum=iniDataSet.value(strSession,0).toInt();
 
 	strSession=QString("/system/failureNum");
-	m_sRunningInfo.m_failureNumFromIOcard=iniset.value(strSession,0).toInt();
+	m_sRunningInfo.m_failureNumFromIOcard=iniDataSet.value(strSession,0).toInt();
 }
 #ifdef JIAMI_INITIA
 void GlasswareDetectSystem::MonitorLicense()

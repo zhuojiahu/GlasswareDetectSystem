@@ -178,6 +178,48 @@ void WidgetManagement::slots_new()
 	pMainFrm->Logfile.write((tr("New model:[%1]").arg(strModelName.section("/",-1))),OperationLog);
 
 }
+void WidgetManagement::SeverAdd(QString strModelName)
+{
+	QString strModelPath;
+	QDir dir;
+	strModelPath = pMainFrm->m_sConfigInfo.m_strAppPath+"ModelInfo/"+strModelName;
+	dir.mkpath(strModelPath);
+	QString strSrcPath = pMainFrm->m_sConfigInfo.m_strAppPath + "ModelInfo/" + pMainFrm->m_sSystemInfo.m_strModelName;
+	BackupCate(strModelPath,strSrcPath);
+	UpdateTable();
+	iSelectRow = -1;
+}
+void WidgetManagement::SeverSelect(QString strModelName)
+{
+	pMainFrm->m_sSystemInfo.m_strModelName = strModelName;
+	pMainFrm->m_sConfigInfo.m_strGrabInfoPath = pMainFrm->m_sConfigInfo.m_strAppPath + "ModelInfo/" + strModelName + "/GrabInfo.ini";
+
+	pMainFrm->InitImage();
+	pMainFrm->InitCheckSet();
+
+	pMainFrm->m_sSystemInfo.LastModelName = strModelName;
+	//ΩÁ√Ê
+	UpdateTable();
+	iSelectRow = -1;
+	SaveModelNeme(strModelName);
+	emit signals_clearTable();
+}
+void WidgetManagement::SeverDelete(QString nDeleteModeName)
+{
+	int nSelectRow = 0;
+	for(int i=0;i<dirList.count();i++)
+	{
+		if(dirList.at(i).absoluteFilePath().section("/",-1) == nDeleteModeName)
+		{
+			nSelectRow = i;
+			break;
+		}
+	}
+	QString strDirPath = dirList.at(nSelectRow).absoluteFilePath();
+	DeleteCate(strDirPath);
+	UpdateTable();
+	iSelectRow = -1;
+}
 void WidgetManagement::slots_load(bool bCurModel)
 {
 	if (pMainFrm->m_sRunningInfo.m_bCheck)
@@ -203,9 +245,9 @@ void WidgetManagement::slots_load(bool bCurModel)
 	{
 		return;
 	}
-	for (int iRealCameraSN = 0; iRealCameraSN < pMainFrm->m_sSystemInfo.iRealCamCount;iRealCameraSN++)
+	for (int i = 0; i < pMainFrm->m_sSystemInfo.iRealCamCount;i++)
 	{
-		pMainFrm->m_sRealCamInfo[iRealCameraSN].m_bGrabIsStart = FALSE;
+		pMainFrm->m_sRealCamInfo[i].m_bGrabIsStart = FALSE;
 	}
 	pMainFrm->m_sSystemInfo.m_strModelName = strDirPath.section("/",-1);
 	pMainFrm->m_sConfigInfo.m_strGrabInfoPath = pMainFrm->m_sConfigInfo.m_strAppPath + "ModelInfo/" + pMainFrm->m_sSystemInfo.m_strModelName + "/GrabInfo.ini";
@@ -224,9 +266,9 @@ void WidgetManagement::slots_load(bool bCurModel)
 
 	emit signals_clearTable();
 
-	for (int iRealCameraSN = 0; iRealCameraSN < pMainFrm->m_sSystemInfo.iRealCamCount;iRealCameraSN++)
+	for (int i = 0; i < pMainFrm->m_sSystemInfo.iRealCamCount;i++)
 	{
-		pMainFrm->m_sRealCamInfo[iRealCameraSN].m_bGrabIsStart = TRUE;
+		pMainFrm->m_sRealCamInfo[i].m_bGrabIsStart = TRUE;
 	}
 }
 void WidgetManagement::SaveModelNeme(QString strDirPath)

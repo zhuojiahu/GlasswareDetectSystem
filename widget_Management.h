@@ -46,7 +46,9 @@ public:
 
 	void initCameraPositionWidget();
 	void intoCameraPositionWidget();
-
+	void SeverAdd(QString);
+	void SeverDelete(QString);
+	void SeverSelect(QString);
 signals:
 	void signals_clearTable();
 public slots:
