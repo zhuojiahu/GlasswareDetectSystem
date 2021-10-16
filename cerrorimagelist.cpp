@@ -123,10 +123,10 @@ void CErrorImageList::initail()
 	//利用setModel()方法将数据模型与QTableView绑定--为避免不在该界面时的刷新，取消开始的绑定
 	m_ListErrorWidget->setModel(m_modelError);
 	//设置列宽
-	m_ListErrorWidget->setColumnWidth(0, 60); 
+	m_ListErrorWidget->setColumnWidth(0, 60);
 	m_ListErrorWidget->setColumnWidth(1, 60); 
-	m_ListErrorWidget->setColumnWidth(2, 80); 
-	m_ListErrorWidget->setColumnWidth(3, 80); 
+	m_ListErrorWidget->setColumnWidth(2, 60); 
+	m_ListErrorWidget->setColumnWidth(3, 60); 
 
 	CherkerAry.iValidNum = pMainFrm->m_sSystemInfo.iCamCount;
 	CherkerAry.pCheckerlist = new s_CheckerList[CherkerAry.iValidNum];

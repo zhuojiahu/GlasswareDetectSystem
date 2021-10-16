@@ -40,7 +40,7 @@ QConsole::QConsole(int SystemType,QWidget *parent)
 		nReadIOcard = new QTimer(this);
 		nReadIOcard->setInterval(1000);
 		connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
-		//nReadIOcard->start();
+		nReadIOcard->start();
 	}
 	m_plc = new Widget_PLC(parent,nType);
 	connect(m_plc,SIGNAL(signals_ResetCard()),this,SLOT(slot_ResetIoCard()));
@@ -58,18 +58,21 @@ void QConsole::slot_readIoCard()
 {
 	if (pMainFrm->m_sRunningInfo.m_bCheck && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 	{
-		int nCheckNum = m_vIOCard->ReadCounter(3);
-		int nFailNum = m_vIOCard->ReadCounter(4);
-		if((nCheckNum - nInfo.m_passNum>0)&&(nCheckNum - nInfo.m_passNum<50))
+		if(nType == 2)
 		{
-			nInfo.m_checkedNum += nCheckNum - nInfo.m_passNum;
+			int nCheckNum = m_vIOCard->ReadCounter(3);
+			int nFailNum = m_vIOCard->ReadCounter(4);
+			if((nCheckNum - nInfo.m_passNum>0)&&(nCheckNum - nInfo.m_passNum<50))
+			{
+				nInfo.m_checkedNum += nCheckNum - nInfo.m_passNum;
+			}
+			nInfo.m_passNum = nCheckNum;
+			if((nFailNum - nInfo.m_failureNum>0)&&(nFailNum - nInfo.m_failureNum<50))
+			{
+				nInfo.m_checkedNum2 += nFailNum - nInfo.m_failureNum;
+			}
+			nInfo.m_failureNum = nFailNum;
 		}
-		nInfo.m_passNum = nCheckNum;
-		if((nFailNum - nInfo.m_failureNum>0)&&(nFailNum - nInfo.m_failureNum<50))
-		{
-			nInfo.m_checkedNum2 += nFailNum - nInfo.m_failureNum;
-		}
-		nInfo.m_failureNum = nFailNum;
 	}
 }
 void QConsole::closeEvent(QCloseEvent *event)
@@ -105,6 +108,7 @@ void QConsole::slot_OpenPLC()
 {
 	QByteArray st;
 	m_plc->SendMessage(97,st,1,2,110);//暂时获取界面显示的所有数据2+8*5+8*8+4
+	m_plc->raise();
 	m_plc->show();
 }
 void QConsole::slot_OpenCard()

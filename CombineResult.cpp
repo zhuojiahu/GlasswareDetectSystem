@@ -1,6 +1,5 @@
 #include "CombineResult.h"
 #include "clogFile.h"
-
 CCombineRlt::CCombineRlt()
 {
 	i_CameraCount = 0;

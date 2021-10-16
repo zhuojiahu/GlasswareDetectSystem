@@ -19,6 +19,7 @@ WidgetCarveSetting::WidgetCarveSetting(QWidget *parent)
 	pStackedCarve = new QStackedWidget(this);
 	image_widget = new ImageWidget(this);
 	errorList_widget = new CErrorImageList(this);
+	//pStackedCarve->setCurrentIndex(0);
 	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
 	{
 		widgetCarveImage = new Widget_CarveImage;
@@ -86,7 +87,8 @@ WidgetCarveSetting::WidgetCarveSetting(QWidget *parent)
   	splitter->setSizes(listSplitter);
 
 	setWidget->setVisible(false);
-	slots_turnCameraPage(0);
+	//slots_turnCameraPage(0);
+	iCameraNo = 0;
 	buttonGroupCamera->button(0)->setText(QString("*%1").arg(1));
 	buttonGroupCamera->button(0)->setStyleSheet("background-color:green");
 
@@ -163,6 +165,7 @@ void WidgetCarveSetting::slots_turnCameraPage(int index)
 	tempCarveInfo->ui.spinBox_exposureTime->setValue(pMainFrm->m_sRealCamInfo[pMainFrm->m_sCarvedCamInfo[index].m_iToRealCamera].m_iShuter);
 	//tempCarveiamge->updateActiveImg(index);
 	tempCarveiamge->intoWidget();
+	tempCarveiamge->slots_cancel();
 }
 
 void WidgetCarveSetting::slots_showCarve()

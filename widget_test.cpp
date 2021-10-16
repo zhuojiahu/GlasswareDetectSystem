@@ -67,6 +67,7 @@ WidgetTest::~WidgetTest()
 }
 void WidgetTest::slot_openPlcSet()
 {
+	nConsole->raise();
 	nConsole->show();
 }
 void WidgetTest::slots_intoWidget()

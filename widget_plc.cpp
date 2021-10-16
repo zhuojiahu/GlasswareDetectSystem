@@ -47,6 +47,7 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	nErrorType = 0;
 	nErrorCameraID = 0;
 	nSystemType = SystemType;
+	
 	/*for(int i=0;i<40;i++)
 	{
 	nHandle[i] = CreateEvent(NULL,FALSE,NULL,NULL);
@@ -79,11 +80,11 @@ void Widget_PLC::slots_CrashTimeOut()
 	DataToByte(zTest,st);
 	if(nSystemType == 1)
 	{
-		SendMessage(200,st,1,1,8);
+		SendMessage(200,st,2,1,8);
 	}else if(nSystemType == 2){
-		SendMessage(204,st,1,1,8);
+		SendMessage(204,st,2,1,8);
 	}else if(nSystemType == 3){
-		SendMessage(208,st,1,1,8);
+		SendMessage(208,st,2,1,8);
 	}
 }
 void Widget_PLC::slots_TimeOut()

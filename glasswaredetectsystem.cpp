@@ -116,6 +116,7 @@ GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
 		nSendData[i].nType = 0;
 		m_vcolorTable.append(qRgb(i, i, i)); 
 	}
+	//m_eCurrentMainPage = CarveSettingPage;
 	CherkerAry.pCheckerlist=NULL;
 	surplusDays=0;
 
@@ -271,7 +272,6 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 			}
 		}
 	}
-
 	CGrabElement *pGrabElement = NULL;
 
 	if(nQueue[tempCamera].listGrab.count()>0)
@@ -584,7 +584,13 @@ void GlasswareDetectSystem::ReadIniInformation()
 
 	//切割后相机个数
 	m_sSystemInfo.iCamCount = iniset.value("/system/CarveDeviceCount",1).toInt();
-
+	if(pMainFrm->m_sSystemInfo.m_iSystemType != 2)
+	{
+		if(m_sSystemInfo.iCamCount>m_sSystemInfo.iRealCamCount+m_sSystemInfo.iRealCamCount/2)
+		{
+			m_sSystemInfo.iCamCount = m_sSystemInfo.iRealCamCount+m_sSystemInfo.iRealCamCount/2;
+		}
+	}
 	
 	for (int i=0;i<m_sSystemInfo.iRealCamCount;i++)
 	{
@@ -1264,6 +1270,8 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 			nTPIOtr+=sizeof(MyStruct);
 			if(m_sSystemInfo.m_iSystemType == 2)
 			{
+				nIOCard[21] = test_widget->nConsole->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
+				nIOCard[22] = test_widget->nConsole->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
 				nIOCard[23] = test_widget->nConsole->m_plc->nErrorType;
 			}
 			memcpy(nTPIOtr,nIOCard,24*sizeof(int));
