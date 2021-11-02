@@ -7,8 +7,54 @@
 #include "widget_camera.h"
 #include "ui_widget_test.h"
 #include "camerasatuslabel.h"
-#include "qconsole.h"
-
+#include "widget_plc.h"
+#include "CIOCard.h"
+enum StateEnum
+{
+	SENDDATA,
+	GETSUCCESS,
+	CLEAR,
+	CONNECT,
+	LOCKSCREEN,
+	ALERT,
+	SEVERS,//服务器
+	IMAGE,
+	NLEADING,
+	NCLAMPING,
+	NBACKING,
+	MAININTERFACE,
+	SYSTEMMODEADD,
+	SYSTEMMODESELECT,
+	SYSTEMMODEDELTE
+};
+enum UnitEnum
+{
+	LEADING, //前端
+	CLAMPING,//夹持
+	BACKING,//后端
+};
+struct MyStruct
+{
+	StateEnum nState;//发送状态标志位
+	UnitEnum nUnit;//发送的设备标志位
+	int nCount;//前端通过in0得到的过检总数
+	int nFail;//前端通过out3得到的踢废总数
+	char nTemp[256];//前端的多余变量
+};
+struct NingInfo
+{
+	int m_checkedNum;
+	int m_passNum;
+	int m_failureNum;
+	int m_checkedNum2;
+	NingInfo()
+	{
+		m_checkedNum = 0;
+		m_passNum = 0;
+		m_failureNum = 0;
+		m_checkedNum2 = 0;
+	}
+};
 class WidgetTest : public QWidget
 {
 	Q_OBJECT
@@ -37,6 +83,8 @@ signals:
 	void signals_ShowWarning(int , QString );
 	void signal_UsualSend(int);
 public slots:
+	void slot_ConnectSever();
+	void slot_readIoCard();
 	void slot_openPlcSet();
 	void slots_intoWidget();
 	void slots_ChoseCamera();
@@ -94,9 +142,15 @@ private:
 	QTimer* CameraOffAreet;
 
 	QList<CameraStatusLabel*> m_EquipAlarmStatusList;
-
+	
 public:
-	QConsole* nConsole;
+	QMutex nTestCounter;
+	CIOCard* m_vIOCard;
+	QTimer* nReadIOcard;
+public:
+	NingInfo nInfo;
+	Widget_PLC * m_plc;
+	//QConsole* nConsole;
 	int iIOCardOffSet;
 	int ifshowImage;
 	int CameraOFF[CAMERA_MAX_COUNT];

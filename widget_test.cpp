@@ -48,14 +48,40 @@ WidgetTest::WidgetTest(QWidget *parent)
 	ui.Distance1to4->setText(QString::number(iIOCardOffSet));
 
 	//瓶口瓶底增加控件控制PLC通讯
-	nConsole = new QConsole(pMainFrm->m_sSystemInfo.m_iSystemType);
-	nConsole->setStyleSheet("background:white");
 	connect(ui.pushButton_set,SIGNAL(clicked()),this,SLOT(slot_openPlcSet()));
+	connect(ui.pushButton,SIGNAL(clicked()),this,SLOT(slot_ConnectSever()));
+	m_plc = new Widget_PLC(ui.widget_splc,pMainFrm->m_sSystemInfo.m_iSystemType);
+	ui.gridLayout->addWidget(m_plc);
+
 	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)//隐藏瓶身的按钮，防止前后壁误操作到第二块接口卡
 	{
 		ui.pushButton_set->setVisible(true);
+		m_plc->setVisible(true);
+		if(pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+		{
+			s_ConfigIOCardInfo m_sSystemInfo;
+			m_sSystemInfo.iCardID = 1;
+			m_sSystemInfo.strCardInitFile = QString("./PIO24B_reg_init1.txt");
+			m_sSystemInfo.strCardName = QString("PIO24B");
+			m_vIOCard = new CIOCard(m_sSystemInfo,1);
+			s_IOCardErrorInfo sIOCardErrorInfo = m_vIOCard->InitIOCard();
+			if (!sIOCardErrorInfo.bResult)
+			{
+				pMainFrm->m_sSystemInfo.m_bIsIOCardOK = false;
+				pMainFrm->Logfile.write(tr("Error in init IOCard"),CheckLog);
+			}
+			Sleep(100);
+			m_vIOCard->enable(true);
+			m_vIOCard->writeParam(114,256);
+
+			nReadIOcard = new QTimer(this);
+			nReadIOcard->setInterval(1000);
+			connect(nReadIOcard,SIGNAL(timeout()),this,SLOT(slot_readIoCard()));
+			nReadIOcard->start();
+		}
 	}else{
 		ui.pushButton_set->setVisible(false);
+		m_plc->setVisible(false);
 	}
 	pMainFrm->m_sRunningInfo.m_iKickMode = 2;
 }
@@ -63,12 +89,45 @@ WidgetTest::~WidgetTest()
 {
 	delete widget_ErrorType;
 	delete widget_Camera;
-	delete nConsole;
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	{
+		m_vIOCard->CloseIOCard();
+	}
+}
+void WidgetTest::slot_readIoCard()
+{
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	{
+		nTestCounter.lock();
+		int nCheckNum = m_vIOCard->ReadCounter(3);
+		int nFailNum = m_vIOCard->ReadCounter(4);
+		if((nCheckNum - nInfo.m_passNum>0)&&(nCheckNum - nInfo.m_passNum<50))
+		{
+			nInfo.m_checkedNum += nCheckNum - nInfo.m_passNum;
+		}
+		nInfo.m_passNum = nCheckNum;
+		if((nFailNum - nInfo.m_failureNum>0)&&(nFailNum - nInfo.m_failureNum<50))
+		{
+			nInfo.m_checkedNum2 += nFailNum - nInfo.m_failureNum;
+		}
+		nInfo.m_failureNum = nFailNum;
+		nTestCounter.unlock();
+	}
+}
+void WidgetTest::slot_ConnectSever()
+{
+	pMainFrm->m_tcpSocket->connectToHost("192.168.250.204",8088);
+	m_plc->m_pSocket->connectToHost("192.168.250.1", 9600);
+	if(pMainFrm->m_tcpSocket->waitForConnected(3000) && m_plc->m_pSocket->waitForConnected(3000))
+	{
+		QMessageBox::information(this,tr("message"),tr("connect success!"));
+	}else{
+		QMessageBox::information(this,tr("message"),tr("connect failed!"));
+	}
 }
 void WidgetTest::slot_openPlcSet()
 {
-	nConsole->raise();
-	nConsole->show();
+	m_vIOCard->Show_PIO24B_DebugDialog(this);
 }
 void WidgetTest::slots_intoWidget()
 {	
@@ -129,6 +188,8 @@ void WidgetTest::slots_intoWidget()
 	ui.spinBox_Number->setValue(iSaveImgCount);
 	initInformation();//更新接口卡配置
 	ui.comboBox->setCurrentIndex(ifshowImage);
+	//发送PLC事件，更新数据
+	m_plc->EnterPLC();
 }
 bool WidgetTest::leaveWidget()
 {
@@ -302,6 +363,10 @@ void WidgetTest::initWidgetName()
 	ui.widget_IOCardSet->widgetName->setMaximumHeight(25);
 	ui.widget_IOCounter->addWidget(ui.widget_IOCardSet->widgetName);
 
+	/*ui.verticalLayout_2->setWidgetName(tr("Plc Set"));
+	ui.verticalLayout_2->widgetName->setMaximumHeight(25);
+	ui.verticalLayout_2->addWidget(ui.verticalLayout_2->widgetName);*/
+
 	//modif 2020-11-05 Joge
 	ui.widget_EquipAlarm->setWidgetName(tr("Equipment Maintenance Alarm Set"));
 }
@@ -464,13 +529,13 @@ void WidgetTest::slots_CameraOffAreet()
 			pMainFrm->cameraStatus_list.at(i)->SetCameraStatus(2);
 			//emit signals_ShowWarning(i,QString(tr("Camera %1 Offline ! \nPlease check the camera and restart the software!")).arg(i+1));
 			test = true;
-			nConsole->m_plc->nErrorCameraID = i+1;
+			m_plc->nErrorCameraID = i+1;
 			break;
 		}
 	}
 	if(!test)
 	{
-		nConsole->m_plc->nErrorCameraID = 0;
+		m_plc->nErrorCameraID = 0;
 	}
 	/*if(test)
 	{

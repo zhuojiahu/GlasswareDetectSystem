@@ -427,9 +427,9 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 		if (pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 		{
 			//·¢ËÍÍ¼ÏñºÅ¼ÇÂ¼
-			pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->writeParam(110,nSignalNo);
+			//pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->writeParam(110,nSignalNo);
 			//·¢ËÍÌß·Ï½á¹û
-			Sleep(1);
+			//Sleep(1);
 			pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->SendResult(sResultInfo);
 		}
 		/*if(comResult)

@@ -184,8 +184,11 @@ public:
 public:
 	//涉及网络通信的变量
 	QMutex nSocketMutex;
+	QMutex nSocketNCount;
 	QList<QByteArray> ncSocketWriteData;
 	int nCountNumber;
+	int nLastCheckNum;
+	int nLastFailedNum;
 	time_t n_StartTime;
 	time_t n_EndTime;
 	char* m_ptr;

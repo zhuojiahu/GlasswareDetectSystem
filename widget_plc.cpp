@@ -14,7 +14,6 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	setWindowIcon(QIcon("./Resources/LOGO.png"));
 	setWindowTitle(QString::fromLocal8Bit("PLC设置"));
 	//setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);//去掉标题栏
-	connect(ui.PlcReturn,SIGNAL(clicked()),this,SLOT(slots_return()));
 	connect(ui.SureButton,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonsure()));
 	connect(ui.pushButton_save,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonsave()));
 	connect(ui.pushButton_read,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonread()));
@@ -27,7 +26,7 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	}
 	QIntValidator* IntValidator = new QIntValidator;
 	IntValidator->setRange(1, 60);
-	ui.lineEdit_2->setValidator(IntValidator);
+	//ui.lineEdit_2->setValidator(IntValidator);
 	ui.lineEdit_3->setValidator(IntValidator);
 	ui.lineEdit_4->setValidator(IntValidator);
 	ui.lineEdit_5->setValidator(IntValidator);
@@ -35,10 +34,13 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	IntValidator->setRange(1,450);
 	ui.lineEdit_1->setValidator(IntValidator);
 
-	m_zTimer = new QTimer(this);
-	connect(m_zTimer,SIGNAL(timeout()),this,SLOT(slots_TimeOut()));
-	m_zTimer->start(1000);
-
+	if(SystemType==2)
+	{
+		m_zTimer = new QTimer(this);
+		connect(m_zTimer,SIGNAL(timeout()),this,SLOT(slots_TimeOut()));
+		m_zTimer->start(1000);
+	}
+	
 	m_CrashTimer = new QTimer(this);
 	connect(m_CrashTimer,SIGNAL(timeout()),this,SLOT(slots_CrashTimeOut()));
 	m_CrashTimer->start(10000);
@@ -47,6 +49,23 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	nErrorType = 0;
 	nErrorCameraID = 0;
 	nSystemType = SystemType;
+	
+	//
+	QButtonGroup* test=new QButtonGroup(this);
+	test->addButton(ui.radioButton_3);
+	test->addButton(ui.radioButton_4);
+
+	QButtonGroup* test1=new QButtonGroup(this);
+	test1->addButton(ui.radioButton_5);
+	test1->addButton(ui.radioButton_6);
+
+	QButtonGroup* test3=new QButtonGroup(this);
+	test3->addButton(ui.radioButton_7);
+	test3->addButton(ui.radioButton_8);
+
+	QButtonGroup* test4=new QButtonGroup(this);
+	test4->addButton(ui.radioButton_9);
+	test4->addButton(ui.radioButton_10);
 	
 	/*for(int i=0;i<40;i++)
 	{
@@ -64,6 +83,11 @@ void Widget_PLC::slots_Pushbuttonread()
 {
 	QByteArray st;
 	SendMessage(20,st,1,1,40);
+}
+void Widget_PLC::EnterPLC()
+{
+	QByteArray st;
+	SendMessage(97,st,1,2,110);//暂时获取界面显示的所有数据2+8*5+8*8+4
 }
 void Widget_PLC::slots_CrashTimeOut()
 {
@@ -92,10 +116,6 @@ void Widget_PLC::slots_TimeOut()
 	//获取PLC的报警信息
 	QByteArray st;
 	SendMessage(0,st,1,1,10);//读取报警数据
-}
-void Widget_PLC::slots_return()
-{
-	hide();
 }
 void Widget_PLC::SendDataToPLCHead(int address, QByteArray& st, int state,int id,int DataSize) //参数1为相机ID号，参数2为组装后的数据，参数3为读写状态,参数4为通道ID(可以为任意整数),参数5为数据大小
 {
@@ -212,7 +232,7 @@ void Widget_PLC::slots_readFromPLC()
 		}
 		v_bit+=4;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp);
-		ui.lineEdit_2->setText(QString::number(v_Itmp/100));
+		ui.lineEdit_2->setText(QString::number(v_Itmp*0.01,'2'));
 		v_bit+=4;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp);
 		ui.lineEdit_3->setText(QString::number(v_Itmp/100));
@@ -368,7 +388,7 @@ void Widget_PLC::slots_Pushbuttonsave()
 		TempData = 1;
 	}
 	DataToByte(TempData,st);
-	TempData = ui.lineEdit_2->text().toInt()*100;
+	TempData = ui.lineEdit_2->text().toDouble()*100;
 	DataToByte(TempData,st);
 	TempData = ui.lineEdit_3->text().toInt()*100;
 	DataToByte(TempData,st);

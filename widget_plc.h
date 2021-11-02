@@ -15,7 +15,6 @@ public:
 	Widget_PLC(QWidget *parent,int);
 	~Widget_PLC();
 public slots:
-	void slots_return();
 	void slots_Pushbuttonsure();
 	void slots_Pushbuttonsave();
 	void slots_Pushbuttonread();
@@ -23,6 +22,7 @@ public slots:
 	void slots_TimeOut();
 	void slots_CrashTimeOut();
 public:
+	void EnterPLC();
 	int GetImageNo(int nAddr,int CameraId,int& ImageNo);
 signals:
 	void signals_ResetCard();
