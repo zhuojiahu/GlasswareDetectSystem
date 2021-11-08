@@ -74,8 +74,10 @@ DWORD GlasswareDetectSystem::SendDetect(void* param)
 				{
 					nlastNumber = nSignalNo;
 					nCheckSendData[pMainFrm->nCountNumber] = pMainFrm->nSendData[nSignalNo];
+					pMainFrm->nSendData[nSignalNo].id = 0;
+					pMainFrm->nSendData[nSignalNo].nType = 0;
+					pMainFrm->nSendData[nSignalNo].nErrorArea = 0;
 					pMainFrm->nCountNumber++;
-					//pMainFrm->Logfile.write(QString("send data%1--%2").arg(nSignalNo).arg(nCurrentNum),CheckLog);
 					if(pMainFrm->nCountNumber == 256)//发送256个数据到服务器进行汇总
 					{
 						pMainFrm->nCountNumber = 0;
@@ -83,10 +85,9 @@ DWORD GlasswareDetectSystem::SendDetect(void* param)
 						nTempStruct.nCount = 256;
 						memcpy(m_reportPtr,&nTempStruct,sizeof(MyStruct));
 						nTPtr = m_reportPtr;
-						//pMainFrm->Logfile.write("send data",CheckLog);
 						nTPtr+=sizeof(MyStruct);
 						memcpy(nTPtr,&nCheckSendData,256*sizeof(MyErrorType));
-						memset(nCheckSendData,0,256*sizeof(MyErrorType));
+						memset(&nCheckSendData,0,256*sizeof(MyErrorType));
 						QByteArray ba(m_reportPtr, 256*sizeof(MyErrorType)+sizeof(MyStruct));
 						pMainFrm->nSocketMutex.lock();
 						pMainFrm->ncSocketWriteData.push_back(ba);
@@ -388,7 +389,6 @@ void GlasswareDetectSystem::onServerDataReady()
 		test_widget->nInfo.m_checkedNum2 = 0;
 		test_widget->nInfo.m_passNum = 0;
 		test_widget->nInfo.m_failureNum = 0;
-		nCountNumber = 0;
 		nLastCheckNum=0;
 		nLastFailedNum = 0;
 		QString nClearName = QString(((MyStruct*)t_ptr)->nTemp);
@@ -399,6 +399,7 @@ void GlasswareDetectSystem::onServerDataReady()
 			{
 				test_widget->m_vIOCard->m_Pio24b.softReset();
 			}
+			nCountNumber = 0;
 		}
 	}else if(((MyStruct*)t_ptr)->nState == IMAGE)
 	{

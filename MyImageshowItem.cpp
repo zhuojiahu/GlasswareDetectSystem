@@ -110,8 +110,6 @@ void MyImageShowItem::leaveEvent(QEvent *)
 	btnPrevious->setVisible(false);
 	btnFollowing->setVisible(false);
 	btnStartRefresh->setVisible(false);
-//  	setMinimumSize(0,0);
-//  	setMaximumSize(16777215,16777215);
 }
 
 void MyImageShowItem::paintEvent(QPaintEvent *event)

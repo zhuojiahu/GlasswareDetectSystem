@@ -426,16 +426,8 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 		sResultInfo.nIOCardNum = 0;
 		if (pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
 		{
-			//发送图像号记录
-			//pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->writeParam(110,nSignalNo);
-			//发送踢废结果
-			//Sleep(1);
 			pMainFrm->m_vIOCard[sResultInfo.nIOCardNum]->SendResult(sResultInfo);
 		}
-		/*if(comResult)
-		{
-		pMainFrm->m_sRunningInfo.m_failureNumFromIOcard++;
-		}*/
 		pMainFrm->m_cCombine.SetReject(nSignalNo);
 		//缺陷统计
 		pMainFrm->m_cCombine.RemoveOneResult(nSignalNo);
@@ -605,6 +597,8 @@ void DetectThread::addErrorImageList(CGrabElement *pElement)
 	pErrorElement->nSignalNo = pElement->nSignalNo; 
 	pErrorElement->cErrorRectList = pElement->cErrorRectList;
 	pErrorElement->cErrorParaList = pElement->cErrorParaList;
+	memcpy(pErrorElement->sImgLocInfo.sXldPoint.nColsAry,pElement->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);							
+	memcpy(pErrorElement->sImgLocInfo.sXldPoint.nRowsAry,pElement->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
 	//******************************************
 	if (pErrorElement->myImage != NULL)
 	{

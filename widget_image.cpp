@@ -305,6 +305,8 @@ void ImageWidget::slots_showPrevious(int nItemID)
 		listImageShowItem.at(nItemID)->updateImage(pElement->myImage, camera, imageSN, time, result, mouldID, pElement->cErrorRectList);
 		sAlgImageLocInfo[nItemID].sLocOri = pElement->sImgLocInfo.sLocOri;
 		sAlgImageLocInfo[nItemID].sXldPoint.nCount = pElement->sImgLocInfo.sXldPoint.nCount;
+		memcpy(sAlgImageLocInfo[nItemID].sXldPoint.nColsAry,pElement->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);
+		memcpy(sAlgImageLocInfo[nItemID].sXldPoint.nRowsAry,pElement->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
 		//new一个设置算法用的QImage
 		if (ImageError[nItemID] != NULL)
 		{
@@ -366,6 +368,8 @@ void ImageWidget::slots_showFollowing(int nItemID)
 		listImageShowItem.at(nItemID)->updateImage(pElement->myImage, camera, imageSN, time, result, mouldID, pElement->cErrorRectList);
 		sAlgImageLocInfo[nItemID].sLocOri = pElement->sImgLocInfo.sLocOri;
 		sAlgImageLocInfo[nItemID].sXldPoint.nCount = pElement->sImgLocInfo.sXldPoint.nCount;
+		memcpy(sAlgImageLocInfo[nItemID].sXldPoint.nColsAry,pElement->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);
+		memcpy(sAlgImageLocInfo[nItemID].sXldPoint.nRowsAry,pElement->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
 		//new一个设置算法用的QImage
 		if (ImageError[nItemID] != NULL)
 		{
