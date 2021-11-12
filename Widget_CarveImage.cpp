@@ -17,6 +17,7 @@ Widget_CarveImage::Widget_CarveImage(QWidget *parent)
 	zeroPoint.setX(0);
 	zeroPoint.setY(0);
 
+	
 	pWidgetCarveInfo = new Widget_CarveInfo;
 
 	pWidgetCarveInfo->ui.widget_CameraInfo->setVisible(true);
@@ -77,11 +78,11 @@ Widget_CarveImage::~Widget_CarveImage()
 	ReleaseWidget();
 }
 
+
 void Widget_CarveImage::init(int iCamNo)
 {
 	iCameraNo = iCamNo;
 	int iRealCameraSN =	pMainFrm->m_sCarvedCamInfo[iCameraNo].m_iToRealCamera;
-
 	pImageShown = new QImage(pMainFrm->m_sRealCamInfo[iCamNo].m_iImageWidth,pMainFrm->m_sRealCamInfo[iCamNo].m_iImageHeight,pMainFrm->m_sRealCamInfo[iCamNo].m_iImageBitCount);
 	pImageShown->setColorTable(pMainFrm->m_vcolorTable);
 	maxPoint.setX(pMainFrm->m_sRealCamInfo[iCamNo].m_iImageWidth);
@@ -348,7 +349,7 @@ int Widget_CarveImage::slots_carve()
 		QMessageBox::information(this,"TIPS",tr("Please change to carve mode!"));
 		return 2;
 	}
-	pMainFrm->Logfile.write(tr("Carve image! "),OperationLog);
+	pMainFrm->Logfile.write(("Carve image! "),OperationLog);
 	pCarveRectItem->setVisible(false);
 
 	int m_iRectWidth = (spinBox_W->value())/4*4;
@@ -550,12 +551,11 @@ void Widget_CarveImage::slots_save()
 }
 void Widget_CarveImage::slots_CopyROI()
 {
-	/*for(int i=0; i<pMainFrm->m_sSystemInfo.iCamCount;i++)
+	if(pMainFrm->m_sSystemInfo.m_iSystemType != 2)
 	{
-	Widget_CarveImage* widgetCarveImage = pMainFrm->widget_carveSetting->listWidgetCarveImage.at(i);
-	widgetCarveImage->topPoint = topPoint;
-	widgetCarveImage->buttomPoint = buttomPoint;
-	}*/
+		pMainFrm->nLightSource->raise();
+		pMainFrm->nLightSource->showNormal();
+	}
 }
 
 void Widget_CarveImage::slots_mousePressEvent(QMouseEvent *event)
@@ -1548,7 +1548,7 @@ void Widget_CarveImage::slots_setToCamera()
 			StateTool::WritePrivateProfileQString("PIO24B",strPara,strValue,pMainFrm->m_sSystemInfo.m_sConfigIOCardInfo[0].strCardInitFile);
 		}
 	}
-	pMainFrm->Logfile.write(tr("set camera%1 param,TriggerType:%2,ShuterTime:%3,TriggerDelay:%4!").arg(iCameraSN).arg(iTriggerType).arg(iShuterTime).arg(iTriggerDelay),OperationLog);
+	pMainFrm->Logfile.write(QString("set camera%1 param,TriggerType:%2,ShuterTime:%3,TriggerDelay:%4!").arg(iCameraSN).arg(iTriggerType).arg(iShuterTime).arg(iTriggerDelay),OperationLog);
 }
 void Widget_CarveImage::slots_startTest()
 {

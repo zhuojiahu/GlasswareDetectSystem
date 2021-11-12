@@ -250,9 +250,21 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 	int nWidth, nHeight;
 	mutexDetectElement[iRealCameraSN].lock();
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageBufferAddr, nAddr);
-	pImageBuffer = (uchar*)nAddr;
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageWidth, nWidth);
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageHeight, nHeight);
+	int nAddr2;
+	__int64 lAddr, lAddr2, lAddr3;
+	if (m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageBufferAddr2, nAddr2)) //只有sg加了该功能
+	{
+		lAddr  = (__int64)nAddr & 0xFFFFFFFF;
+		lAddr2 = ((__int64)nAddr2) << 32;
+		lAddr3 = lAddr | lAddr2;
+		pImageBuffer = (uchar*)lAddr3;
+	}
+	else
+	{
+		pImageBuffer = (uchar*)nAddr;
+	}
 	mutexDetectElement[iRealCameraSN].unlock();
 
 	if (m_sSystemInfo.m_bIsIOCardOK)
@@ -409,7 +421,14 @@ void GlasswareDetectSystem::onServerDataReady()
 		time(&nConnectStartTime);
 	}else if(((MyStruct*)t_ptr)->nState == SEVERS)
 	{
-		
+		QString nClearName = QString(((MyStruct*)t_ptr)->nTemp);
+		if(nClearName == "NULL")
+		{
+			nWidgetWarning->hideWarnning();
+		}else{
+			QString nAddModeName = QString::fromLocal8Bit(((MyStruct*)t_ptr)->nTemp);//报警的错误信息
+			nWidgetWarning->showWarnning(nAddModeName);
+		}
 	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == SYSTEMMODEADD)
 	{
 		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
@@ -1176,6 +1195,8 @@ void GlasswareDetectSystem::initInterface()
 	iLastPage = 0;
 	title_widget->turnPage("0");
 	skin.fill(QColor(90,90,90,120));
+	nLightSource = new LightSource();
+	nWidgetWarning = new Widget_Warning();
 }
 void GlasswareDetectSystem::SendDataToSever(int nSendCount,StateEnum nState)
 {
@@ -1402,7 +1423,7 @@ void GlasswareDetectSystem::slots_OnBtnStar()
 			{
 				//for (int i = 0; i< m_sSystemInfo.iIOCardCount;i++)
 				{
-					pMainFrm->Logfile.write(QString(tr("OpenIOCard%1")).arg(0),OperationLog,0);
+					pMainFrm->Logfile.write(QString(("OpenIOCard%1")).arg(0),OperationLog,0);
 					m_vIOCard[0]->enable(true);
 				}
 			}
@@ -1416,7 +1437,7 @@ void GlasswareDetectSystem::slots_OnBtnStar()
 			m_sRunningInfo.nGSoap_ErrorTypeCount[2]=0;
 			m_sRunningInfo.nGSoap_ErrorCamCount[2]=0;
 
-			pMainFrm->Logfile.write(tr("Start Check"),OperationLog);
+			pMainFrm->Logfile.write(("Start Check"),OperationLog);
 			m_sRunningInfo.m_bCheck = true;
 		}
 		else
@@ -1436,14 +1457,14 @@ void GlasswareDetectSystem::slots_OnBtnStar()
 		{
 			//for (int i = 0; i< m_sSystemInfo.iIOCardCount;i++)
 			{
-				pMainFrm->Logfile.write(QString(tr("CloseIOCard%1")).arg(0),OperationLog,0);
+				pMainFrm->Logfile.write(QString(("CloseIOCard%1")).arg(0),OperationLog,0);
 				m_vIOCard[0]->enable(false);
 
 			}
 		}
 		// 停止算法检测 
 		m_sRunningInfo.m_bCheck = false;
-		pMainFrm->Logfile.write(tr("Stop Check"),OperationLog);
+		pMainFrm->Logfile.write(("Stop Check"),OperationLog);
 
 		QPixmap pixmap(":/toolWidget/start");
 		TBtn->setText(tr("Start"));
@@ -1484,7 +1505,7 @@ void  GlasswareDetectSystem::ReleaseIOCard()
 // 关闭相机 [11/11/2010 zhaodt]
 void GlasswareDetectSystem::CloseCam()
 {
-	pMainFrm->Logfile.write(tr("CloseCam"),OperationLog);
+	pMainFrm->Logfile.write(("CloseCam"),OperationLog);
 
 	for (int i=0;i<m_sSystemInfo.iRealCamCount;i++)
 	{
@@ -1645,7 +1666,7 @@ void GlasswareDetectSystem::ShowCheckSet(int nCamIdx,int signalNumber)
 	catch (...)
 	{
 	}
-	pMainFrm->Logfile.write(tr("In to Alg Page")+tr("CamraNo:%1").arg(nCamIdx),OperationLog,0);
+	pMainFrm->Logfile.write(("In to Alg Page")+QString("CamraNo:%1").arg(nCamIdx+1),OperationLog,0);
 	return;	
 }
 void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
@@ -1676,11 +1697,11 @@ void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 		
 		EquipRuntime::Instance()->EquipExitLogFile();
 		ToolButton *TBtn = title_widget->button_list.at(4);
-		pMainFrm->Logfile.write(tr("Close ModelDlg!"),OperationLog);
+		pMainFrm->Logfile.write(("Close ModelDlg!"),OperationLog);
 		s_Status  sReturnStatus = m_cBottleModel.CloseModelDlg();
 		if (sReturnStatus.nErrorID != RETURN_OK)
 		{
-			pMainFrm->Logfile.write(tr("Error in Close ModelDlg--OnExit"),AbnormityLog);
+			pMainFrm->Logfile.write(("Error in Close ModelDlg--OnExit"),AbnormityLog);
 			return;
 		}
 		CloseCam();

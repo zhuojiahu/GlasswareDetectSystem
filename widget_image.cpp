@@ -500,7 +500,7 @@ void ImageWidget::showErrorCheck(int nItemID)
 
 	}
 
-	pMainFrm->Logfile.write(tr("Into Alg page(From failure image)")+tr("CameraNo:%1").arg(nItemID),OperationLog,0);
+	pMainFrm->Logfile.write(QString("Into Alg page(From failure image)")+QString("CameraNo:%1").arg(nItemID),OperationLog,0);
 
 }
 void ImageWidget::slots_stopCheck(int nItemID)
