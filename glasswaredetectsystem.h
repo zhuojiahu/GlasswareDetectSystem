@@ -19,6 +19,8 @@
 #include "Widget_CarveSetting.h"
 #include "widget_Management.h"
 #include "widget_test.h"
+#include "LightSource.h"
+#include "widgetwarning.h"
 #include <time.h>
 
 #include "CombineResult.h"
@@ -120,7 +122,8 @@ public:
 	WidgetManagement *widget_Management;			//品种设置
 	WidgetTest *test_widget;
 	QWidget *widget_alg;
-	//WidgetWarning *widget_Warning;
+	LightSource* nLightSource;
+	Widget_Warning *nWidgetWarning;
 	QString skin_name;						//主窗口背景图片的名称
 	QPixmap skin;
 	//状态栏控件

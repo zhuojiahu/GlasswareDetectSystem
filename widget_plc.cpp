@@ -1,5 +1,4 @@
 #include "widget_plc.h"
-
 #include <QLayout>
 #include <QGroupBox>
 #include <QSettings>

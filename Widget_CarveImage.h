@@ -13,6 +13,8 @@
 #include "cmygraphicsview.h"
 #include "rotemptybottle.h"
 #include "DHBaseWidget.h"
+
+
 class Widget_CarveImage : public QWidget
 {
 	Q_OBJECT

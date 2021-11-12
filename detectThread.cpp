@@ -597,6 +597,8 @@ void DetectThread::addErrorImageList(CGrabElement *pElement)
 	pErrorElement->nSignalNo = pElement->nSignalNo; 
 	pErrorElement->cErrorRectList = pElement->cErrorRectList;
 	pErrorElement->cErrorParaList = pElement->cErrorParaList;
+	pErrorElement->sImgLocInfo.sLocOri = pElement->sImgLocInfo.sLocOri;
+	pErrorElement->sImgLocInfo.sXldPoint.nCount = pElement->sImgLocInfo.sXldPoint.nCount;
 	memcpy(pErrorElement->sImgLocInfo.sXldPoint.nColsAry,pElement->sImgLocInfo.sXldPoint.nColsAry,4*BOTTLEXLD_POINTNUM);							
 	memcpy(pErrorElement->sImgLocInfo.sXldPoint.nRowsAry,pElement->sImgLocInfo.sXldPoint.nRowsAry,4*BOTTLEXLD_POINTNUM);
 	//******************************************
