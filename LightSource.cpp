@@ -34,7 +34,7 @@ void LightSource::initLight()
 		test->setStyleSheet("background-color:gray;border:1px solid rgb(96,96,96)");
 		ui.horizontalLayout->addWidget(test);
 		ui.horizontalLayout->setSpacing(0);
-		nBrightness[i] = 0;
+		nBrightness[i] = 50;
 		nListButton.push_back(test);
 	}
 	ui.checkBox->setStyleSheet("QCheckBox::indicator {width:15px;height:15px;border-radius:7px}""QCheckBox::indicator:checked {background-color:green;}""QCheckBox::indicator:unchecked {background-color:red;}");
@@ -58,6 +58,7 @@ void LightSource::initLight()
 	connect(signal_mapper2, SIGNAL(mapped(int)), this, SLOT(slot_setPushbotton(int)));
 	ui.radioButton->setChecked(false);
 	ui.pushButton_6->setVisible(false);
+	ui.pushButton_3->setVisible(false);
 }
 
 void LightSource::initConfig()
@@ -161,11 +162,18 @@ void LightSource::slot_setPushbotton(int i)
 				i+=4;
 			}
 		}
+		getStyle();
 	case 4:
 		SaveParameter();
 		break;
 	case 5:
 		nBrightness[nPositon] = ui.spinBox->text().toInt();//保存单区域的亮度等级
+		if(nBrightness[nPositon]!=0)
+		{
+			nListButton[nPositon]->setStyleSheet("background-color:green;border:4px solid rgb(0,0,255)");
+		}else{
+			nListButton[nPositon]->setStyleSheet("background-color:gray;border:4px solid rgb(0,0,255)");
+		}
 		break;
 	default:
 		break;

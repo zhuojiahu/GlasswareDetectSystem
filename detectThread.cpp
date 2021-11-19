@@ -52,7 +52,7 @@ void DetectThread::ProcessHanlde(int Camera)
 			memcpy(pMainFrm->m_sRealCamInfo[iCamera].m_pRealImage->bits(),DetectElement.ImageNormal->SourceImage->bits(),lImageSize);
 		}
 		//裁剪原始图片
-		pMainFrm->nQueue[iCamera].mGrabLocker.lock();
+		pMainFrm->m_mutexmCarve[iCamera].lock();
 		long lImageSize = pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageWidth * pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageHeight;
 		if (lImageSize != DetectElement.ImageNormal->myImage->byteCount())
 		{
@@ -61,7 +61,7 @@ void DetectThread::ProcessHanlde(int Camera)
 			delete DetectElement.ImageNormal->SourceImage;
 			delete DetectElement.ImageNormal;
 			DetectElement.ImageNormal = NULL;
-			pMainFrm->nQueue[iCamera].mGrabLocker.unlock();
+			pMainFrm->m_mutexmCarve[iCamera].unlock();
 			return;
 		}
 		pMainFrm->CarveImage(pMainFrm->m_sRealCamInfo[iCamera].m_pRealImage->bits(),pMainFrm->m_sCarvedCamInfo[iCamera].m_pGrabTemp,\
@@ -71,7 +71,7 @@ void DetectThread::ProcessHanlde(int Camera)
 		memcpy(DetectElement.ImageNormal->myImage->bits(), pMainFrm->m_sCarvedCamInfo[iCamera].m_pGrabTemp, \
 			pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageWidth*pMainFrm->m_sCarvedCamInfo[iCamera].m_iImageHeight);
 		//进入检测环节
-		pMainFrm->nQueue[iCamera].mGrabLocker.unlock();
+		pMainFrm->m_mutexmCarve[iCamera].unlock();
 		if(0 == DetectElement.iType)
 		{
 			DetectNormal(DetectElement.ImageNormal);

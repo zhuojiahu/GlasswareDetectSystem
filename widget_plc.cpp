@@ -5,6 +5,10 @@
 #include <QTextCodec>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QGridLayout>
+#include <QSignalMapper>
+#include "glasswaredetectsystem.h"
+extern GlasswareDetectSystem *pMainFrm;
 
 Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	: QWidget(parent)
@@ -49,34 +53,89 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	nErrorCameraID = 0;
 	nSystemType = SystemType;
 	
-	//
-	QButtonGroup* test=new QButtonGroup(this);
-	test->addButton(ui.radioButton_3);
-	test->addButton(ui.radioButton_4);
-
-	QButtonGroup* test1=new QButtonGroup(this);
-	test1->addButton(ui.radioButton_5);
-	test1->addButton(ui.radioButton_6);
-
-	QButtonGroup* test3=new QButtonGroup(this);
-	test3->addButton(ui.radioButton_7);
-	test3->addButton(ui.radioButton_8);
-
 	QButtonGroup* test4=new QButtonGroup(this);
 	test4->addButton(ui.radioButton_9);
 	test4->addButton(ui.radioButton_10);
-	
-	/*for(int i=0;i<40;i++)
+	/////////////////////m_vstrPLCInfoType
+	nPlcAlertNumber = pMainFrm->m_vstrPLCInfoType.count();
+	nAlertDataList = new int[nPlcAlertNumber*3];
+	memset(nAlertDataList,0,nPlcAlertNumber*3*sizeof(int));
+	nAlertSet = new QWidget(this);
+	QPalette pal(nAlertSet->palette());
+	pal.setColor(QPalette::Background,QColor(90,90,90,120));
+	nAlertSet->setAutoFillBackground(true);
+	nAlertSet->setPalette(pal);
+
+	QGridLayout *gridlayout = new QGridLayout(nAlertSet);
+	QSignalMapper* signalmapper = new QSignalMapper(this);//工具栏的信号管理
+	QLabel * labelinfo1= new QLabel(this);
+	labelinfo1->setText(QString::fromLocal8Bit("报警状态"));//勾选表示要报警
+	gridlayout->addWidget(labelinfo1,0,1);
+
+	QLabel * labelinfo2= new QLabel(this);
+	labelinfo2->setText(QString::fromLocal8Bit("输送线状态"));//勾选表示要停止输送线
+	gridlayout->addWidget(labelinfo2,0,2);
+
+	QLabel * labelinfo3= new QLabel(this);
+	labelinfo3->setText(QString::fromLocal8Bit("理瓶器状态"));//勾选表示要停止理瓶器
+	gridlayout->addWidget(labelinfo3,0,3);
+
+	for (int i = 1;i <= nPlcAlertNumber;i++)
 	{
-	nHandle[i] = CreateEvent(NULL,FALSE,NULL,NULL);
-	nImageNum[i] = 0;
-	}*/
+		QLabel * label = new QLabel(this);
+		label->setText(pMainFrm->m_vstrPLCInfoType[i-1]);
+		QCheckBox *checkBox = new QCheckBox(this);
+		connect(checkBox, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+		signalmapper->setMapping(checkBox, i);
+		nlistCheckBox.append(checkBox);
+
+		QCheckBox *checkBox1 = new QCheckBox(this);
+		connect(checkBox1, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+		signalmapper->setMapping(checkBox1, i+nPlcAlertNumber);
+		nlistCheckBox.append(checkBox1);
+
+		QCheckBox *checkBox2 = new QCheckBox(this);
+		connect(checkBox2, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+		signalmapper->setMapping(checkBox2, i+2*nPlcAlertNumber);
+		nlistCheckBox.append(checkBox2);
+
+		if(pMainFrm->m_vstrPLCInfoType[i-1] != "")
+		{
+			gridlayout->addWidget(label,i,0);
+			gridlayout->addWidget(checkBox,i,1);
+			gridlayout->addWidget(checkBox1,i,2);
+			gridlayout->addWidget(checkBox2,i,3);
+		}else{
+			label->setVisible(false);
+			checkBox->setVisible(false);
+			checkBox1->setVisible(false);
+			checkBox2->setVisible(false);
+		}
+	}
+	connect(signalmapper, SIGNAL(mapped(int)), this, SLOT(slots_clickBox(int)));
+	QVBoxLayout *mainLayout = new QVBoxLayout();
+	mainLayout->addLayout(gridlayout);
+	mainLayout->setSpacing(6);
+	mainLayout->setContentsMargins(0,0,0,0);
+
+	nAlertSet->setLayout(mainLayout);
+	ui.scrollArea->setWidget(nAlertSet);
+
 	//80000200010000020005 0101B200 D4000002
 }
 
 Widget_PLC::~Widget_PLC()
 {
 	delete m_pSocket;
+}
+void Widget_PLC::slots_clickBox(int mTemp)
+{
+	if(nAlertDataList[mTemp-1]==1)
+	{
+		nAlertDataList[mTemp-1]=0;
+	}else{
+		nAlertDataList[mTemp-1]=1;
+	}
 }
 void Widget_PLC::slots_Pushbuttonread()
 {
@@ -86,7 +145,7 @@ void Widget_PLC::slots_Pushbuttonread()
 void Widget_PLC::EnterPLC()
 {
 	QByteArray st;
-	SendMessage(97,st,1,2,110);//暂时获取界面显示的所有数据2+8*5+8*8+4
+	SendMessage(92,st,1,2,120);//暂时获取界面显示的所有数据2+8*5+8*8+4
 }
 void Widget_PLC::slots_CrashTimeOut()
 {
@@ -114,7 +173,7 @@ void Widget_PLC::slots_TimeOut()
 {
 	//获取PLC的报警信息
 	QByteArray st;
-	SendMessage(0,st,1,1,10);//读取报警数据
+	SendMessage(0,st,1,1,4);//读取报警数据
 }
 void Widget_PLC::SendDataToPLCHead(int address, QByteArray& st, int state,int id,int DataSize) //参数1为相机ID号，参数2为组装后的数据，参数3为读写状态,参数4为通道ID(可以为任意整数),参数5为数据大小
 {
@@ -154,66 +213,31 @@ int Widget_PLC::SendMessage(int address,QByteArray& send,int state,int id,int Da
 	}
 	return 0;
 }
-int Widget_PLC::GetImageNo(int nAddr,int CameraId,int& ImageNo)
-{
-	//QByteArray send;
-	//SendDataToPLCHead(nAddr,send,1,CameraId,4);
-	//if (m_pSocket->state() == QAbstractSocket::ConnectedState) //
-	//{
-	//	if (NULL != m_pSocket)
-	//	{
-	//		m_pSocket->write(send);
-	//	}
-	//}
-	//WaitForSingleObject(nHandle[CameraId],2000);
-	//return nImageNum[CameraId];
-	return 0;
-}
 void Widget_PLC::slots_readFromPLC()
 {
 	QByteArray v_receive = m_pSocket->readAll();
-	if(v_receive.size() == 18)
-	{
-		/*int v_Itmp=0;
-		ByteToData(v_receive,14,17,v_Itmp);
-		WORD imgNO = 0;
-		ByteToData(v_receive,8,9,imgNO);
-		nImageNum[imgNO] = v_Itmp;
-		SetEvent(nHandle[imgNO]);*/
-
-	}else if (v_receive.size() == 124)
+	if (v_receive.size() == 134)//120+14
 	{
 		double v_douTemp = 0;
 		int v_Itmp = 0;
 		int v_bit = 14;
+		WORD v_Itmps=0;
+		int j=0;
+		int m_byte=14;
+		for (;m_byte<26;m_byte+=2)
+		{
+			ByteToData(v_receive,m_byte,m_byte+1,v_Itmps);
+			for(int i=0;i<16;i++)
+			{
+				if(v_Itmps >> i & 0x01)
+				{
+					nAlertDataList[j]=1;
+					nlistCheckBox[j]->setChecked(true);
+				}
+				j++;
+			}
+		}
 
-		WORD m_Itmp=0;
-		ByteToData(v_receive,v_bit,v_bit+1,m_Itmp);  //H97
-		if(m_Itmp >> 0 & 0x01)
-		{
-			ui.radioButton_3->setChecked(true);
-			ui.radioButton_4->setChecked(false);
-		}else{
-			ui.radioButton_3->setChecked(false);
-			ui.radioButton_4->setChecked(true);
-		}
-		if(m_Itmp >> 1 & 0x01)
-		{
-			ui.radioButton_5->setChecked(true);
-			ui.radioButton_6->setChecked(false);
-		}else{
-			ui.radioButton_5->setChecked(false);
-			ui.radioButton_6->setChecked(true);
-		}
-		if(m_Itmp >> 2 & 0x01)
-		{
-			ui.radioButton_7->setChecked(true);
-			ui.radioButton_8->setChecked(false);
-		}else{
-			ui.radioButton_7->setChecked(false);
-			ui.radioButton_8->setChecked(true);
-		}
-		v_bit+=2;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp); //H98
 		ui.lineEdit_21->setText(QString::number(v_Itmp));
 		v_bit+=4;
@@ -231,7 +255,7 @@ void Widget_PLC::slots_readFromPLC()
 		}
 		v_bit+=4;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp);
-		ui.lineEdit_2->setText(QString::number(v_Itmp*0.01,'2'));
+		ui.lineEdit_2->setText(QString::number(v_Itmp*0.01,'f',2));
 		v_bit+=4;
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp);
 		ui.lineEdit_3->setText(QString::number(v_Itmp/100));
@@ -282,7 +306,7 @@ void Widget_PLC::slots_readFromPLC()
 			ui.radioButton_9->setChecked(true);
 			ui.radioButton_10->setChecked(false);
 		}
-	}else if(v_receive.size() == 24)
+	}else if(v_receive.size() == 18)
 	{
 		WORD v_Itmp=0;
 		int j=0;
@@ -305,13 +329,6 @@ void Widget_PLC::slots_readFromPLC()
 		{
 			nErrorType = -1;
 		}
-		m_byte+=4;
-		ByteToData(v_receive,m_byte,m_byte+1,v_Itmp);
-		
-		if(v_Itmp >> 0 & 0x01)
-		{
-			emit signals_ResetCard();
-		}
 	}else if(v_receive.size() == 54)//14+40
 	{
 		double v_douTemp;
@@ -330,17 +347,24 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_20->setText(QString::number(v_douTemp,'f',2));
-		/*v_bit+=8;
-		int v_Temp = 0;
-		ByteToData(v_receive,v_bit,v_bit+3,v_Temp);
-		if(v_Temp)
+	}else if(v_receive.size() == 26)//14+12
+	{
+		WORD v_Itmp=0;
+		int j=0;
+		int m_byte=14;
+		for (;m_byte<26;m_byte+=2)
 		{
-			ui.radioButton_9->setChecked(true);
-			ui.radioButton_10->setChecked(false);
-		}else{
-			ui.radioButton_9->setChecked(false);
-			ui.radioButton_10->setChecked(true);
-		}*/
+			ByteToData(v_receive,m_byte,m_byte+1,v_Itmp);
+			for(int i=0;i<16;i++)
+			{
+				if(v_Itmp >> i & 0x01)
+				{
+					nAlertDataList[j]=1;
+					nlistCheckBox[j]->setChecked(true);
+				}
+				j++;
+			}
+		}
 	}
 }
 
@@ -355,27 +379,52 @@ void Widget_PLC::slots_Pushbuttonsure()
 void Widget_PLC::slots_Pushbuttonsave()
 {
 	QByteArray st;
+	WORD test = 1;
+	WORD nData[6];
+	memset(nData,0,sizeof(WORD)*6);
+	int serial = 0;
+	for(int i=0;i<nPlcAlertNumber*3;i++)
+	{
+		if(i<nPlcAlertNumber)
+		{
+			if(nAlertDataList[i])
+			{
+				if(i<16)
+				{
+					nData[0] += test<<i;
+				}else{
+					nData[1] += test<<(i-16);
+				}
+			}
+		}else if(i>=nPlcAlertNumber&&i<nPlcAlertNumber*2)
+		{
+			if(nAlertDataList[i])
+			{
+				if(i<48)
+				{
+					nData[2] += test<<(i-32);
+				}else{
+					nData[3] += test<<(i-48);
+				}
+			}
+		}else{
+			if(nAlertDataList[i])
+			{
+				if(i<80)
+				{
+					nData[4] += test<<(i-64);
+				}else{
+					nData[5] += test<<(i-80);
+				}
+			}
+		}
+	}
+	for(int i=0;i<6;i++)
+	{
+		DataToByte(nData[i],st);
+	}
+
 	int TempData = 0;
-	WORD test = 0;
-	if(ui.radioButton_3->isChecked())
-	{
-		test = 1;
-	}else{
-		test = 0;
-	}
-	if(ui.radioButton_5->isChecked())
-	{
-		test += 2;
-	}else{
-		test += 0;
-	}
-	if(ui.radioButton_7->isChecked())
-	{
-		test += 4;
-	}else{
-		test += 0;
-	}
-	DataToByte(test,st);
 	TempData = ui.lineEdit_21->text().toInt();
 	DataToByte(TempData,st);
 	TempData = ui.lineEdit_1->text().toInt();
@@ -423,7 +472,7 @@ void Widget_PLC::slots_Pushbuttonsave()
 		TempData = 0;
 	}
 	DataToByte(TempData,st);
-	SendMessage(97,st,2,1,110);
+	SendMessage(92,st,2,1,120);
 }
 template<typename T>
 void Widget_PLC::DataToByte(T& xx, QByteArray& st)

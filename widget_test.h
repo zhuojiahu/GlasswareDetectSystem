@@ -91,7 +91,6 @@ public slots:
 	void slots_ChoseErrorType();
 	void slots_OKSave();
 	void slots_OKCameraSurveillance();
-	void slots_updateAlert(int);
 	void slots_Cancel();
 	void slots_KickModeChanged(int iMode);
 

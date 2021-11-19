@@ -250,21 +250,22 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 	int nWidth, nHeight;
 	mutexDetectElement[iRealCameraSN].lock();
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageBufferAddr, nAddr);
+	pImageBuffer = (uchar*)nAddr;
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageWidth, nWidth);
 	m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageHeight, nHeight);
-	int nAddr2;
-	__int64 lAddr, lAddr2, lAddr3;
-	if (m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageBufferAddr2, nAddr2)) //只有sg加了该功能
-	{
-		lAddr  = (__int64)nAddr & 0xFFFFFFFF;
-		lAddr2 = ((__int64)nAddr2) << 32;
-		lAddr3 = lAddr | lAddr2;
-		pImageBuffer = (uchar*)lAddr3;
-	}
-	else
-	{
-		pImageBuffer = (uchar*)nAddr;
-	}
+	//int nAddr2;
+	//__int64 lAddr, lAddr2, lAddr3;
+	//if (m_sRealCamInfo[iRealCameraSN].m_pGrabber->GetParamInt(GBImageBufferAddr2, nAddr2)) //只有sg加了该功能
+	//{
+	//	lAddr  = (__int64)nAddr & 0xFFFFFFFF;
+	//	lAddr2 = ((__int64)nAddr2) << 32;
+	//	lAddr3 = lAddr | lAddr2;
+	//	pImageBuffer = (uchar*)lAddr3;
+	//}
+	//else
+	//{
+	//	pImageBuffer = (uchar*)nAddr;
+	//}
 	mutexDetectElement[iRealCameraSN].unlock();
 
 	if (m_sSystemInfo.m_bIsIOCardOK)
@@ -353,7 +354,7 @@ void GlasswareDetectSystem::InitParameter()
 	}else{
 		m_sConfigInfo.m_strErrorTypePath = "Config/ErrorType-en.ini";
 	}
-	m_sConfigInfo.m_strPLCStatusTypePath = "Config/PLCStatusType.ini";
+	m_sConfigInfo.m_strPLCStatusTypePath = "Config/PLCAlertType.ini";
 	m_sConfigInfo.m_sAlgFilePath = "ModelInfo";// 算法路径 [10/26/2010 GZ]	
 	m_sConfigInfo.m_sRuntimePath = "Config/runtime.ini";
 
@@ -516,7 +517,7 @@ void GlasswareDetectSystem::ReadIniInformation()
 
 	strSession = QString("/StatusType/total");
 	int  StatusTypeNumber= PLCStatusiniset.value(strSession,0).toInt();
-	for (int i=0;i<StatusTypeNumber;i++)
+	for (int i=1;i<=StatusTypeNumber;i++)
 	{
 		strSession = QString("/StatusType/%1").arg(i);
 		m_vstrPLCInfoType.append(QString::fromLocal8Bit(PLCStatusiniset.value(strSession,"NULL").toString()));//.toLatin1().data()));
@@ -722,7 +723,6 @@ void GlasswareDetectSystem::LoadParameterAndCam()
 		struGrabCardPara[i].Context = this;
 		//初始化采集卡
 		InitGrabCard(struGrabCardPara[i],i);
-
 	}
 }
 //初始化采集卡（：初始化相机）
@@ -987,12 +987,12 @@ void GlasswareDetectSystem::InitIOCard()
 		m_vIOCard[0] = new CIOCard(m_sSystemInfo.m_sConfigIOCardInfo[0],0);
 		connect(m_vIOCard[0],SIGNAL(emitMessageBoxMainThread(s_MSGBoxInfo)),this,SLOT(slots_MessageBoxMainThread(s_MSGBoxInfo)));
 		s_IOCardErrorInfo sIOCardErrorInfo = m_vIOCard[0]->InitIOCard();
-		//Sleep(200);
 		if (!sIOCardErrorInfo.bResult)
 		{
 			m_sSystemInfo.m_bIsIOCardOK = false;
 			pMainFrm->Logfile.write(tr("Error in init IOCard"),AbnormityLog);
 		}
+		pMainFrm->Logfile.write(tr("IOCard success"),AbnormityLog);
 	}
 }
 //初始化算法
@@ -1349,6 +1349,7 @@ void GlasswareDetectSystem::slots_turnPage(int current_page, int iPara)
 		statked_widget->setCurrentWidget(widget_carveSetting);
 		m_eLastMainPage = m_eCurrentMainPage;
 		iLastPage = 0;
+		pMainFrm->Logfile.write(("into 1"),AbnormityLog);
 		break;
 	case 1:
 		m_eCurrentMainPage = ManagementSettingPage;
@@ -1356,6 +1357,7 @@ void GlasswareDetectSystem::slots_turnPage(int current_page, int iPara)
 		statked_widget->setCurrentWidget(widget_Management);
 		m_eLastMainPage = m_eCurrentMainPage;
 		iLastPage = 1;
+		pMainFrm->Logfile.write(("into 2"),AbnormityLog);
 		break;
 	case 2:
 		m_eCurrentMainPage = TestPage;
@@ -1363,6 +1365,7 @@ void GlasswareDetectSystem::slots_turnPage(int current_page, int iPara)
 		statked_widget->setCurrentWidget(test_widget);
 		m_eLastMainPage = m_eCurrentMainPage;
 		iLastPage = 2;
+		pMainFrm->Logfile.write(("into 3"),AbnormityLog);
 		break;
 	case 3:
 		m_eCurrentMainPage = AlgPage;
@@ -1370,6 +1373,7 @@ void GlasswareDetectSystem::slots_turnPage(int current_page, int iPara)
 		ShowCheckSet(iPara);
 		m_eLastMainPage = m_eCurrentMainPage;
 		iLastPage = 3;
+		pMainFrm->Logfile.write(("into 4"),AbnormityLog);
 		break;
 	case 4:
 		slots_OnBtnStar();
@@ -1666,7 +1670,7 @@ void GlasswareDetectSystem::ShowCheckSet(int nCamIdx,int signalNumber)
 	catch (...)
 	{
 	}
-	pMainFrm->Logfile.write(("In to Alg Page")+QString("CamraNo:%1").arg(nCamIdx+1),OperationLog,0);
+	pMainFrm->Logfile.write(("Into Alg Page")+QString("CamraNo:%1").arg(nCamIdx+1),OperationLog,0);
 	return;	
 }
 void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
@@ -1750,58 +1754,6 @@ int GlasswareDetectSystem::ReadImageSignal(int nImageNum,int cameraID)
 			return 0;
 		}
 	}
-	//PLC获取图像号
-	//int nImageNo = -1;
-	////Sleep(1000);
-	//if(m_sSystemInfo.m_iSystemType == 1)
-	//{
-	//	switch(nImageNum) 
-	//	{
-	//	case 1:
-	//		return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
-	//	case 2:
-	//		return test_widget->nConsole->m_plc->GetImageNo(212,cameraID,nImageNo);
-	//	case 3:
-	//		return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
-	//	case 4:
-	//		return test_widget->nConsole->m_plc->GetImageNo(214,cameraID,nImageNo);
-	//	case 5:
-	//		return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
-	//	case 6:
-	//		return test_widget->nConsole->m_plc->GetImageNo(216,cameraID,nImageNo);
-	//	}
-	//}else if(m_sSystemInfo.m_iSystemType == 2)
-	//{
-	//	switch(nImageNum) 
-	//	{
-	//	case 1:
-	//		return test_widget->nConsole->m_plc->GetImageNo(218,cameraID,nImageNo);
-	//	case 2:
-	//		return test_widget->nConsole->m_plc->GetImageNo(220,cameraID,nImageNo);
-	//	case 3:
-	//		return test_widget->nConsole->m_plc->GetImageNo(222,cameraID,nImageNo);
-	//	case 4:
-	//		return test_widget->nConsole->m_plc->GetImageNo(224,cameraID,nImageNo);
-	//	}
-	//}else if(m_sSystemInfo.m_iSystemType == 3)
-	//{
-	//	switch(nImageNum) 
-	//	{
-	//	case 1:
-	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-	//	case 2:
-	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-	//	case 3:
-	//		return test_widget->nConsole->m_plc->GetImageNo(228,cameraID,nImageNo);
-	//	case 4:
-	//		return test_widget->nConsole->m_plc->GetImageNo(226,cameraID,nImageNo);
-	//	case 5:
-	//		return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
-	//	case 6:
-	//		return test_widget->nConsole->m_plc->GetImageNo(230,cameraID,nImageNo);
-	//	}
-	//}
-	//return nImageNo;
 }
 
 void GlasswareDetectSystem::InitCamImage(int iCameraNo)

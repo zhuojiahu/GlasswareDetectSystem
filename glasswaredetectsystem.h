@@ -156,7 +156,7 @@ public:
 	CMyQueue nQueue[CAMERA_MAX_COUNT];	
 	CDetectElement m_detectElement[CAMERA_MAX_COUNT];
 	QMutex mutexDetectElement[CAMERA_MAX_COUNT];
-
+	QMutex m_mutexmCarve[CAMERA_MAX_COUNT];
 	CIOCard *m_vIOCard[IOCard_MAX_COUNT];		//IO卡队列
 	CMyErrorList m_ErrorList;
 

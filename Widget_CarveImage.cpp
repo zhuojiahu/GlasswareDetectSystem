@@ -534,9 +534,9 @@ void Widget_CarveImage::slots_save()
 	{
 		disconnect(pMainFrm->pdetthread[i],SIGNAL(signals_updateImage(QImage*, QString , QString ,QString , QString, QString, QList<QRect>,int )),imageShowItem,SLOT(slots_updateImage(QImage*, QString , QString ,QString , QString, QString, QList<QRect>,int )));
 	}
-		
+	pMainFrm->m_mutexmCarve[iCameraNo].lock();
 	pMainFrm->InitCamImage(iCameraNo);
-
+	pMainFrm->m_mutexmCarve[iCameraNo].unlock();
 	for (int i = 0; i < pMainFrm->m_sSystemInfo.iCamCount; i++)
 	{
 		connect(pMainFrm->pdetthread[i],SIGNAL(signals_updateImage(QImage*, QString , QString ,QString , QString, QString, QList<QRect>,int )),imageShowItem,SLOT(slots_updateImage(QImage*, QString , QString ,QString , QString, QString, QList<QRect>,int )));

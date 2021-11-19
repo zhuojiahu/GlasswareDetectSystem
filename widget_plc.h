@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <QDebug>
 #include <QVector>
+#include <QCheckBox>
 class Widget_PLC : public QWidget
 {
 	Q_OBJECT
@@ -21,11 +22,9 @@ public slots:
 	void slots_readFromPLC();
 	void slots_TimeOut();
 	void slots_CrashTimeOut();
+	void slots_clickBox(int);
 public:
 	void EnterPLC();
-	int GetImageNo(int nAddr,int CameraId,int& ImageNo);
-signals:
-	void signals_ResetCard();
 public:
 	Ui::widget_plc ui;
 public:
@@ -42,8 +41,10 @@ public:
 	int nErrorType;
 	int nErrorCameraID;
 	int nSystemType;
-	//HANDLE nHandle[40];
-	//int nImageNum[40];
+	QWidget * nAlertSet;
+	QList<QCheckBox*> nlistCheckBox;
+	int* nAlertDataList;
+	int nPlcAlertNumber;
 };
 
 #endif // WIDGET_PLC_H

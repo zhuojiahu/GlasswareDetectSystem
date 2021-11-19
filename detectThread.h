@@ -21,7 +21,6 @@ signals:
 	void signals_updateCameraFailureRate();
 	void signals_updateImage(QImage*, QString, QString, QString, QString, QString, QList<QRect> ,int );
 	void signals_showspeed(int);
-	void signals_updateAlert(int);
 private:
 	void DetectNormal(CGrabElement *pElement);
 	void DetectStress(CGrabElement *pElement);

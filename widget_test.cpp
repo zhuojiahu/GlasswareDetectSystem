@@ -10,12 +10,6 @@ WidgetTest::WidgetTest(QWidget *parent)
 	ifshowImage = 0;
 	iSaveMode = -1;
 	ui.setupUi(this);
-	for (int i = 0;i<pMainFrm->m_sSystemInfo.iCamCount;i++)
-	{
-		connect(pMainFrm->pdetthread[i], SIGNAL(signals_updateAlert(int)), this, SLOT(slots_updateAlert(int)));
-	}
-
-	//connect(this,SIGNAL(signals_ShowWarning(int , QString )),pMainFrm->widget_Warning,SLOT(slots_ShowWarning(int , QString )));
 	int widgetWidth = pMainFrm->statked_widget->geometry().width();
 	init();
 	initWidgetName();
@@ -990,9 +984,6 @@ void WidgetTest::slots_updateIOcardCounter()
 	}
 }
 
-void WidgetTest::slots_updateAlert(int i)
-{
-}
 void WidgetTest::slots_ifCheckShowImage()
 {
 	ifshowImage=ui.comboBox->currentIndex();
