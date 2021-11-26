@@ -32,7 +32,7 @@ DWORD GlasswareDetectSystem::SendIOCard(void* param)
 		{
 			QByteArray nTest = pMainFrm->ncSocketWriteData.first();
 			pMainFrm->ncSocketWriteData.removeFirst();
-			pMainFrm->m_tcpSocket->write(nTest.data(),nTest.size());
+			//pMainFrm->m_tcpSocket->write(nTest.data(),nTest.size());
 		}
 		Sleep(20);
 	}
@@ -125,6 +125,7 @@ GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
 	surplusDays=0;
 
 	//网络通信初始化
+	n_EndTime = 0;
 	nLastCheckNum = 0;
 	nLastFailedNum = 0;
 	nCountNumber = 0;
@@ -378,9 +379,6 @@ void GlasswareDetectSystem::InitParameter()
 	//m_tcpSocket->connectToHost("127.0.0.1",8088);
 	m_tcpSocket->waitForConnected(3000);
 	connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(onServerDataReady()));
-	
-	time(&nConnectStartTime);
-	time(&n_StartTime);
 }
 void GlasswareDetectSystem::onServerDataReady()
 {
@@ -419,7 +417,7 @@ void GlasswareDetectSystem::onServerDataReady()
 		
 	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == CONNECT)
 	{
-		time(&nConnectStartTime);
+
 	}else if(((MyStruct*)t_ptr)->nState == SEVERS)
 	{
 		QString nClearName = QString(((MyStruct*)t_ptr)->nTemp);
@@ -471,14 +469,7 @@ void GlasswareDetectSystem::onServerDataReady()
 		widget_Management->SeverDelete(nAddModeName);
 	}
 }
-void GlasswareDetectSystem::mouseMoveEvent(QMouseEvent *event)
-{
-	time(&n_StartTime);
-}
-void GlasswareDetectSystem::mousePressEvent(QMouseEvent *event)
-{
-	time(&n_StartTime);
-}
+
 //读取配置信息
 void GlasswareDetectSystem::ReadIniInformation()
 {
@@ -1156,7 +1147,7 @@ void GlasswareDetectSystem::initInterface()
 	timerUpdateCoder->setInterval(1000);
 	timerUpdateCoder->start();
 	nSockScreen = new QTimer(this);
-	nSockScreen->setInterval(10000);
+	nSockScreen->setInterval(1000*5);
 	nSockScreen->start();
 
 	QHBoxLayout* hLayoutStateBar = new QHBoxLayout(stateBar);
@@ -1202,6 +1193,21 @@ void GlasswareDetectSystem::SendDataToSever(int nSendCount,StateEnum nState)
 {
 	MyStruct nTempStruct;
 	nTempStruct.nState = nState;
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
+	{
+		nTempStruct.nUnit = LEADING;
+	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	{
+		nTempStruct.nUnit = CLAMPING;
+		if(nState == ALERT)
+		{
+			nTempStruct.nCount = nSendCount;
+		}
+	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
+	{
+		nTempStruct.nUnit = BACKING;
+	}
+	
 	QByteArray ba((char*)&nTempStruct, sizeof(MyStruct));
 	nSocketMutex.lock();
 	ncSocketWriteData.push_back(ba);
@@ -1243,69 +1249,69 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 		labelCoder->setText(strEncoder+strTime);
 	}
 	//保存IO卡的数据准备发送
-	if(m_sRunningInfo.m_bCheck && m_sSystemInfo.m_bIsIOCardOK)
-	{
-		MyStruct nTempStruct;
-		if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
-		{
-			nTempStruct.nUnit = LEADING;
-		}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
-		{
-			nTempStruct.nUnit = CLAMPING;
-		}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
-		{
-			nTempStruct.nUnit = BACKING;
-		}
-		char* nTPIOtr;
-		if(pMainFrm->nCameraErrorType.count()>0)
-		{
-			nTempStruct.nState = ALERT;
-			memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
-			nTPIOtr = m_ptr;
-			nTPIOtr+=sizeof(MyStruct);
-			MyErrorType nTest = pMainFrm->nCameraErrorType.first();
-			nCameraErrorType.removeFirst();
-			nIOCard[16] = nTest.id+1;
-			nIOCard[17] = nTest.nType;
-			if(m_sSystemInfo.m_iSystemType == 2)
-			{
-				nIOCard[21] = test_widget->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
-				nIOCard[22] = test_widget->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
-				nIOCard[23] = test_widget->m_plc->nErrorType;
-			}
-			memcpy(nTPIOtr,nIOCard,24*sizeof(int));
-			memset(nIOCard,0,24*sizeof(int));
-			QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
-			nSocketMutex.lock();
-			pMainFrm->ncSocketWriteData.push_back(ba);
-			nSocketMutex.unlock();
-		}else{
-			if(nLastCheckNum != test_widget->nInfo.m_checkedNum ||nLastFailedNum != test_widget->nInfo.m_checkedNum2|| m_sRunningInfo.m_iKickMode2!=test_widget->m_plc->nErrorType)
-			{
-				test_widget->nTestCounter.lock();
-				nLastCheckNum = test_widget->nInfo.m_checkedNum;
-				nLastFailedNum = test_widget->nInfo.m_checkedNum2;
-				test_widget->nTestCounter.unlock();
-				m_sRunningInfo.m_iKickMode2 = test_widget->m_plc->nErrorType;
-				nTempStruct.nState = ALERT;
-				memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
-				nTPIOtr = m_ptr;
-				nTPIOtr+=sizeof(MyStruct);
-				if(m_sSystemInfo.m_iSystemType == 2)
-				{
-					nIOCard[21] = test_widget->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
-					nIOCard[22] = test_widget->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
-					nIOCard[23] = test_widget->m_plc->nErrorType;
-				}
-				memcpy(nTPIOtr,nIOCard,24*sizeof(int));
-				memset(nIOCard,0,24*sizeof(int));
-				QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
-				nSocketMutex.lock();
-				pMainFrm->ncSocketWriteData.push_back(ba);
-				nSocketMutex.unlock();
-			}
-		}
-	}
+	//if(m_sRunningInfo.m_bCheck && m_sSystemInfo.m_bIsIOCardOK)
+	//{
+	//	MyStruct nTempStruct;
+	//	if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
+	//	{
+	//		nTempStruct.nUnit = LEADING;
+	//	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	//	{
+	//		nTempStruct.nUnit = CLAMPING;
+	//	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
+	//	{
+	//		nTempStruct.nUnit = BACKING;
+	//	}
+	//	char* nTPIOtr;
+	//	if(pMainFrm->nCameraErrorType.count()>0)
+	//	{
+	//		nTempStruct.nState = ALERT;
+	//		memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
+	//		nTPIOtr = m_ptr;
+	//		nTPIOtr+=sizeof(MyStruct);
+	//		MyErrorType nTest = pMainFrm->nCameraErrorType.first();
+	//		nCameraErrorType.removeFirst();
+	//		nIOCard[16] = nTest.id+1;
+	//		nIOCard[17] = nTest.nType;
+	//		if(m_sSystemInfo.m_iSystemType == 2)
+	//		{
+	//			nIOCard[21] = test_widget->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
+	//			nIOCard[22] = test_widget->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
+	//			nIOCard[23] = test_widget->m_plc->nErrorType;
+	//		}
+	//		memcpy(nTPIOtr,nIOCard,24*sizeof(int));
+	//		memset(nIOCard,0,24*sizeof(int));
+	//		QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
+	//		nSocketMutex.lock();
+	//		pMainFrm->ncSocketWriteData.push_back(ba);
+	//		nSocketMutex.unlock();
+	//	}else{
+	//		if(nLastCheckNum != test_widget->nInfo.m_checkedNum ||nLastFailedNum != test_widget->nInfo.m_checkedNum2|| m_sRunningInfo.m_iKickMode2!=test_widget->m_plc->nErrorType)
+	//		{
+	//			test_widget->nTestCounter.lock();
+	//			nLastCheckNum = test_widget->nInfo.m_checkedNum;
+	//			nLastFailedNum = test_widget->nInfo.m_checkedNum2;
+	//			test_widget->nTestCounter.unlock();
+	//			m_sRunningInfo.m_iKickMode2 = test_widget->m_plc->nErrorType;
+	//			nTempStruct.nState = ALERT;
+	//			memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
+	//			nTPIOtr = m_ptr;
+	//			nTPIOtr+=sizeof(MyStruct);
+	//			if(m_sSystemInfo.m_iSystemType == 2)
+	//			{
+	//				nIOCard[21] = test_widget->nInfo.m_checkedNum;//表示第四块接口卡的过检总数
+	//				nIOCard[22] = test_widget->nInfo.m_checkedNum2;//表示第四块接口卡的踢废数目
+	//				nIOCard[23] = test_widget->m_plc->nErrorType;
+	//			}
+	//			memcpy(nTPIOtr,nIOCard,24*sizeof(int));
+	//			memset(nIOCard,0,24*sizeof(int));
+	//			QByteArray ba(m_ptr,24*sizeof(int)+sizeof(MyStruct));
+	//			nSocketMutex.lock();
+	//			pMainFrm->ncSocketWriteData.push_back(ba);
+	//			nSocketMutex.unlock();
+	//		}
+	//	}
+	//}
 }
 
 void GlasswareDetectSystem::slots_updateCameraState(int nCam,int mode)
@@ -1865,25 +1871,16 @@ void GlasswareDetectSystem::SetLanguage(int pLang)
 
 void GlasswareDetectSystem::slot_SockScreen()
 {
-	//用于判断是否操作每10秒判断一次，如果10秒内有人操作则发送事件到服务器，更新锁屏时间 没有则不发送。
-	time(&n_EndTime);
-	if(difftime(n_StartTime,n_EndTime)> 0 && difftime(n_StartTime,n_EndTime)<10)
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
 	{
-		SendDataToSever(0,LOCKSCREEN);
+		SendDataToSever(pMainFrm->test_widget->m_plc->nErrorType,ALERT);
 	}
-	/*if(difftime(nConnectStartTime,n_EndTime)>40 && pMainFrm->m_sSystemInfo.m_bIsIOCardOK)
+	QTime time = QTime::currentTime();
+	if(n_EndTime != time.minute())
 	{
-	m_tcpSocket->connectToHost("192.168.250.204",8088);
-	if(m_tcpSocket->waitForConnected(3000))
-	{
-	}else{
-	Logfile.write(QString("network failed!"),AbnormityLog);
-	m_tcpSocket->abort();
+		n_EndTime = time.minute();
+		SendDataToSever(0,CONNECT);
 	}
-	}else{
-	SendDataToSever(0,CONNECT);
-	}*/
-	SendDataToSever(0,CONNECT);
 }
 
 void GlasswareDetectSystem::InitLastData()

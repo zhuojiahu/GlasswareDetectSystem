@@ -41,7 +41,7 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	{
 		m_zTimer = new QTimer(this);
 		connect(m_zTimer,SIGNAL(timeout()),this,SLOT(slots_TimeOut()));
-		m_zTimer->start(1000);
+		m_zTimer->start(2000);
 	}
 	
 	m_CrashTimer = new QTimer(this);
@@ -56,71 +56,73 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	QButtonGroup* test4=new QButtonGroup(this);
 	test4->addButton(ui.radioButton_9);
 	test4->addButton(ui.radioButton_10);
-	/////////////////////m_vstrPLCInfoType
-	nPlcAlertNumber = pMainFrm->m_vstrPLCInfoType.count();
-	nAlertDataList = new int[nPlcAlertNumber*3];
-	memset(nAlertDataList,0,nPlcAlertNumber*3*sizeof(int));
-	nAlertSet = new QWidget(this);
-	QPalette pal(nAlertSet->palette());
-	pal.setColor(QPalette::Background,QColor(90,90,90,120));
-	nAlertSet->setAutoFillBackground(true);
-	nAlertSet->setPalette(pal);
-
-	QGridLayout *gridlayout = new QGridLayout(nAlertSet);
-	QSignalMapper* signalmapper = new QSignalMapper(this);//工具栏的信号管理
-	QLabel * labelinfo1= new QLabel(this);
-	labelinfo1->setText(QString::fromLocal8Bit("报警状态"));//勾选表示要报警
-	gridlayout->addWidget(labelinfo1,0,1);
-
-	QLabel * labelinfo2= new QLabel(this);
-	labelinfo2->setText(QString::fromLocal8Bit("输送线状态"));//勾选表示要停止输送线
-	gridlayout->addWidget(labelinfo2,0,2);
-
-	QLabel * labelinfo3= new QLabel(this);
-	labelinfo3->setText(QString::fromLocal8Bit("理瓶器状态"));//勾选表示要停止理瓶器
-	gridlayout->addWidget(labelinfo3,0,3);
-
-	for (int i = 1;i <= nPlcAlertNumber;i++)
+	/////////////////////
+	if(SystemType==2)
 	{
-		QLabel * label = new QLabel(this);
-		label->setText(pMainFrm->m_vstrPLCInfoType[i-1]);
-		QCheckBox *checkBox = new QCheckBox(this);
-		connect(checkBox, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-		signalmapper->setMapping(checkBox, i);
-		nlistCheckBox.append(checkBox);
+		nPlcAlertNumber = pMainFrm->m_vstrPLCInfoType.count();
+		nAlertDataList = new int[nPlcAlertNumber*3];
+		memset(nAlertDataList,0,nPlcAlertNumber*3*sizeof(int));
+		nAlertSet = new QWidget(this);
+		QPalette pal(nAlertSet->palette());
+		pal.setColor(QPalette::Background,QColor(90,90,90,120));
+		nAlertSet->setAutoFillBackground(true);
+		nAlertSet->setPalette(pal);
 
-		QCheckBox *checkBox1 = new QCheckBox(this);
-		connect(checkBox1, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-		signalmapper->setMapping(checkBox1, i+nPlcAlertNumber);
-		nlistCheckBox.append(checkBox1);
+		QGridLayout *gridlayout = new QGridLayout(nAlertSet);
+		QSignalMapper* signalmapper = new QSignalMapper(this);//工具栏的信号管理
+		QLabel * labelinfo1= new QLabel(this);
+		labelinfo1->setText(QString::fromLocal8Bit("报警状态"));//勾选表示要报警
+		gridlayout->addWidget(labelinfo1,0,1);
 
-		QCheckBox *checkBox2 = new QCheckBox(this);
-		connect(checkBox2, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-		signalmapper->setMapping(checkBox2, i+2*nPlcAlertNumber);
-		nlistCheckBox.append(checkBox2);
+		QLabel * labelinfo2= new QLabel(this);
+		labelinfo2->setText(QString::fromLocal8Bit("输送线状态"));//勾选表示要停止输送线
+		gridlayout->addWidget(labelinfo2,0,2);
 
-		if(pMainFrm->m_vstrPLCInfoType[i-1] != "")
+		QLabel * labelinfo3= new QLabel(this);
+		labelinfo3->setText(QString::fromLocal8Bit("理瓶器状态"));//勾选表示要停止理瓶器
+		gridlayout->addWidget(labelinfo3,0,3);
+
+		for (int i = 1;i <= nPlcAlertNumber;i++)
 		{
-			gridlayout->addWidget(label,i,0);
-			gridlayout->addWidget(checkBox,i,1);
-			gridlayout->addWidget(checkBox1,i,2);
-			gridlayout->addWidget(checkBox2,i,3);
-		}else{
-			label->setVisible(false);
-			checkBox->setVisible(false);
-			checkBox1->setVisible(false);
-			checkBox2->setVisible(false);
+			QLabel * label = new QLabel(this);
+			label->setText(pMainFrm->m_vstrPLCInfoType[i-1]);
+			QCheckBox *checkBox = new QCheckBox(this);
+			connect(checkBox, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(checkBox, i);
+			nlistCheckBox.append(checkBox);
+
+			QCheckBox *checkBox1 = new QCheckBox(this);
+			connect(checkBox1, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(checkBox1, i+nPlcAlertNumber);
+			nlistCheckBox.append(checkBox1);
+
+			QCheckBox *checkBox2 = new QCheckBox(this);
+			connect(checkBox2, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(checkBox2, i+2*nPlcAlertNumber);
+			nlistCheckBox.append(checkBox2);
+
+			if(pMainFrm->m_vstrPLCInfoType[i-1] != "")
+			{
+				gridlayout->addWidget(label,i,0);
+				gridlayout->addWidget(checkBox,i,1);
+				gridlayout->addWidget(checkBox1,i,2);
+				gridlayout->addWidget(checkBox2,i,3);
+			}else{
+				label->setVisible(false);
+				checkBox->setVisible(false);
+				checkBox1->setVisible(false);
+				checkBox2->setVisible(false);
+			}
 		}
+		connect(signalmapper, SIGNAL(mapped(int)), this, SLOT(slots_clickBox(int)));
+		QVBoxLayout *mainLayout = new QVBoxLayout();
+		mainLayout->addLayout(gridlayout);
+		mainLayout->setSpacing(6);
+		mainLayout->setContentsMargins(0,0,0,0);
+
+		nAlertSet->setLayout(mainLayout);
+		ui.scrollArea->setWidget(nAlertSet);
 	}
-	connect(signalmapper, SIGNAL(mapped(int)), this, SLOT(slots_clickBox(int)));
-	QVBoxLayout *mainLayout = new QVBoxLayout();
-	mainLayout->addLayout(gridlayout);
-	mainLayout->setSpacing(6);
-	mainLayout->setContentsMargins(0,0,0,0);
-
-	nAlertSet->setLayout(mainLayout);
-	ui.scrollArea->setWidget(nAlertSet);
-
 	//80000200010000020005 0101B200 D4000002
 }
 
@@ -221,16 +223,16 @@ void Widget_PLC::slots_readFromPLC()
 		double v_douTemp = 0;
 		int v_Itmp = 0;
 		int v_bit = 14;
-		WORD v_Itmps=0;
 		int j=0;
-		int m_byte=14;
-		for (;m_byte<26;m_byte+=2)
+		for (;v_bit<26;v_bit+=2)
 		{
-			ByteToData(v_receive,m_byte,m_byte+1,v_Itmps);
+			WORD v_Itmps=0;
+			ByteToData(v_receive,v_bit,v_bit+1,v_Itmps);
 			for(int i=0;i<16;i++)
 			{
 				if(v_Itmps >> i & 0x01)
 				{
+					//pMainFrm->Logfile.write(QString("%1---%2").arg(v_Itmps).arg(j),CheckLog);
 					nAlertDataList[j]=1;
 					nlistCheckBox[j]->setChecked(true);
 				}
@@ -347,24 +349,6 @@ void Widget_PLC::slots_readFromPLC()
 		v_bit+=8;
 		ByteToData(v_receive,v_bit,v_bit+7,v_douTemp);
 		ui.lineEdit_20->setText(QString::number(v_douTemp,'f',2));
-	}else if(v_receive.size() == 26)//14+12
-	{
-		WORD v_Itmp=0;
-		int j=0;
-		int m_byte=14;
-		for (;m_byte<26;m_byte+=2)
-		{
-			ByteToData(v_receive,m_byte,m_byte+1,v_Itmp);
-			for(int i=0;i<16;i++)
-			{
-				if(v_Itmp >> i & 0x01)
-				{
-					nAlertDataList[j]=1;
-					nlistCheckBox[j]->setChecked(true);
-				}
-				j++;
-			}
-		}
 	}
 }
 
@@ -373,7 +357,7 @@ void Widget_PLC::slots_Pushbuttonsure()
 	QByteArray st;
 	WORD TempData = 3;
 	DataToByte(TempData,st);
-	SendMessage(90,st,2,1,2);
+	SendMessage(90,st,2,1,2);//写入指令，命令下发完毕后再写一次
 }
 
 void Widget_PLC::slots_Pushbuttonsave()

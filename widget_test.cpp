@@ -183,7 +183,10 @@ void WidgetTest::slots_intoWidget()
 	initInformation();//更新接口卡配置
 	ui.comboBox->setCurrentIndex(ifshowImage);
 	//发送PLC事件，更新数据
-	m_plc->EnterPLC();
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	{
+		m_plc->EnterPLC();
+	}
 }
 bool WidgetTest::leaveWidget()
 {
@@ -970,16 +973,16 @@ void WidgetTest::slots_updateIOcardCounter()
 		pMainFrm->nIOCard[11] = iCounter;
 		ui.label_OUT7->setText(tr("OUT7:")+QString::number(iCounter));
 		//记录接口中的数据 by zl
-		iCounter = pMainFrm->m_vIOCard[0]->ReadCounter(37);
-		ui.label_23->setText(QString::fromLocal8Bit("接口卡补踢总数：")+QString::number(iCounter));		//接口卡补踢总数
+		//iCounter = pMainFrm->m_vIOCard[0]->ReadCounter(37);
+		//ui.label_23->setText(QString::fromLocal8Bit("接口卡补踢总数：")+QString::number(0));		//接口卡补踢总数
 		ui.label_15->setText(QString::fromLocal8Bit("综合过检总数：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[0])); //综合过检总数
 		ui.label_24->setText(QString::fromLocal8Bit("综合过检踢废：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[0]));  //综合过检踢废
-		ui.label_28->setText(QString::fromLocal8Bit("补踢过检总数：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[2])); //补踢过检总数
-		ui.label_29->setText(QString::fromLocal8Bit("补踢踢废总数：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[2]));  //补踢踢废总数
+		//ui.label_28->setText(QString::fromLocal8Bit("补踢过检总数：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[2])); //补踢过检总数
+		//ui.label_29->setText(QString::fromLocal8Bit("补踢踢废总数：")+QString::number(pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[2]));  //补踢踢废总数
 		pMainFrm->nIOCard[12] = pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[0];
 		pMainFrm->nIOCard[13] = pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[0];
-		pMainFrm->nIOCard[14] = pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[2];
-		pMainFrm->nIOCard[15] = pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[2];
+		//pMainFrm->nIOCard[14] = pMainFrm->m_sRunningInfo.nGSoap_ErrorTypeCount[2];
+		//pMainFrm->nIOCard[15] = pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[2];
 		//
 	}
 }

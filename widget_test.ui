@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
+    <width>1334</width>
     <height>879</height>
    </rect>
   </property>
@@ -48,8 +48,8 @@
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
+        <x>-355</x>
+        <y>-180</y>
         <width>1646</width>
         <height>1014</height>
        </rect>
@@ -835,116 +835,6 @@ background:#FFFFFF;
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_15">
-              <item row="6" column="4">
-               <widget class="QLineEdit" name="KickDelay">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="3">
-               <widget class="QLabel" name="label_20">
-                <property name="text">
-                 <string>Kick Delay:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="4">
-               <widget class="QLineEdit" name="Delay6">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="4">
-               <widget class="QLineEdit" name="Delay4">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
-               <widget class="QLabel" name="label_IN0">
-                <property name="text">
-                 <string>IN0:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_frequency">
-                <property name="text">
-                 <string>Frequency:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="3">
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>Channel6:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="1">
-               <widget class="QLabel" name="label_OUT5">
-                <property name="text">
-                 <string>OUT5:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_OUT4">
-                <property name="text">
-                 <string>OUT4:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="1">
-               <widget class="QLineEdit" name="lineDelay">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="3">
-               <widget class="QLabel" name="label_IN2">
-                <property name="text">
-                 <string>IN2:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="3">
-               <widget class="QLabel" name="label_OUT6">
-                <property name="text">
-                 <string>OUT6:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="4">
-               <widget class="QLabel" name="label_29">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0">
-               <widget class="QLabel" name="label_OUT0">
-                <property name="text">
-                 <string>OUT0:</string>
-                </property>
-               </widget>
-              </item>
               <item row="6" column="1">
                <widget class="QLineEdit" name="Distance1to4">
                 <property name="sizePolicy">
@@ -974,24 +864,17 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
-              <item row="10" column="1">
-               <widget class="QLabel" name="label_IN1">
-                <property name="text">
-                 <string>IN1:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="0">
-               <widget class="QLabel" name="label_23">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="3">
                <widget class="QLabel" name="label_9">
                 <property name="text">
                  <string>Channel4:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <widget class="QLabel" name="label_IN1">
+                <property name="text">
+                 <string>IN1:</string>
                 </property>
                </widget>
               </item>
@@ -1009,6 +892,109 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
+              <item row="7" column="1">
+               <widget class="QLineEdit" name="lineDelay">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QLabel" name="label_IN0">
+                <property name="text">
+                 <string>IN0:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="1">
+               <widget class="QLabel" name="label_OUT5">
+                <property name="text">
+                 <string>OUT5:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="3">
+               <widget class="QLabel" name="label_OUT6">
+                <property name="text">
+                 <string>OUT6:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="4">
+               <widget class="QLineEdit" name="KickDelay">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QLineEdit" name="Delay6">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Channel6:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="4">
+               <widget class="QLineEdit" name="Delay4">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="0">
+               <widget class="QLabel" name="label_OUT0">
+                <property name="text">
+                 <string>OUT0:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_frequency">
+                <property name="text">
+                 <string>Frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_OUT4">
+                <property name="text">
+                 <string>OUT4:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="3">
+               <widget class="QLabel" name="label_IN2">
+                <property name="text">
+                 <string>IN2:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="3">
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Kick Delay:</string>
+                </property>
+               </widget>
+              </item>
               <item row="7" column="0">
                <widget class="QLabel" name="label_5">
                 <property name="text">
@@ -1016,8 +1002,66 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
-              <item row="7" column="3">
-               <widget class="QLabel" name="label_19">
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="Delay1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="4">
+               <widget class="QLabel" name="label_OUT3">
+                <property name="text">
+                 <string>OUT3:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="4">
+               <widget class="QLabel" name="label_OUT7">
+                <property name="text">
+                 <string>OUT7:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="3">
+               <widget class="QLabel" name="label_OUT2">
+                <property name="text">
+                 <string>OUT2:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="4">
+               <widget class="QLabel" name="label_IN3">
+                <property name="text">
+                 <string>IN3:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="4">
+               <widget class="QLineEdit" name="KickWidth">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="Delay3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="4">
+               <widget class="QPushButton" name="read">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1025,7 +1069,61 @@ background:#FFFFFF;
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Kick Width:</string>
+                 <string>Read</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="3">
+               <widget class="QPushButton" name="pushButton_set">
+                <property name="text">
+                 <string>set</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QLineEdit" name="Delay2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="3">
+               <widget class="QRadioButton" name="radioButton_normal">
+                <property name="text">
+                 <string>Normal</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="pushButton">
+                <property name="text">
+                 <string>网络重连</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="Delay5">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QRadioButton" name="radioButton_bad">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Continue Kick</string>
                 </property>
                </widget>
               </item>
@@ -1036,8 +1134,22 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
-              <item row="9" column="3">
-               <widget class="QPushButton" name="settocard">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_10">
+                <property name="text">
+                 <string>Channel5:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="1">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="4">
+               <widget class="QPushButton" name="settofile">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1045,7 +1157,7 @@ background:#FFFFFF;
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Set to Card</string>
+                 <string>Save to File</string>
                 </property>
                </widget>
               </item>
@@ -1075,61 +1187,6 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
-              <item row="11" column="3">
-               <widget class="QLabel" name="label_OUT2">
-                <property name="text">
-                 <string>OUT2:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="0">
-               <widget class="QLabel" name="label_28">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="1">
-               <widget class="QLabel" name="label_15">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="Delay1">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="4">
-               <widget class="QLabel" name="label_IN3">
-                <property name="text">
-                 <string>IN3:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_10">
-                <property name="text">
-                 <string>Channel5:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="4">
-               <widget class="QLineEdit" name="KickWidth">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_8">
                 <property name="sizePolicy">
@@ -1143,35 +1200,8 @@ background:#FFFFFF;
                 </property>
                </widget>
               </item>
-              <item row="1" column="4">
-               <widget class="QLineEdit" name="Delay2">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="Delay3">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="4">
-               <widget class="QLabel" name="label_OUT3">
-                <property name="text">
-                 <string>OUT3:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="4">
-               <widget class="QPushButton" name="settofile">
+              <item row="9" column="3">
+               <widget class="QPushButton" name="settocard">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1179,12 +1209,12 @@ background:#FFFFFF;
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Save to File</string>
+                 <string>Set to Card</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="4">
-               <widget class="QPushButton" name="read">
+              <item row="7" column="3">
+               <widget class="QLabel" name="label_19">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1192,34 +1222,7 @@ background:#FFFFFF;
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Read</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="4">
-               <widget class="QLabel" name="label_OUT7">
-                <property name="text">
-                 <string>OUT7:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="QRadioButton" name="radioButton_bad">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Continue Kick</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="3">
-               <widget class="QPushButton" name="pushButton_set">
-                <property name="text">
-                 <string>set</string>
+                 <string>Kick Width:</string>
                 </property>
                </widget>
               </item>
@@ -1233,30 +1236,6 @@ background:#FFFFFF;
                 </property>
                 <property name="text">
                  <string>Continue Good</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="Delay5">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="3">
-               <widget class="QRadioButton" name="radioButton_normal">
-                <property name="text">
-                 <string>Normal</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="pushButton">
-                <property name="text">
-                 <string>网络重连</string>
                 </property>
                </widget>
               </item>

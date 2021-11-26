@@ -79,8 +79,6 @@ public:
 	void showAllert();
 	static DWORD WINAPI SendDetect(void*);
 	static DWORD WINAPI SendIOCard(void*);
-	void mouseMoveEvent(QMouseEvent *event);
-	void mousePressEvent(QMouseEvent *event);
 signals:
 	void signals_intoManagementWidget();
 	void signals_intoTestWidget();
@@ -181,7 +179,6 @@ public:
 	ImageSave m_SavePicture[CAMERA_MAX_COUNT];
 	int surplusDays;
 	HANDLE pHandles[CAMERA_MAX_COUNT];
-	time_t nConnectStartTime;//用于判断掉线重连的时间
 	MyErrorType nSendData[256];
 	QList<MyErrorType> nCameraErrorType;
 public:
@@ -192,8 +189,7 @@ public:
 	int nCountNumber;
 	int nLastCheckNum;
 	int nLastFailedNum;
-	time_t n_StartTime;
-	time_t n_EndTime;
+	int n_EndTime;
 	char* m_ptr;
 	int* nIOCard;
 };
