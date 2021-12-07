@@ -18,7 +18,7 @@ LightSource::~LightSource()
 void LightSource::closeEvent(QCloseEvent *event)
 {
 	//πÿ±’¡¨Ω”
-	slot_cancel();
+	//slot_cancel();
 }
 void LightSource::initLight()
 {

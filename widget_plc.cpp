@@ -20,7 +20,6 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	connect(ui.SureButton,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonsure()));
 	connect(ui.pushButton_save,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonsave()));
 	connect(ui.pushButton_read,SIGNAL(clicked()),this,SLOT(slots_Pushbuttonread()));
-	
 	m_pSocket = new QUdpSocket();
 	m_pSocket->connectToHost("192.168.250.1", 9600);
 	if (m_pSocket->state() == QAbstractSocket::ConnectedState || m_pSocket->waitForConnected(2000))
@@ -36,82 +35,77 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 	ui.lineEdit_6->setValidator(IntValidator);
 	IntValidator->setRange(1,450);
 	ui.lineEdit_1->setValidator(IntValidator);
-
 	if(SystemType==2)
 	{
 		m_zTimer = new QTimer(this);
 		connect(m_zTimer,SIGNAL(timeout()),this,SLOT(slots_TimeOut()));
-		m_zTimer->start(2000);
+		m_zTimer->start(1000);
 	}
-	
 	m_CrashTimer = new QTimer(this);
 	connect(m_CrashTimer,SIGNAL(timeout()),this,SLOT(slots_CrashTimeOut()));
 	m_CrashTimer->start(10000);
-
 	//获取PLC报警信息
 	nErrorType = 0;
-	nErrorCameraID = 0;
+	nErrorCameraID = 0;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 	nSystemType = SystemType;
-	
 	QButtonGroup* test4=new QButtonGroup(this);
 	test4->addButton(ui.radioButton_9);
 	test4->addButton(ui.radioButton_10);
 	/////////////////////
 	if(SystemType==2)
 	{
-		nPlcAlertNumber = pMainFrm->m_vstrPLCInfoType.count();
-		nAlertDataList = new int[nPlcAlertNumber*3];
-		memset(nAlertDataList,0,nPlcAlertNumber*3*sizeof(int));
+		nAlertDataList = new int[96];
+		memset(nAlertDataList,0,96*sizeof(int));
+		for(int i=0;i<96;i++)
+		{
+			QCheckBox *checkBox = new QCheckBox(this);
+			nlistCheckBox<<checkBox;
+		}
 		nAlertSet = new QWidget(this);
 		QPalette pal(nAlertSet->palette());
 		pal.setColor(QPalette::Background,QColor(90,90,90,120));
 		nAlertSet->setAutoFillBackground(true);
 		nAlertSet->setPalette(pal);
-
 		QGridLayout *gridlayout = new QGridLayout(nAlertSet);
 		QSignalMapper* signalmapper = new QSignalMapper(this);//工具栏的信号管理
 		QLabel * labelinfo1= new QLabel(this);
 		labelinfo1->setText(QString::fromLocal8Bit("报警状态"));//勾选表示要报警
 		gridlayout->addWidget(labelinfo1,0,1);
-
 		QLabel * labelinfo2= new QLabel(this);
 		labelinfo2->setText(QString::fromLocal8Bit("输送线状态"));//勾选表示要停止输送线
 		gridlayout->addWidget(labelinfo2,0,2);
-
 		QLabel * labelinfo3= new QLabel(this);
 		labelinfo3->setText(QString::fromLocal8Bit("理瓶器状态"));//勾选表示要停止理瓶器
 		gridlayout->addWidget(labelinfo3,0,3);
-
-		for (int i = 1;i <= nPlcAlertNumber;i++)
+		for (int i = 0;i < 32;i++)
 		{
 			QLabel * label = new QLabel(this);
-			label->setText(pMainFrm->m_vstrPLCInfoType[i-1]);
-			QCheckBox *checkBox = new QCheckBox(this);
-			connect(checkBox, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-			signalmapper->setMapping(checkBox, i);
-			nlistCheckBox.append(checkBox);
-
-			QCheckBox *checkBox1 = new QCheckBox(this);
-			connect(checkBox1, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-			signalmapper->setMapping(checkBox1, i+nPlcAlertNumber);
-			nlistCheckBox.append(checkBox1);
-
-			QCheckBox *checkBox2 = new QCheckBox(this);
-			connect(checkBox2, SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
-			signalmapper->setMapping(checkBox2, i+2*nPlcAlertNumber);
-			nlistCheckBox.append(checkBox2);
-
-			if(pMainFrm->m_vstrPLCInfoType[i-1] != "")
+			QString ErrorName;
+			if(i<pMainFrm->m_vstrPLCInfoType.count())
 			{
-				gridlayout->addWidget(label,i,0);
-				gridlayout->addWidget(checkBox,i,1);
-				gridlayout->addWidget(checkBox1,i,2);
-				gridlayout->addWidget(checkBox2,i,3);
+				ErrorName = pMainFrm->m_vstrPLCInfoType[i];
+				label->setText(ErrorName);
+			}else{
+				ErrorName = "";
+				label->setText("");
+			}
+			connect(nlistCheckBox[i], SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(nlistCheckBox[i], i);
+			connect(nlistCheckBox[i+32], SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(nlistCheckBox[i+32], i+32);
+			connect(nlistCheckBox[i+64], SIGNAL(stateChanged(int)), signalmapper, SLOT(map()));
+			signalmapper->setMapping(nlistCheckBox[i+64], i+64);
+			if(ErrorName != "")
+			{
+				gridlayout->addWidget(label,i+1,0);
+				gridlayout->addWidget(nlistCheckBox[i],i+1,1);
+				gridlayout->addWidget(nlistCheckBox[i+32],i+1,2);
+				gridlayout->addWidget(nlistCheckBox[i+64],i+1,3);
 			}else{
 				label->setVisible(false);
-				checkBox->setVisible(false);
-				checkBox1->setVisible(false);
-				checkBox2->setVisible(false);
+				nlistCheckBox[i]->setVisible(false);
+				nlistCheckBox[i+32]->setVisible(false);
+				nlistCheckBox[i+64]->setVisible(false);
 			}
 		}
 		connect(signalmapper, SIGNAL(mapped(int)), this, SLOT(slots_clickBox(int)));
@@ -119,7 +113,6 @@ Widget_PLC::Widget_PLC(QWidget *parent,int SystemType)
 		mainLayout->addLayout(gridlayout);
 		mainLayout->setSpacing(6);
 		mainLayout->setContentsMargins(0,0,0,0);
-
 		nAlertSet->setLayout(mainLayout);
 		ui.scrollArea->setWidget(nAlertSet);
 	}
@@ -132,11 +125,11 @@ Widget_PLC::~Widget_PLC()
 }
 void Widget_PLC::slots_clickBox(int mTemp)
 {
-	if(nAlertDataList[mTemp-1]==1)
+	if(nAlertDataList[mTemp]==1)
 	{
-		nAlertDataList[mTemp-1]=0;
+		nAlertDataList[mTemp]=0;
 	}else{
-		nAlertDataList[mTemp-1]=1;
+		nAlertDataList[mTemp]=1;
 	}
 }
 void Widget_PLC::slots_Pushbuttonread()
@@ -232,14 +225,15 @@ void Widget_PLC::slots_readFromPLC()
 			{
 				if(v_Itmps >> i & 0x01)
 				{
-					//pMainFrm->Logfile.write(QString("%1---%2").arg(v_Itmps).arg(j),CheckLog);
 					nAlertDataList[j]=1;
 					nlistCheckBox[j]->setChecked(true);
+				}else{
+					nAlertDataList[j]=0;
+					nlistCheckBox[j]->setChecked(false);
 				}
 				j++;
 			}
 		}
-
 		ByteToData(v_receive,v_bit,v_bit+3,v_Itmp); //H98
 		ui.lineEdit_21->setText(QString::number(v_Itmp));
 		v_bit+=4;
@@ -366,10 +360,9 @@ void Widget_PLC::slots_Pushbuttonsave()
 	WORD test = 1;
 	WORD nData[6];
 	memset(nData,0,sizeof(WORD)*6);
-	int serial = 0;
-	for(int i=0;i<nPlcAlertNumber*3;i++)
+	for(int i=0;i<96;i++)
 	{
-		if(i<nPlcAlertNumber)
+		if(i<32)
 		{
 			if(nAlertDataList[i])
 			{
@@ -380,7 +373,7 @@ void Widget_PLC::slots_Pushbuttonsave()
 					nData[1] += test<<(i-16);
 				}
 			}
-		}else if(i>=nPlcAlertNumber&&i<nPlcAlertNumber*2)
+		}else if(i>=32&&i<64)
 		{
 			if(nAlertDataList[i])
 			{
@@ -407,7 +400,6 @@ void Widget_PLC::slots_Pushbuttonsave()
 	{
 		DataToByte(nData[i],st);
 	}
-
 	int TempData = 0;
 	TempData = ui.lineEdit_21->text().toInt();
 	DataToByte(TempData,st);
@@ -432,7 +424,6 @@ void Widget_PLC::slots_Pushbuttonsave()
 	DataToByte(TempData,st);
 	double TempSpeed = ui.lineEdit_7->text().toDouble();
 	DataToByte(TempSpeed,st);
-
 	TempSpeed = ui.lineEdit_9->text().toDouble();
 	DataToByte(TempSpeed,st);
 	TempSpeed = ui.lineEdit_10->text().toDouble();

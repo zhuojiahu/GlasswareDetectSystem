@@ -442,11 +442,9 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 				//暂时使用无用变量作为总的综合踢废数目 by zl
 				pMainFrm->m_sRunningInfo.nGSoap_ErrorCamCount[0] += 1;//阴同添加
 				pMainFrm->m_sRunningInfo.m_iErrorTypeCount[sComErrorpara.nErrorType] +=1;
-				
 				pMainFrm->nSendData[nSignalNo].id = iErrorCamera;
 				pMainFrm->nSendData[nSignalNo].nType = sComErrorpara.nErrorType;
 				pMainFrm->nSendData[nSignalNo].nErrorArea = sComErrorpara.nArea;
-
 				pMainFrm->nCameraErrorType.push_back(pMainFrm->nSendData[nSignalNo]);
 			}
 			else
@@ -608,7 +606,6 @@ void DetectThread::addErrorImageList(CGrabElement *pElement)
 		pErrorElement->myImage = NULL;
 	}
 	pErrorElement->myImage = new QImage(*pElement->myImage);
-
 	pMainFrm->m_ErrorList.listError.push_front(pErrorElement);
 	pMainFrm->m_ErrorList.m_mutexmErrorList.unlock();
 

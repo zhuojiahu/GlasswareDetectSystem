@@ -44,7 +44,6 @@ public:
 	QWidget * nAlertSet;
 	QList<QCheckBox*> nlistCheckBox;
 	int* nAlertDataList;
-	int nPlcAlertNumber;
 };
 
 #endif // WIDGET_PLC_H
