@@ -1263,7 +1263,7 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 			nTPIOtr = m_ptr;
 			nTPIOtr+=sizeof(MyStruct);
 			MyErrorType nTest = pMainFrm->nCameraErrorType.first();
-			nCameraErrorType.removeFirst();
+			nCameraErrorType.clear();
 			nIOCard[16] = nTest.id+1;
 			nIOCard[17] = nTest.nType;
 			if(m_sSystemInfo.m_iSystemType == 2)
@@ -1399,6 +1399,7 @@ void GlasswareDetectSystem::slots_turnPage(int current_page, int iPara)
 		iLastPage = 9;
 		Sleep(1000);
 		SendDataToSever(0,MAININTERFACE);
+		pMainFrm->Logfile.write(("return severs interface"),AbnormityLog);
 		break;
 	}
 }
