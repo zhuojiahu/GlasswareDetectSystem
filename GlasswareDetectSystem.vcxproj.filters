@@ -289,15 +289,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_EquipRuntime.cpp">
       <Filter>Header Files\Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_qconsole.cpp">
-      <Filter>Header Files\Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_qconsole.cpp">
-      <Filter>Header Files\Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="qconsole.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="widget_plc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -305,6 +296,24 @@
       <Filter>Header Files\Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_widget_plc.cpp">
+      <Filter>Header Files\Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LightSource.cpp">
+      <Filter>Header Files\Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LightSource.cpp">
+      <Filter>Header Files\Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="widgetwarning.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_widgetwarning.cpp">
+      <Filter>Header Files\Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_widgetwarning.cpp">
       <Filter>Header Files\Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
@@ -456,26 +465,34 @@
     <CustomBuild Include="ProgramLicense.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="qconsole.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="qconsole.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="widget_plc.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="widget_plc.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="GeneratedFiles\ui_qconsole.h">
-      <Filter>Header Files\Generated Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="GeneratedFiles\ui_widget_plc.h">
       <Filter>Header Files\Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LightSource.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="LightSource.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="widgetwarning.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GlasswareDetectSystem.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_LightSource.h">
+      <Filter>Header Files\Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RseeController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
