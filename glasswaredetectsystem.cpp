@@ -82,7 +82,7 @@ DWORD GlasswareDetectSystem::SendDetect(void* param)
 					{
 						pMainFrm->nCountNumber = 0;
 						nTempStruct.nState = SENDDATA;
-						nTempStruct.nCount = 256;
+						nTempStruct.nCount = 256*sizeof(MyErrorType)+sizeof(MyStruct);
 						memcpy(m_reportPtr,&nTempStruct,sizeof(MyStruct));
 						nTPtr = m_reportPtr;
 						nTPtr+=sizeof(MyStruct);
@@ -384,97 +384,123 @@ void GlasswareDetectSystem::onServerDataReady()
 {
 	QTcpSocket* nTcpSocket = dynamic_cast<QTcpSocket*>(sender());
 	QByteArray buffer = nTcpSocket->readAll();
-	char* t_ptr = buffer.data();
-	if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == CLEAR)
+	m_buffer.append(buffer);
+	int totalLen = m_buffer.size();
+	while(totalLen)  
 	{
-		widget_carveSetting->errorList_widget->slots_clearTable();
-		m_sRunningInfo.nGSoap_ErrorTypeCount[0]=0;
-		m_sRunningInfo.nGSoap_ErrorCamCount[0]=0;
-		m_sRunningInfo.nGSoap_ErrorTypeCount[2]=0;
-		m_sRunningInfo.nGSoap_ErrorCamCount[2]=0;
-		m_sRunningInfo.m_checkedNum = 0;
-		m_sRunningInfo.m_passNum = 0;
-		m_sRunningInfo.m_kickoutNumber = 0;
-		m_sRunningInfo.m_failureNumFromIOcard = 0;
-		test_widget->nInfo.m_checkedNum = 0;
-		test_widget->nInfo.m_checkedNum2 = 0;
-		test_widget->nInfo.m_passNum = 0;
-		test_widget->nInfo.m_failureNum = 0;
-		nLastCheckNum=0;
-		nLastFailedNum = 0;
-		QString nClearName = QString(((MyStruct*)t_ptr)->nTemp);
-		if(nClearName == "Clear")
+		if( totalLen < sizeof(MyStruct))  
 		{
-			m_vIOCard[0]->m_Pio24b.softReset();
-			if(m_sSystemInfo.m_iSystemType == 2)
+			break;
+		}
+		int nCount = ((MyStruct*)m_buffer.data())->nCount;
+		if(totalLen < nCount)
+		{
+			break;
+		}
+		QString nClearName;
+		QString nAddModeName;
+		switch(((MyStruct*)m_buffer.data())->nState)
+		{
+		case CLEAR:
+			widget_carveSetting->errorList_widget->slots_clearTable();
+			m_sRunningInfo.nGSoap_ErrorTypeCount[0]=0;
+			m_sRunningInfo.nGSoap_ErrorCamCount[0]=0;
+			m_sRunningInfo.nGSoap_ErrorTypeCount[2]=0;
+			m_sRunningInfo.nGSoap_ErrorCamCount[2]=0;
+			m_sRunningInfo.m_checkedNum = 0;
+			m_sRunningInfo.m_passNum = 0;
+			m_sRunningInfo.m_kickoutNumber = 0;
+			m_sRunningInfo.m_failureNumFromIOcard = 0;
+			test_widget->nInfo.m_checkedNum = 0;
+			test_widget->nInfo.m_checkedNum2 = 0;
+			test_widget->nInfo.m_passNum = 0;
+			test_widget->nInfo.m_failureNum = 0;
+			nLastCheckNum=0;
+			nLastFailedNum = 0;
+			nClearName = QString(((MyStruct*)m_buffer.data())->nTemp);
+			if(nClearName == "Clear")
 			{
-				test_widget->m_vIOCard->m_Pio24b.softReset();
+				m_vIOCard[0]->m_Pio24b.softReset();
+				if(m_sSystemInfo.m_iSystemType == 2)
+				{
+					test_widget->m_vIOCard->m_Pio24b.softReset();
+				}
+				QSettings iniDataSet(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
+				iniDataSet.setIniCodec(QTextCodec::codecForName("GBK"));
+				QString strSession;
+				strSession=QString("/system/checkedNum");
+				iniDataSet.setValue(strSession,m_sRunningInfo.m_checkedNum);
+
+				strSession = QString("/system/failureNum");
+				iniDataSet.setValue(strSession,m_sRunningInfo.m_failureNumFromIOcard);
+				nCountNumber = 0;
 			}
-			QSettings iniDataSet(m_sConfigInfo.m_strDataPath,QSettings::IniFormat);
-			iniDataSet.setIniCodec(QTextCodec::codecForName("GBK"));
-			QString strSession;
-			strSession=QString("/system/checkedNum");
-			iniDataSet.setValue(strSession,m_sRunningInfo.m_checkedNum);
+			break;
+		case SEVERS:
+			nClearName = QString(((MyStruct*)m_buffer.data())->nTemp);
+			if(nClearName == "NULL")
+			{
+				nWidgetWarning->hideWarnning();
+			}else{
+				nAddModeName = QString::fromLocal8Bit(((MyStruct*)m_buffer.data())->nTemp);//报警的错误信息
+				nWidgetWarning->showWarnning(nAddModeName);
+			}
+			break;
+		case LOCKSCREEN:
+			//根据服务器返回的账号权限，隐藏弹窗，设置按钮属性
+			nClearName = QString(((MyStruct*)m_buffer.data())->nTemp);
+			if(nClearName == "3")
+			{
+				
+			}else{
 
-			strSession = QString("/system/failureNum");
-			iniDataSet.setValue(strSession,m_sRunningInfo.m_failureNumFromIOcard);
-			nCountNumber = 0;
+			}
+			break;
+		case SYSTEMMODEADD:
+			if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+			{
+				slots_OnBtnStar();
+			}
+			if(m_sSystemInfo.m_bIsTest)
+			{
+				widget_carveSetting->widgetCarveImage->slots_startTest();
+			}
+			//创建新的模板函数
+			nAddModeName = QString::fromLocal8Bit(((MyStruct*)m_buffer.data())->nTemp);
+			widget_Management->SeverDelete(nAddModeName);
+			break;
+		case SYSTEMMODESELECT:
+			if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+			{
+				slots_OnBtnStar();
+			}
+			if(m_sSystemInfo.m_bIsTest)
+			{
+				widget_carveSetting->widgetCarveImage->slots_startTest();
+			}
+			//创建新的模板函数
+			nAddModeName = QString::fromLocal8Bit(((MyStruct*)m_buffer.data())->nTemp);
+			widget_Management->SeverSelect(nAddModeName);
+			break;
+		case SYSTEMMODEDELTE:
+			if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
+			{
+				slots_OnBtnStar();
+			}
+			if(m_sSystemInfo.m_bIsTest)
+			{
+				widget_carveSetting->widgetCarveImage->slots_startTest();
+			}
+			//创建新的模板函数
+			nAddModeName = QString::fromLocal8Bit(((MyStruct*)m_buffer.data())->nTemp);
+			widget_Management->SeverDelete(nAddModeName);
+			break;
 		}
-	}else if(((MyStruct*)t_ptr)->nState == IMAGE)
-	{
-		
-	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == CONNECT)
-	{
-
-	}else if(((MyStruct*)t_ptr)->nState == SEVERS)
-	{
-		QString nClearName = QString(((MyStruct*)t_ptr)->nTemp);
-		if(nClearName == "NULL")
-		{
-			nWidgetWarning->hideWarnning();
-		}else{
-			QString nAddModeName = QString::fromLocal8Bit(((MyStruct*)t_ptr)->nTemp);//报警的错误信息
-			nWidgetWarning->showWarnning(nAddModeName);
-		}
-	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == SYSTEMMODEADD)
-	{
-		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
-		{
-			slots_OnBtnStar();
-		}
-		if(m_sSystemInfo.m_bIsTest)
-		{
-			widget_carveSetting->widgetCarveImage->slots_startTest();
-		}
-		//创建新的模板函数
-		QString nAddModeName = QString::fromLocal8Bit(((MyStruct*)t_ptr)->nTemp);
-		widget_Management->SeverAdd(nAddModeName);
-	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == SYSTEMMODESELECT)
-	{
-		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
-		{
-			slots_OnBtnStar();
-		}
-		if(m_sSystemInfo.m_bIsTest)
-		{
-			widget_carveSetting->widgetCarveImage->slots_startTest();
-		}
-		//创建新的模板函数
-		QString nAddModeName = QString::fromLocal8Bit(((MyStruct*)t_ptr)->nTemp);
-		widget_Management->SeverSelect(nAddModeName);
-	}else if(buffer.size()==sizeof(MyStruct) && ((MyStruct*)t_ptr)->nState == SYSTEMMODEDELTE)
-	{
-		if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
-		{
-			slots_OnBtnStar();
-		}
-		if(m_sSystemInfo.m_bIsTest)
-		{
-			widget_carveSetting->widgetCarveImage->slots_startTest();
-		}
-		//创建新的模板函数
-		QString nAddModeName = QString::fromLocal8Bit(((MyStruct*)t_ptr)->nTemp);
-		widget_Management->SeverDelete(nAddModeName);
+		buffer = m_buffer.right(totalLen - nCount);  
+		//更新长度
+		totalLen = buffer.size();
+		//更新多余数据
+		m_buffer = buffer;
 	}
 }
 
@@ -1200,6 +1226,8 @@ void GlasswareDetectSystem::SendDataToSever(int nSendCount,StateEnum nState)
 {
 	MyStruct nTempStruct;
 	nTempStruct.nState = nState;
+	nTempStruct.nCount = sizeof(MyStruct);
+	nTempStruct.nFail = nSendCount;
 	QByteArray ba((char*)&nTempStruct, sizeof(MyStruct));
 	nSocketMutex.lock();
 	ncSocketWriteData.push_back(ba);
@@ -1259,6 +1287,7 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 		if(pMainFrm->nCameraErrorType.count()>0)
 		{
 			nTempStruct.nState = ALERT;
+			nTempStruct.nCount = 24*sizeof(int)+sizeof(MyStruct);
 			memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
 			nTPIOtr = m_ptr;
 			nTPIOtr+=sizeof(MyStruct);
@@ -1287,6 +1316,7 @@ void GlasswareDetectSystem::slots_UpdateCoderNumber()
 				m_sRunningInfo.m_iKickMode2 = test_widget->m_plc->nErrorType;
 				test_widget->nTestCounter.unlock();
 				nTempStruct.nState = ALERT;
+				nTempStruct.nCount = 24*sizeof(int)+sizeof(MyStruct);
 				memcpy(m_ptr,&nTempStruct,sizeof(MyStruct));
 				nTPIOtr = m_ptr;
 				nTPIOtr+=sizeof(MyStruct);

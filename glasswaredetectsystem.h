@@ -192,6 +192,7 @@ public:
 	int n_EndTime;
 	char* m_ptr;
 	int* nIOCard;
+	QByteArray m_buffer;
 };
 #endif // GLASSWAREDETECTSYSTEM_H
 
