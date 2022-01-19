@@ -234,7 +234,6 @@ void DetectThread::checkImage(CGrabElement *pElement,int iCheckMode)
 	sAlgCInp.sInputParam.nChannel = 1;
 	sAlgCInp.sInputParam.pcData = (char*)pElement->myImage->bits();
 	//sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
-
 	if (1 == iCheckMode)
 	{
 		sReturnStatus = pMainFrm->m_cBottleCheck[iCamera].Check(sAlgCInp,&pAlgCheckResult);
@@ -445,7 +444,7 @@ void DetectThread::CountDefectIOCard(int nSignalNo,int tmpResult)
 				pMainFrm->nSendData[nSignalNo].id = iErrorCamera;
 				pMainFrm->nSendData[nSignalNo].nType = sComErrorpara.nErrorType;
 				pMainFrm->nSendData[nSignalNo].nErrorArea = sComErrorpara.nArea;
-				pMainFrm->nCameraErrorType.push_back(pMainFrm->nSendData[nSignalNo]);
+				//pMainFrm->nCameraErrorType.push_back(pMainFrm->nSendData[nSignalNo]);
 			}
 			else
 			{
@@ -663,7 +662,7 @@ void DetectThread::CountRuningData( int cameraNumber )
 			lastSpeed = nCurTime;
 			nSpeedCount = 0;
 			pMainFrm->m_sRunningInfo.strSpeed = QString::number(nCurSpeed);
-			emit signals_showspeed(nCurSpeed);
+			//emit signals_showspeed(nCurSpeed);
 		}
 	}
 }

@@ -190,6 +190,7 @@ public:
 	int nLastCheckNum;
 	int nLastFailedNum;
 	int n_EndTime;
+	int n_StartTime;
 	char* m_ptr;
 	int* nIOCard;
 	QByteArray m_buffer;

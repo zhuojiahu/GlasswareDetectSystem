@@ -114,6 +114,7 @@ void WidgetTest::slot_ConnectSever()
 	m_plc->m_pSocket->connectToHost("192.168.250.1", 9600);
 	if(pMainFrm->m_tcpSocket->waitForConnected(3000) && m_plc->m_pSocket->waitForConnected(3000))
 	{
+		pMainFrm->Logfile.write(("connect success"),OperationLog);
 		QMessageBox::information(this,tr("message"),tr("connect success!"));
 	}else{
 		QMessageBox::information(this,tr("message"),tr("connect failed!"));

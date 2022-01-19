@@ -30,11 +30,14 @@ DWORD GlasswareDetectSystem::SendIOCard(void* param)
 	{
 		if(pMainFrm->ncSocketWriteData.count()>0)
 		{
+			pMainFrm->nSocketMutex.lock();
 			QByteArray nTest = pMainFrm->ncSocketWriteData.first();
 			pMainFrm->ncSocketWriteData.removeFirst();
+			pMainFrm->nSocketMutex.unlock();
 			pMainFrm->m_tcpSocket->write(nTest.data(),nTest.size());
+			//pMainFrm->m_tcpSocket->waitForBytesWritten(3000); 
 		}
-		Sleep(20);
+		Sleep(200);
 	}
 	return TRUE;
 }
@@ -126,6 +129,7 @@ GlasswareDetectSystem::GlasswareDetectSystem(QWidget *parent, Qt::WFlags flags)
 
 	//网络通信初始化
 	n_EndTime = 0;
+	n_StartTime = QTime::currentTime().minute();
 	nLastCheckNum = 0;
 	nLastFailedNum = 0;
 	nCountNumber = 0;
@@ -302,9 +306,12 @@ void GlasswareDetectSystem::GrabCallBack(const s_GBSIGNALINFO *SigInfo)
 
 	if(nQueue[tempCamera].listGrab.count()>0)
 	{
+		pMainFrm->nQueue[tempCamera].mGrabLocker.lock();
 		pGrabElement = (CGrabElement *) nQueue[tempCamera].listGrab.first();
 		nQueue[tempCamera].listGrab.removeFirst();
 		memcpy(pGrabElement->SourceImage->bits(),pImageBuffer,nWidth*nHeight);
+		pMainFrm->nQueue[tempCamera].mGrabLocker.unlock();
+
 		pGrabElement->bHaveImage=TRUE;
 		pGrabElement->nCheckRet = FALSE;
 		pGrabElement->cErrorParaList.clear();
@@ -455,6 +462,9 @@ void GlasswareDetectSystem::onServerDataReady()
 			}else{
 
 			}
+			break;
+		case CONNECT:
+			n_StartTime = QTime::currentTime().minute();
 			break;
 		case SYSTEMMODEADD:
 			if(m_sRunningInfo.m_bCheck)//如果是开始检测和开始调试中则自动关闭
@@ -1131,6 +1141,7 @@ void GlasswareDetectSystem::initInterface()
 	statked_widget->setObjectName("mainStacked");
 	title_widget = new WidgetTitle(this);
 	widget_carveSetting = new WidgetCarveSetting;
+	widget_carveSetting->slots_turnCameraPage(0);
 	widget_Management = new WidgetManagement;
 	test_widget = new WidgetTest(this);
 	test_widget->slots_intoWidget();
@@ -1228,6 +1239,16 @@ void GlasswareDetectSystem::SendDataToSever(int nSendCount,StateEnum nState)
 	nTempStruct.nState = nState;
 	nTempStruct.nCount = sizeof(MyStruct);
 	nTempStruct.nFail = nSendCount;
+	if(pMainFrm->m_sSystemInfo.m_iSystemType == 1)
+	{
+		nTempStruct.nUnit = LEADING;
+	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 2)
+	{
+		nTempStruct.nUnit = CLAMPING;
+	}else if(pMainFrm->m_sSystemInfo.m_iSystemType == 3)
+	{
+		nTempStruct.nUnit = BACKING;
+	}
 	QByteArray ba((char*)&nTempStruct, sizeof(MyStruct));
 	nSocketMutex.lock();
 	ncSocketWriteData.push_back(ba);
@@ -1728,7 +1749,9 @@ void GlasswareDetectSystem::slots_OnExit(bool ifyanz)
 			QMessageBox::information(this,tr("Infomation"),tr("Please Stop Detection First!"));
 			return;		
 		}
-		
+		m_tcpSocket->disconnectFromHost();
+		m_tcpSocket->waitForDisconnected();
+		m_tcpSocket->close();
 		EquipRuntime::Instance()->EquipExitLogFile();
 		ToolButton *TBtn = title_widget->button_list.at(4);
 		pMainFrm->Logfile.write(("Close ModelDlg!"),OperationLog);
@@ -1900,6 +1923,16 @@ void GlasswareDetectSystem::slot_SockScreen()
 	{
 		n_EndTime = time.minute();
 		SendDataToSever(0,CONNECT);
+	}
+	if((n_StartTime - time.minute()+60) % 60>3)
+	{
+		m_tcpSocket->connectToHost("192.168.250.204",8088);
+		if(pMainFrm->m_tcpSocket->waitForConnected(3000))
+		{
+			Logfile.write("connect Severs success!",CheckLog);
+		}else{
+			Logfile.write("connect Severs failed!",CheckLog);
+		}
 	}
 }
 
